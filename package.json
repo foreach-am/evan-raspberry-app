@@ -1,0 +1,70 @@
+{
+  "name": "evan-raspberry-app",
+  "version": "1.0.0",
+  "private": true,
+  "author": "forEach LLC",
+  "license": "MIT",
+  "description": "EVAN raspberry app.",
+  "scripts": {
+    "start": "bash ./scripts/app/run-development.sh",
+    "postinstall": "bash ./scripts/hooks/package/post-install.sh",
+    "prepare": "bash ./run-cmd.sh tool:husky:init",
+    "lint": "bash ./run-cmd.sh tool:lint:uncache && bash ./run-cmd.sh tool:lint:execute:dev",
+    "format": "bash ./run-cmd.sh tool:format:code && bash ./run-cmd.sh tool:format:scripts",
+    "tool:app:env-check": "bash ./scripts/app/check-env.sh",
+    "tool:husky:init": "bash ./scripts/tools/init-git-hooks.sh",
+    "tool:sum-hash:build": "bash ./scripts/tools/sumhash-build.sh",
+    "tool:sum-hash:check": "bash ./scripts/tools/sumhash-check.sh",
+    "tool:lint:uncache": "bash ./scripts/tools/eslint-uncache.sh",
+    "tool:lint:execute:dev": "bash ./scripts/tools/eslint-execute.sh dev",
+    "tool:lint:execute:prod": "bash ./scripts/tools/eslint-execute.sh prod",
+    "tool:format:code": "bash ./scripts/tools/format-code.sh",
+    "tool:format:scripts": "bash ./scripts/tools/format-scripts.sh"
+  },
+  "dependencies": {
+    "raspi": "^6.0.1",
+    "raspi-serial": "^6.0.0",
+    "rpio": "^2.4.2",
+    "serialport": "^10.4.0",
+    "websocket": "^1.0.34"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.0",
+    "@babel/eslint-parser": "^7.18.2",
+    "@babel/runtime": "^7.18.0",
+    "eslint": "^8.16.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-import-resolver-typescript": "^2.7.1",
+    "eslint-plugin-flowtype": "^8.0.3",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.30.0",
+    "eslint-plugin-react-hooks": "^4.5.0",
+    "eslint-plugin-react-native": "^4.0.0",
+    "eslint-plugin-unicorn": "^42.0.0",
+    "husky": "^8.0.1",
+    "nodemon": "^2.0.16",
+    "prettier": "^2.6.2",
+    "prettier-plugin-sh": "^0.11.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

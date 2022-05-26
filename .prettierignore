@@ -1,0 +1,8 @@
+build/
+.release/
+.idea/
+node_modules/
+.husky/
+
+package-lock.json
+yarn.lock

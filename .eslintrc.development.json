@@ -1,0 +1,18 @@
+{
+  "extends": ["./.eslintrc"],
+  "rules": {},
+  "overrides": [
+    {
+      "files": ["*.js"],
+      "rules": {
+        "prettier/prettier": "warn",
+        "no-unused-vars": "warn",
+        "no-console": "warn",
+        "semi": "warn",
+        "curly": "warn",
+        "no-debugger": "warn",
+        "no-constant-condition": "warn"
+      }
+    }
+  ]
+}

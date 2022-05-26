@@ -1,0 +1,20 @@
+{
+  "exec": "node ./index.js",
+  "execArgs": ["--trace-warnings", "--unhandled-rejections=strict"],
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "delay": "200",
+  "ext": "js",
+  "ignore": [
+    "scripts/*",
+    ".editorconfig",
+    ".env.example",
+    ".eslintignore",
+    ".prettierignore",
+    "deploy.sh",
+    "index.js",
+    "LICENSE.md",
+    "README.md"
+  ]
+}
