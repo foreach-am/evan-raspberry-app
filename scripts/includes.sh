@@ -97,6 +97,14 @@ function end_cmd_die() {
   fi
 }
 
+function exit_on_fail() {
+  local CMD_EXIT_CODE="$1"
+
+  if [[ $CMD_EXIT_CODE != 0 ]]; then
+    exit $CMD_EXIT_CODE
+  fi
+}
+
 function end_cmd() {
   local EXIT_CODE=$1
 
