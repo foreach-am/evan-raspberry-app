@@ -1,18 +1,17 @@
-const { EventQueue, EventQueueEnum } = require('../../libs/EventQueue');
-const { WebSocketSender } = require('../../libs/WebSocket');
+const { EventQueue, EventCommandEnum } = require('../../libraries/EventQueue');
+const { WebSocketSender } = require('../../libraries/WebSocket');
 
-const commandName = 'Authorize';
-const event = EventQueueEnum.EVENT_AUTHORIZE;
+const event = EventCommandEnum.EVENT_AUTHORIZE;
 
-function sendAuthorize(data, transactionId) {
-  WebSocketSender.send(transactionId, commandName, {
+function sendAuthorize(data) {
+  WebSocketSender.send(event, {
     idTag: 'B4A63CDF',
   });
 }
 
-function sendAuthorizeHandler(data, args) {
+function sendAuthorizeHandler(data) {
   return EventQueue.register(event, data, function () {
-    sendAuthorize(data, args.transactionId);
+    sendAuthorize(data);
   });
 }
 

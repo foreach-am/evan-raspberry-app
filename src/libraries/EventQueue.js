@@ -1,6 +1,6 @@
 const { Logger } = require('./Logger');
 
-const EventQueueEnum = {
+const EventCommandEnum = {
   EVENT_BOOT_NOTIFICATION: 1,
   EVENT_HEARTHBEAT: 2,
   EVENT_AUTHORIZE: 3,
@@ -9,13 +9,23 @@ const EventQueueEnum = {
   EVENT_RESERVE_ACCEPT: 6,
 };
 
+const EventCommandNameEnum = {
+  [EventCommandEnum.EVENT_BOOT_NOTIFICATION]: 'BootNotification',
+  [EventCommandEnum.EVENT_HEARTHBEAT]: 'Heartbeat',
+  [EventCommandEnum.EVENT_AUTHORIZE]: 'Authorize',
+  [EventCommandEnum.EVENT_TRANSACTION_START]: 'StartTransaction',
+  [EventCommandEnum.EVENT_TRANSACTION_STOP]: 'StopTransaction',
+  [EventCommandEnum.EVENT_RESERVE_ACCEPT]: 'ReserveNow',
+};
+
 let queue = [];
 
 function register(commandId, packetData, callback) {
+  const commandName = EventCommandNameEnum[commandId];
+
   Logger.info(
-    `Register ${commandName}`,
-    args.connection.connected,
-    args.transactionId
+    `Register ${commandName}`
+    // args.transactionId
   );
 
   queue.push({
@@ -25,7 +35,7 @@ function register(commandId, packetData, callback) {
     status: 'queue',
   });
 
-  return this.process();
+  return process();
 }
 
 function getPreviousCommandId() {
@@ -62,14 +72,7 @@ function process() {
   if (queueItem.status == 'running') {
     return new Promise(function (resolve) {
       setTimeout(function () {
-        // console.log('--------->>> IN QUEUE:', queue.map(function (i) {
-        //     return ({
-        //         c: i.commandId,
-        //         s: i.status,
-        //     });
-        // }));
-
-        resolve(this.process());
+        resolve(process());
       }, 100);
     });
   }
@@ -77,13 +80,11 @@ function process() {
   queueItem.status = 'running';
 
   const onFinish = function (resolve) {
-    // console.log('--------->>> finished:', queueItem.commandId);
     queueItem.status = 'finished';
     resolve();
   };
 
   return new Promise(function (resolve) {
-    // console.log(queueItem);
     const result = queueItem.callback(queueItem.packetData);
     if (result instanceof Promise) {
       result.finally(function () {
@@ -96,19 +97,24 @@ function process() {
 }
 
 function print() {
-  console.log(
-    '--------->>> ',
+  Logger.info(
+    'EventQueue list:',
     queue.map(function (i) {
       return {
-        c: i.commandId,
-        s: i.status,
+        cmdId: i.commandId,
+        status: i.status,
       };
     })
   );
 }
 
+// setInterval(function () {
+//   print();
+// }, 200);
+
 module.exports = {
-  EventQueueEnum: EventQueueEnum,
+  EventCommandEnum: EventCommandEnum,
+  EventCommandNameEnum: EventCommandNameEnum,
   EventQueue: {
     register: register,
     getPreviousCommandId: getPreviousCommandId,

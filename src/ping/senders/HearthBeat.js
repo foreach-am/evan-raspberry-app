@@ -1,20 +1,21 @@
-const { EventQueue, EventQueueEnum } = require('../../libs/EventQueue');
-const { WebSocketSender } = require('../../libs/WebSocket');
+const { EventQueue, EventCommandEnum } = require('../../libraries/EventQueue');
+const { WebSocketSender } = require('../../libraries/WebSocket');
 
-const commandName = 'Heartbeat';
-const event = EventQueueEnum.EVENT_HEARTHBEAT;
+const state = require('../../state');
 
-function sendHeartBeat(data, transactionId, bootNotRequireTime) {
-  WebSocketSender.send(transactionId, commandName, {});
+const event = EventCommandEnum.EVENT_HEARTHBEAT;
+
+function sendHeartBeat(data) {
+  WebSocketSender.send(event, {});
 
   setTimeout(function () {
     sendHeartBeatHandler(data);
-  }, bootNotRequireTime * 1000);
+  }, state.bootNotRequireTime * 1000);
 }
 
-function sendHeartBeatHandler(data, args) {
+function sendHeartBeatHandler(data) {
   return EventQueue.register(event, data, function () {
-    sendHeartBeat(data, args.transactionId, args.bootNotRequireTime);
+    sendHeartBeat(data);
   });
 }
 

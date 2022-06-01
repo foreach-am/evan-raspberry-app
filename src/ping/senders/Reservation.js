@@ -1,18 +1,17 @@
-const { EventQueue, EventQueueEnum } = require('../../libs/EventQueue');
-const { WebSocketSender } = require('../../libs/WebSocket');
+const { EventQueue, EventCommandEnum } = require('../../libraries/EventQueue');
+const { WebSocketSender } = require('../../libraries/WebSocket');
 
-const commandName = 'ReserveNow';
-const event = EventQueueEnum.EVENT_RESERVE_ACCEPT;
+const event = EventCommandEnum.EVENT_RESERVE_ACCEPT;
 
-function sendReservation(data, transactionId) {
-  WebSocketSender.send(transactionId, commandName, {
+function sendReservation(data) {
+  WebSocketSender.send(event, {
     status: 'Accepted',
   });
 }
 
-function sendReservationHandler(data, args) {
+function sendReservationHandler(data) {
   return EventQueue.register(event, data, function () {
-    sendReservation(data, args.transactionId);
+    sendReservation(data);
   });
 }
 

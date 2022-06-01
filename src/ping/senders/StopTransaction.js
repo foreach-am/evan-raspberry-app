@@ -1,12 +1,11 @@
-const { EventQueue, EventQueueEnum } = require('../../libs/EventQueue');
-const { Logger } = require('../../libs/Logger');
+const { EventQueue, EventCommandEnum } = require('../../libraries/EventQueue');
+const { WebSocketSender } = require('../../libraries/WebSocket');
 
-const commandName = 'StopTransaction';
-const event = EventQueueEnum.EVENT_TRANSACTION_STOP;
+const event = EventCommandEnum.EVENT_TRANSACTION_STOP;
 
-function sendStopTransaction(data, transactionId) {
-  WebSocketSender.send(transactionId, commandName, {
-    transactionId: transactionId,
+function sendStopTransaction(data) {
+  WebSocketSender.send(event, {
+    transactionId: state.transactionId,
     idTag: 'B4A63CDF',
     timestamp: new Date().toISOString(),
     meterStop: 0, //data.pow1Kwh
@@ -15,7 +14,7 @@ function sendStopTransaction(data, transactionId) {
 
 function sendStopTransactionHandler(data) {
   return EventQueue.register(event, data, function () {
-    sendStopTransaction(data, args.connection, args.transactionId);
+    sendStopTransaction(data);
   });
 }
 

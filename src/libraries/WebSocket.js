@@ -1,9 +1,14 @@
 const url = require('url');
 const { client: WebSocketClient } = require('websocket');
+const { EventCommandNameEnum } = require('./EventQueue');
 const { Logger } = require('./Logger');
 
 const client = new WebSocketClient();
+
 let connection = null;
+function getConnection() {
+  return connection;
+}
 
 const reconnectionMaxAttempts = 10;
 const reconnectionDelays = {
@@ -48,7 +53,7 @@ function onConnect(callback) {
   client.on('connect', function (currentConnection) {
     connection = currentConnection;
 
-    Logger.error('WebSocket connected successfully.');
+    Logger.info('WebSocket connected successfully.');
   });
 
   client.on('connect', callback);
@@ -64,11 +69,11 @@ function register(event, callback) {
   }
 
   connection.on('error', function (error) {
-    Logger.info('WebSocket connection error:', error);
+    Logger.error('WebSocket connection error:', error);
   });
 
   connection.on('close', function () {
-    Logger.info('WebSocket connection closed.');
+    Logger.error('WebSocket connection closed.');
 
     if (code !== 1000) {
       reconnect();
@@ -82,20 +87,20 @@ function startServer() {
   connectWithUri();
 }
 
-function send(transactionId, commandName, commandArgs) {
-  Logger.info(
-    ` Calling ${commandName}`,
-    args.connection.connected,
-    args.transactionId
-  );
+function send(commandId, commandArgs) {
+  const commandName = EventCommandNameEnum[commandId];
 
   if (!connection.connected) {
     return Logger.info(
-      `Skipping ${commandName}`,
-      connection.connected,
-      transactionId
+      `Skipping ${commandName}`
+      // transactionId
     );
   }
+
+  Logger.info(
+    ` Calling ${commandName}`
+    // args.transactionId
+  );
 
   const dataToSend = JSON.stringify([
     2,
@@ -109,6 +114,7 @@ function send(transactionId, commandName, commandArgs) {
 
 module.exports = {
   WebSocket: {
+    getConnection: getConnection,
     onConnect: onConnect,
     onConnectionFailure: onConnectionFailure,
     register: register,

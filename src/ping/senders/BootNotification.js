@@ -1,11 +1,10 @@
-const { EventQueue, EventQueueEnum } = require('../../libs/EventQueue');
-const { WebSocketSender } = require('../../libs/WebSocket');
+const { EventQueue, EventCommandEnum } = require('../../libraries/EventQueue');
+const { WebSocketSender } = require('../../libraries/WebSocket');
 
-const commandName = 'BootNotification';
-const event = EventQueueEnum.EVENT_BOOT_NOTIFICATION;
+const event = EventCommandEnum.EVENT_BOOT_NOTIFICATION;
 
-function sendBootNotification(data, transactionId) {
-  WebSocketSender.send(transactionId, commandName, {
+function sendBootNotification(data) {
+  WebSocketSender.send(event, {
     chargePointVendor: 'EVAN',
     chargePointModel: 'EVAN F7/22',
     chargePointSerialNumber: 'Evan.000.00.1',
@@ -18,9 +17,9 @@ function sendBootNotification(data, transactionId) {
   });
 }
 
-function sendBootNotificationHandler(data, args) {
+function sendBootNotificationHandler(data) {
   return EventQueue.register(event, data, function () {
-    sendBootNotification(data, args.transactionId);
+    sendBootNotification(data);
   });
 }
 
