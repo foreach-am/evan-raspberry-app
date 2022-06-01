@@ -12,74 +12,25 @@ WebSocket.onConnect(async function (connection) {
   async function onDataReady(data) {
     //connection.emit(data);
 
-    // console.log(
-    //   '(FeedBackVoltA: ' +
-    //     data.pilotFeedBackA +
-    //     ' V)' +
-    //     '(FeedBackVoltB: ' +
-    //     data.pilotFeedBackB +
-    //     ' V)'
-    // ); //Print FeedBack Voltage To Console
-    // console.log(
-    //   '(currentMeasureA: ' +
-    //     data.currentMeasureA +
-    //     ' A)' +
-    //     '(currentMeasureB: ' +
-    //     data.currentMeasureB +
-    //     ' A)'
-    // ); //Print FeedBack Voltage To Console
-    // console.log(
-    //   '(currentMeasureC: ' +
-    //     data.currentMeasureC +
-    //     ' A)' +
-    //     '(currentMeasureD: ' +
-    //     data.currentMeasureD +
-    //     ' A)'
-    // ); //Print FeedBack Voltage To Console
-    // console.log(
-    //   '(plugState1: ' +
-    //     data.plugState1 +
-    //     ' State)' +
-    //     '(plugState2: ' +
-    //     data.plugState2 +
-    //     ' State)'
-    // ); //Print FeedBack Voltage To Console
-    // console.log(
-    //   '(highVoltError: ' +
-    //     data.highVoltError +
-    //     ' State)' +
-    //     '(lowVoltError: ' +
-    //     data.lowVoltError +
-    //     ' State)'
-    // ); //Print FeedBack Voltage To Console
-    // console.log(
-    //   '(pow1Kwh: ' +
-    //     data.pow1Kwh +
-    //     ' KW/h)' +
-    //     '(pow2Kwh: ' +
-    //     data.pow2Kwh +
-    //     ' KW/h)'
-    // ); //Print FeedBack Voltage To Console
-    // console.log(
-    //   '(overCurrent1Error: ' +
-    //     data.overCurrent1Error +
-    //     ' State)' +
-    //     '(overCurrent2Error: ' +
-    //     data.overCurrent2Error +
-    //     ' State'
-    // ); //Print FeedBack Voltage To Console
-    // console.log(
-    //   '(highVoltageMeasure: ' +
-    //     data.highVoltageMeasure +
-    //     ' V.AC)' +
-    //     '(temperature: ' +
-    //     data.temperature +
-    //     ' ^C)'
-    // ); //Print FeedBack Voltage To Console
-    // console.log('(counter: ' + data.counter + ')');
+    Logger.json('Received data is ready:', {
+      '     FeedBackVoltA': `${data.pilotFeedBackA} V`,
+      '     FeedBackVoltB': `${data.pilotFeedBackB} V`,
+      '   CurrentMeasureA': `${data.currentMeasureA} A`,
+      '   CurrentMeasureB': `${data.currentMeasureB} A`,
+      '   CurrentMeasureC': `${data.currentMeasureC} A`,
+      '   CurrentMeasureD': `${data.currentMeasureD} A`,
+      '        PlugState1': `${data.plugState1} State`,
+      '        PlugState2': `${data.plugState2} State`,
+      '     HighVoltError': `${data.highVoltError} State`,
+      '      LowVoltError': `${data.lowVoltError} State`,
+      '         Power1Kwh': `${data.pow1Kwh} KW/h`,
+      '         Power2Kwh': `${data.pow2Kwh} KW/h`,
+      ' OverCurrent1Error': `${data.overCurrent1Error} State`,
+      ' OverCurrent2Error': `${data.overCurrent2Error} State`,
+      'HighVoltageMeasure': `${data.highVoltageMeasure} V.AC`,
+      '       Temperature': `${data.temperature} C`,
+    });
 
-    //=============================Plug 1 State Tasks==============================================
-    //console.log('>>>', data.plugState1);
     if (data.plugState1 === 1) {
       state.startTransactionSwitch = true;
       state.stopTransactionSwitch = true;
