@@ -52,23 +52,3 @@ fi
 
 # -----------------------------------------------------
 # build production
-execute_action "$BUILD_LOG_FILE" \
-  "'$APP_NPM_CLI_BIN/react-app-rewired' build" \
-  "Building pruduction release" \
-  "Failed to build application."
-
-# -----------------------------------------------------
-# replace release folder
-execute_action "$BUILD_LOG_FILE" \
-  "rm -rf .release && mv build .release" \
-  "Replacing release artifacts with new one" \
-  "Failed to replace release artifacts."
-
-# -----------------------------------------------------
-# clearing cloudflare cache
-if [[ ! -d "node_modules" ]]; then
-  execute_action "$BUILD_LOG_FILE" \
-    "bash ./run-cmd.sh tool:app:purge-cache" \
-    "Clearing cloudflare cache" \
-    "Failed to clear cloudflare cache."
-fi

@@ -16,4 +16,4 @@ fi
 
 # -----------------------------------------------------
 # start development server
-"$APP_NPM_CLI_BIN/react-app-rewired" start
+"$APP_NPM_CLI_BIN/nodemon" --config nodemon.json
