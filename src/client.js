@@ -2,6 +2,8 @@ const { Logger } = require('./libraries/Logger');
 const { WebSocket } = require('./libraries/WebSocket');
 const { ComPort } = require('./libraries/ComPort');
 const { EventQueue, EventCommandEnum } = require('./libraries/EventQueue');
+const { PlugStateEnum } = require('./libraries/PlugState');
+// const { Raspberry } = require('./libraries/Raspberry');
 
 const state = require('./state');
 const ping = require('./ping');
@@ -31,7 +33,7 @@ WebSocket.onConnect(async function (connection) {
       '       Temperature': `${data.temperature} C`,
     });
 
-    if (data.plugState1 === 1) {
+    if (data.plugState1 === PlugStateEnum.UNPLUGGED) {
       state.startTransactionSwitch = true;
       state.stopTransactionSwitch = true;
       state.sendAuthSwitch = true;
@@ -39,7 +41,10 @@ WebSocket.onConnect(async function (connection) {
       state.transactionId = 0;
     }
 
-    if (data.plugState1 === 2 && state.sendAuthSwitch) {
+    if (
+      data.plugState1 === PlugStateEnum.CAR_DETECTED &&
+      state.sendAuthSwitch
+    ) {
       state.sendAuthSwitch = false;
       await ping.sendAuthorize();
     }
@@ -59,12 +64,18 @@ WebSocket.onConnect(async function (connection) {
       ComPort.emit('PROXIRE1:');
     }
 
-    if (data.plugState1 === 3 && state.chargingPeriodAuthSwitch) {
+    if (
+      data.plugState1 === PlugStateEnum.CHARGING &&
+      state.chargingPeriodAuthSwitch
+    ) {
       state.chargingPeriodAuthSwitch = false;
       await ping.sendAuthorize();
     }
 
-    if (data.plugState1 === 9 && state.stopTransactionSwitch) {
+    if (
+      data.plugState1 === PlugStateEnum.CHARGE_COMPLETED &&
+      state.stopTransactionSwitch
+    ) {
       state.stopTransactionSwitch = false;
       await ping.sendStopTransaction();
       state.idTagInfoStatus = '';
@@ -97,7 +108,7 @@ WebSocket.onConnect(async function (connection) {
         await ping.sendHearthBeat(bootNotificationResult);
         break;
 
-      case EventCommandEnum.EVENT_HEARTHBEAT:
+      case EventCommandEnum.EVENT_HEARTH_BEAT:
         break;
 
       case EventCommandEnum.EVENT_AUTHORIZE:
@@ -128,6 +139,7 @@ WebSocket.onConnect(async function (connection) {
             state.expiryDateConnector2 = parseData[3].expiryDate;
           } else {
           }
+
           state.reservationId = parseData[3].reservationId;
           ping.sendReservation();
         }

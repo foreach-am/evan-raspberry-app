@@ -3,7 +3,7 @@ const { WebSocketSender } = require('../../libraries/WebSocket');
 
 const state = require('../../state');
 
-const event = EventCommandEnum.EVENT_HEARTHBEAT;
+const event = EventCommandEnum.EVENT_HEARTH_BEAT;
 
 function sendHeartBeat(data) {
   WebSocketSender.send(event, {});

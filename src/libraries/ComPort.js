@@ -30,11 +30,6 @@ const flagData = {
 };
 
 let intervalRunning = false;
-setInterval(function () {
-  if (intervalRunning) {
-    emitMessage('MASTERREAD:');
-  }
-}, 2000);
 
 serialPort.write('STARTRUN:');
 serialPort.on('open', function () {
@@ -57,6 +52,7 @@ serialPort.on('data', function (data) {
   }
 
   inputData = inputData.substring(indexStart, indexEnd + 1);
+  console.log(inputData);
 
   InputDataParser(inputData);
   inputData = '';
@@ -67,6 +63,14 @@ serialPort.on('data', function (data) {
       callback(flagData);
     }
   });
+
+  if (!intervalRunning) {
+    return;
+  }
+
+  setTimeout(function () {
+    emitMessage('MASTERREAD:');
+  }, 2000);
 });
 
 serialPort.on('error', function (error) {

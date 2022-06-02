@@ -42,9 +42,9 @@ function pad_dots() {
   local MESSAGE="$1"
 
   local LENGTH_MSG=${#MESSAGE}
-  local LENGTH_DOT=$(( 61 - $LENGTH_MSG ))
+  local LENGTH_DOT=$((61 - $LENGTH_MSG))
 
-  for INDEX in `seq $LENGTH_DOT`; do
+  for INDEX in $(seq $LENGTH_DOT); do
     echo -en "."
   done
 }
@@ -130,7 +130,7 @@ function set_title() {
 }
 
 function assert_network_connected() {
-  ping -q -t1 -c1 "google.com" &>/dev/null
+  ping -q -t1 -c1 "google.com" &> /dev/null
   if [[ $? != 0 ]]; then
     echo ""
     echo -e " \033[0;31m You don't have an internet connection.\033[0m"
