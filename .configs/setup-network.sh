@@ -24,6 +24,7 @@ if [[ "$FOUND" != "0" ]]; then
 fi
 
 sudo echo "dtparam=spi=on" | sudo tee -a "$CONFIG_FILE" > /dev/null
+sudo echo "dtoverlay=anyspi,spi0-0,dev=\"w5500\",speed=30000000" | sudo tee -a "$CONFIG_FILE" > /dev/null
 sudo echo "dtoverlay=w5500" | sudo tee -a "$CONFIG_FILE" > /dev/null
 sudo echo "" | sudo tee -a "$CONFIG_FILE" > /dev/null
 
@@ -52,6 +53,9 @@ sudo echo "" | sudo tee -a "$SERVICE_FILE" > /dev/null
 sudo chmod 644 "$SERVICE_FILE"
 sudo systemctl daemon-reload
 sudo systemctl enable "$(basename "$SERVICE_FILE")"
+
+# install driver
+cd /tmp
 
 # reboot
 sudo reboot
