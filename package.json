@@ -43,7 +43,6 @@
     "eslint-plugin-unicorn": "^42.0.0",
     "husky": "^8.0.1",
     "nodemon": "^2.0.16",
-    "pm2": "^5.2.0",
     "prettier": "^2.6.2",
     "prettier-plugin-sh": "^0.11.0"
   },
