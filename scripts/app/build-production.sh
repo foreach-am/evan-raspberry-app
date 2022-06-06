@@ -52,7 +52,7 @@ fi
 
 # -----------------------------------------------------
 # check & install pm2
-if [[ "$(command -v pm2)" != "" ]]; then
+if [[ "$(command -v pm2)" == "" ]]; then
   execute_action "$BUILD_LOG_FILE" \
     "npm install --global pm2 --silent" \
     "Installing PM2 engine globally." \
