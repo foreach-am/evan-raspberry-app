@@ -52,3 +52,40 @@ fi
 
 # -----------------------------------------------------
 # build production
+execute_action "$BUILD_LOG_FILE" \
+  "\
+    '$APP_NPM_CLI_BIN/pm2' delete ecosystem.config.js && \
+    '$APP_NPM_CLI_BIN/pm2' start ecosystem.config.js && \
+    '$APP_NPM_CLI_BIN/pm2' update
+  " \
+  "Restarting PM2 engine." \
+  "Failed to restart PM2 engine."
+
+# -----------------------------------------------------
+# update and create system service
+if [[ "$(command -v pm2)" != "" ]]; then
+  execute_action "$BUILD_LOG_FILE" \
+    "pm2 update" \
+    "Updating PM2 in-memory cache." \
+    "Failed to update PM2 in-memory cache."
+
+  if [[ "$(command -v systemctl)" != "" ]]; then
+    SYSTEM_EXISTS="$(systemctl --all --type service | grep 'pm2-root.service' | wc -l)"
+    if [[ "$SYSTEM_EXISTS" == "0" ]]; then
+      execute_action "$BUILD_LOG_FILE" \
+        "\
+          pm2 startup systemd && \
+          systemctl enable pm2-root.service && \
+          systemctl start pm2-root.service\
+        " \
+        "Creating PM2 system service." \
+        "Failed to create PM2 system service."
+    fi
+  fi
+fi
+
+# -----------------------------------------------------
+# empty message
+echo ""
+echo " Successfully restarted."
+echo ""

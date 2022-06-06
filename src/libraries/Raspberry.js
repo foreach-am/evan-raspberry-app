@@ -1,4 +1,5 @@
 const { Gpio } = require('onoff');
+const { CoreEvent, CoreEventEnum } = require('./CoreEvent');
 
 const buttonReset = new Gpio(5, 'out', 'rising', {
   debounceTimeout: 500,
@@ -22,7 +23,7 @@ function restart() {
   })();
 }
 
-process.on('SIGINT', function () {
+CoreEvent.register(CoreEventEnum.EVENT_USIGNINT, function () {
   led.unexport();
   button.unexport();
 });
