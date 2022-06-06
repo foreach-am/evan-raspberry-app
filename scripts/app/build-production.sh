@@ -74,9 +74,9 @@ if [[ "$(command -v pm2)" != "" ]]; then
     if [[ "$SYSTEM_EXISTS" == "0" ]]; then
       execute_action "$BUILD_LOG_FILE" \
         "\
-          pm2 startup systemd && \
-          systemctl enable pm2-root.service && \
-          systemctl start pm2-root.service\
+          sudo pm2 startup systemd && \
+          sudo systemctl enable pm2-root.service && \
+          sudo systemctl start pm2-root.service\
         " \
         "Creating PM2 system service." \
         "Failed to create PM2 system service."
