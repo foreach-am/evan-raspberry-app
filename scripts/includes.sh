@@ -146,8 +146,8 @@ function execute_action() {
   local MESSAGE_LOG="$3"
   local MESSAGE_ERROR="$4"
 
-  set_title "$MESSAGE ..."
-  print_log_section "$LOG_FILE_PATH" "$MESSAGE"
+  set_title "$MESSAGE_LOG ..."
+  print_log_section "$LOG_FILE_PATH" "$MESSAGE_LOG"
   print_row_wait "$MESSAGE_LOG"
 
   eval "$EXECUTE_COMMAND" >> "$LOG_FILE_PATH"
