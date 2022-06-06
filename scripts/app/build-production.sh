@@ -54,7 +54,7 @@ fi
 # check & install pm2
 if [[ "$(command -v pm2)" != "" ]]; then
   execute_action "$BUILD_LOG_FILE" \
-    "npm i -g pm2" \
+    "npm install --global pm2 --silent" \
     "Installing PM2 engine globally." \
     "Failed to install PM2 engine globally."
 fi
@@ -63,9 +63,8 @@ fi
 # build production
 execute_action "$BUILD_LOG_FILE" \
   "\
-    '$APP_NPM_CLI_BIN/pm2' delete ecosystem.config.js && \
-    '$APP_NPM_CLI_BIN/pm2' start ecosystem.config.js && \
-    '$APP_NPM_CLI_BIN/pm2' update
+    pm2 delete ecosystem.config.js && \
+    pm2 start ecosystem.config.js
   " \
   "Restarting PM2 engine." \
   "Failed to restart PM2 engine."
