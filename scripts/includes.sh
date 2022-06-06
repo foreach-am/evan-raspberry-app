@@ -151,5 +151,7 @@ function execute_action() {
   print_row_wait "$MESSAGE_LOG"
 
   eval "$EXECUTE_COMMAND" >> "$LOG_FILE_PATH"
+  echo "-- EXIT CODE: $?" >> "$LOG_FILE_PATH"
+
   end_cmd_die $? "$MESSAGE_ERROR"
 }
