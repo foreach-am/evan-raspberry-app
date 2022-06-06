@@ -40,7 +40,7 @@ execute_action "$BUILD_LOG_FILE" \
 # check node modules installed
 if [[ ! -d "node_modules" ]]; then
   execute_action "$BUILD_LOG_FILE" \
-    "bash ./run-cmd.sh install" \
+    "bash ./run-cmd.sh install --silent" \
     "Installing required dependencies" \
     "Failed to install app dependecies."
 else
@@ -62,12 +62,14 @@ fi
 # -----------------------------------------------------
 # build production
 execute_action "$BUILD_LOG_FILE" \
-  "\
-    pm2 delete ecosystem.config.js && \
-    pm2 start ecosystem.config.js
-  " \
-  "Restarting PM2 engine." \
-  "Failed to restart PM2 engine."
+  "pm2 delete ecosystem.config.js" \
+  "Deleting PM2 engine app." \
+  "Failed to delete PM2 engine app."
+
+execute_action "$BUILD_LOG_FILE" \
+  "pm2 start ecosystem.config.js" \
+  "Starting PM2 engine app." \
+  "Failed to start PM2 engine app."
 
 # -----------------------------------------------------
 # update and create system service
