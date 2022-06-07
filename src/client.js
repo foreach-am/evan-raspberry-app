@@ -26,34 +26,32 @@ function logParseData() {
 
   const logResult = {};
 
-  append('Temperature', `${state.statistic.common.temperature} C`);
-  append('HighVoltError', `${state.statistic.common.highVoltError} State`);
-  append('LowVoltError', `${state.statistic.common.lowVoltError} State`);
-  append(
-    'HighVoltageMeasure',
-    `${state.statistic.common.highVoltageMeasure} V.AC`
-  );
+  const { temperature, highVoltError, lowVoltError, highVoltageMeasure } =
+    state.statistic.common;
+
+  const {
+    pilotFeedBack,
+    currentMeasureA,
+    currentMeasureB,
+    currentMeasureC,
+    overCurrentError,
+    plugState,
+    powerKwh,
+  } = state.statistic.plugs;
+
+  append('Temperature', `${temperature} C`);
+  append('HighVoltError', `${highVoltError} State`);
+  append('LowVoltError', `${lowVoltError} State`);
+  append('HighVoltageMeasure', `${highVoltageMeasure} V.AC`);
 
   for (let i = 1; i <= state.maxPlugsCount; ++i) {
-    append(`PlugState[${i}]`, `${state.statistic.plugs.plugState[i]} State`);
-    append(`PowerKwH[${i}]`, `${state.statistic.plugs.powerKwh[i]} KW/h`);
-    append(`FeedBackVolt[${i}]`, `${state.statistic.plugs.pilotFeedBack[i]} V`);
-    append(
-      `CurrentMeasureA[${i}]`,
-      `${state.statistic.plugs.currentMeasureA[i]} A`
-    );
-    append(
-      `CurrentMeasureB[${i}]`,
-      `${state.statistic.plugs.currentMeasureB[i]} A`
-    );
-    append(
-      `CurrentMeasureC[${i}]`,
-      `${state.statistic.plugs.currentMeasureC[i]} A`
-    );
-    append(
-      `OverCurrentError[${i}]`,
-      `${state.statistic.plugs.overCurrentError[i]} State`
-    );
+    append(`PlugState[${i}]`, `${plugState[i]} State`);
+    append(`PowerKwH[${i}]`, `${powerKwh[i]} KW/h`);
+    append(`FeedBackVolt[${i}]`, `${pilotFeedBack[i]} V`);
+    append(`CurrentMeasureA[${i}]`, `${currentMeasureA[i]} A`);
+    append(`CurrentMeasureB[${i}]`, `${currentMeasureB[i]} A`);
+    append(`CurrentMeasureC[${i}]`, `${currentMeasureC[i]} A`);
+    append(`OverCurrentError[${i}]`, `${overCurrentError[i]} State`);
   }
 
   Logger.json('Received data is ready:', logResult);
