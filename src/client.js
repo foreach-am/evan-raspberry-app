@@ -146,7 +146,7 @@ WebSocket.onConnect(async function (connection) {
     console.log('-----------------------------------------');
     console.log('-----------------------------------------');
     console.log('-----------------------------------------');
-    console.log(isServerCommand);
+    console.log(isServerCommand, parseData[2]);
     console.log('-----------------------------------------');
     console.log('-----------------------------------------');
     console.log('-----------------------------------------');
