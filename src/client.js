@@ -137,7 +137,24 @@ WebSocket.onConnect(async function (connection) {
 
     Logger.json('WebSocket data received:', parseData);
 
-    if (EventQueue.isServerCommand(parseData[2])) {
+    const isServerCommand = EventQueue.isServerCommand(parseData[2]);
+
+    console.log('-----------------------------------------');
+    console.log('-----------------------------------------');
+    console.log('-----------------------------------------');
+    console.log('-----------------------------------------');
+    console.log('-----------------------------------------');
+    console.log('-----------------------------------------');
+    console.log('-----------------------------------------');
+    console.log(isServerCommand);
+    console.log('-----------------------------------------');
+    console.log('-----------------------------------------');
+    console.log('-----------------------------------------');
+    console.log('-----------------------------------------');
+    console.log('-----------------------------------------');
+    console.log('-----------------------------------------');
+
+    if (isServerCommand) {
       switch (parseData[2]) {
         case EventCommandNameEnum[EventCommandEnum.EVENT_RESERVATION]:
           state.receiveServerId = parseData[1];
