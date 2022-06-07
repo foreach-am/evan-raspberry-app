@@ -5,6 +5,8 @@ const state = require('../../state');
 const event = EventCommandEnum.EVENT_TRANSACTION_STOP;
 
 function sendStopTransaction(data) {
+  const connectorId = 1;
+
   WebSocketSender.send(event, {
     transactionId: state.state.plugs.transactionId[connectorId],
     idTag: 'B4A63CDF',
