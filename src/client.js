@@ -120,7 +120,7 @@ WebSocket.onConnect(async function (connection) {
         state.state.plugs.stopTransactionStatus[i] = '';
         state.state.plugs.idTagInfoStatus[i] = '';
 
-        Logger.interval('Charge completed.');
+        Logger.info('Charge completed.');
       }
     }
   }
