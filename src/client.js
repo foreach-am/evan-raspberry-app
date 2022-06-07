@@ -65,7 +65,7 @@ WebSocket.onConnect(async function (connection) {
     logParseData();
 
     for (let i = 1; i <= state.maxPlugsCount; ++i) {
-      if (state.statistic.plugs[i] === PlugStateEnum.UNPLUGGED) {
+      if (state.statistic.plugs.plugState[i] === PlugStateEnum.UNPLUGGED) {
         state.switch.plugs.startTransaction[i] = true;
         state.switch.plugs.stopTransaction[i] = true;
         state.switch.plugs.sendAuth[i] = true;
@@ -74,15 +74,15 @@ WebSocket.onConnect(async function (connection) {
       }
 
       if (
-        state.statistic.plugs[i] === PlugStateEnum.PLUG_SOFT_LOCK &&
+        state.statistic.plugs.plugState[i] === PlugStateEnum.PLUG_SOFT_LOCK &&
         !state.switch.plugs.softLock[i]
       ) {
         state.switch.plugs.softLock[i] = true;
-        // lock
+        await ping.sendChangeAvailability();
       }
 
       if (
-        state.statistic.plugs[i] === PlugStateEnum.CAR_DETECTED &&
+        state.statistic.plugs.plugState[i] === PlugStateEnum.CAR_DETECTED &&
         state.switch.plugs[i].sendAuth
       ) {
         state.switch.plugs[i].sendAuth = false;
@@ -110,7 +110,7 @@ WebSocket.onConnect(async function (connection) {
       }
 
       if (
-        state.statistic.plugs[i] === PlugStateEnum.CHARGING &&
+        state.statistic.plugs.plugState[i] === PlugStateEnum.CHARGING &&
         state.switch.plugs.chargingPeriodAuth[i]
       ) {
         state.switch.plugs.chargingPeriodAuth[i] = false;
@@ -118,7 +118,7 @@ WebSocket.onConnect(async function (connection) {
       }
 
       if (
-        state.statistic.plugs[i] === PlugStateEnum.CHARGE_COMPLETED &&
+        state.statistic.plugs.plugState[i] === PlugStateEnum.CHARGE_COMPLETED &&
         state.switch.plugs.stopTransaction[i]
       ) {
         state.switch.plugs.stopTransaction[i] = false;
