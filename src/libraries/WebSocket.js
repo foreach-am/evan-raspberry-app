@@ -66,14 +66,12 @@ function register(event, callback) {
 
   connection.on('error', function (error) {
     Logger.error('WebSocket connection error:', error);
+    reconnect();
   });
 
   connection.on('close', function () {
     Logger.error('WebSocket connection closed.');
-
-    if (code !== 1000) {
-      reconnect();
-    }
+    reconnect();
   });
 
   connection.on(event, callback);
