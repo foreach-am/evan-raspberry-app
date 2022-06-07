@@ -21,42 +21,36 @@ function logParseData() {
    * @param {*} value
    */
   const append = function (key, value) {
-    logResult[key.padStart(20, ' ')] = value;
+    logResult[key.append(20, ' ')] = value;
   };
 
   const logResult = {};
 
-  padStart('Temperature', `${state.statistic.common.temperature} C`);
-  padStart('HighVoltError', `${state.statistic.common.highVoltError} State`);
-  padStart('LowVoltError', `${state.statistic.common.lowVoltError} State`);
-  padStart(
+  append('Temperature', `${state.statistic.common.temperature} C`);
+  append('HighVoltError', `${state.statistic.common.highVoltError} State`);
+  append('LowVoltError', `${state.statistic.common.lowVoltError} State`);
+  append(
     'HighVoltageMeasure',
     `${state.statistic.common.highVoltageMeasure} V.AC`
   );
 
   for (let i = 1; i <= state.maxPlugsCount; ++i) {
-    padStart(
-      `FeedBackVolt[${i}]`,
-      `${state.statistic.plugs.pilotFeedBack[i]} V`
-    );
-    padStart(
+    append(`FeedBackVolt[${i}]`, `${state.statistic.plugs.pilotFeedBack[i]} V`);
+    append(
       `CurrentMeasureA[${i}]`,
       `${state.statistic.plugs.currentMeasureA[i]} A`
     );
-    padStart(
+    append(
       `CurrentMeasureB[${i}]`,
       `${state.statistic.plugs.currentMeasureB[i]} A`
     );
-    padStart(
+    append(
       `CurrentMeasureC[${i}]`,
       `${state.statistic.plugs.currentMeasureC[i]} A`
     );
-    padStart(`PlugState[${i}]`, `${state.statistic.plugs.plugState[i]} State`);
-    padStart(
-      `PlugPowerKwPerHour[${i}]`,
-      `${state.statistic.plugs.powerKwh[i]} KW/h`
-    );
-    padStart(
+    append(`PlugState[${i}]`, `${state.statistic.plugs.plugState[i]} State`);
+    append(`PowerKwH[${i}]`, `${state.statistic.plugs.powerKwh[i]} KW/h`);
+    append(
       `OverCurrentError[${i}]`,
       `${state.statistic.plugs.overCurrentError[i]} State`
     );
