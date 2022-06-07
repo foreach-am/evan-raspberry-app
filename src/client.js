@@ -21,7 +21,7 @@ function logParseData() {
    * @param {*} value
    */
   const append = function (key, value) {
-    logResult[key.append(20, ' ')] = value;
+    logResult[key.padStart(20, ' ')] = value;
   };
 
   const logResult = {};
