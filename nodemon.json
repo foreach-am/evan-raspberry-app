@@ -6,6 +6,7 @@
   },
   "delay": "200",
   "ext": "js",
+  "watch": ["index.js", ".env", "src/"],
   "ignore": [
     "scripts/*",
     ".editorconfig",
