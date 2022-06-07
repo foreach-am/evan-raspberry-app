@@ -1,7 +1,11 @@
 const { Logger } = require('./libraries/Logger');
 const { WebSocket } = require('./libraries/WebSocket');
 const { ComPort } = require('./libraries/ComPort');
-const { EventQueue, EventCommandEnum } = require('./libraries/EventQueue');
+const {
+  EventQueue,
+  EventCommandEnum,
+  EventCommandNameEnum,
+} = require('./libraries/EventQueue');
 const { PlugStateEnum } = require('./libraries/PlugState');
 // const { Raspberry } = require('./libraries/Raspberry');
 
@@ -11,81 +15,109 @@ const ping = require('./ping');
 let comportHandlerId = -1;
 
 WebSocket.onConnect(async function (connection) {
-  async function onDataReady(data) {
+  async function onDataReady() {
     //connection.emit(data);
 
-    Logger.json('Received data is ready:', {
-      '     FeedBackVoltA': `${data.pilotFeedBackA} V`,
-      '     FeedBackVoltB': `${data.pilotFeedBackB} V`,
-      '   CurrentMeasureA': `${data.currentMeasureA} A`,
-      '   CurrentMeasureB': `${data.currentMeasureB} A`,
-      '   CurrentMeasureC': `${data.currentMeasureC} A`,
-      '   CurrentMeasureD': `${data.currentMeasureD} A`,
-      '        PlugState1': `${data.plugState1} State`,
-      '        PlugState2': `${data.plugState2} State`,
-      '     HighVoltError': `${data.highVoltError} State`,
-      '      LowVoltError': `${data.lowVoltError} State`,
-      '         Power1Kwh': `${data.pow1Kwh} KW/h`,
-      '         Power2Kwh': `${data.pow2Kwh} KW/h`,
-      ' OverCurrent1Error': `${data.overCurrent1Error} State`,
-      ' OverCurrent2Error': `${data.overCurrent2Error} State`,
-      'HighVoltageMeasure': `${data.highVoltageMeasure} V.AC`,
-      '       Temperature': `${data.temperature} C`,
-    });
+    const logResult = {
+      '       Temperature': `${state.statistic.common.temperature} C`,
+      '     HighVoltError': `${state.statistic.common.highVoltError} State`,
+      '      LowVoltError': `${state.statistic.common.lowVoltError} State`,
+      'HighVoltageMeasure': `${state.statistic.common.highVoltageMeasure} V.AC`,
+    };
 
-    if (data.plugState1 === PlugStateEnum.UNPLUGGED) {
-      state.startTransactionSwitch = true;
-      state.stopTransactionSwitch = true;
-      state.sendAuthSwitch = true;
-      state.chargeStartSwitch = true;
-      state.transactionId = 0;
+    for (let i = 1; i <= state.maxPlugsCount; ++i) {
+      logResult[
+        `FeedBackVolt[${i}]`
+      ] = `${state.statistic.plugs.pilotFeedBack[i]} V`;
+      logResult[
+        `CurrentMeasureA[${i}]`
+      ] = `${state.statistic.plugs.currentMeasureA[i]} A`;
+      logResult[
+        `CurrentMeasureB[${i}]`
+      ] = `${state.statistic.plugs.currentMeasureB[i]} A`;
+      logResult[
+        `CurrentMeasureC[${i}]`
+      ] = `${state.statistic.plugs.currentMeasureC[i]} A`;
+      logResult[
+        `PlugState[${i}]`
+      ] = `${state.statistic.plugs.plugState[i]} State`;
+      logResult[`PowerKwh[${i}]`] = `${state.statistic.plugs.powerKwh[i]} KW/h`;
+      logResult[
+        `OverCurrentError[${i}]`
+      ] = `${state.statistic.plugs.overCurrentError[i]} State`;
     }
 
-    if (
-      data.plugState1 === PlugStateEnum.CAR_DETECTED &&
-      state.sendAuthSwitch
-    ) {
-      state.sendAuthSwitch = false;
-      await ping.sendAuthorize();
-    }
+    Logger.json('Received data is ready:', logResult);
 
-    if (state.idTagInfoStatus === 'Accepted' && state.startTransactionSwitch) {
-      state.idTagInfoStatus = '';
-      state.startTransactionSwitch = false;
-      await ping.sendStartTransaction();
-    }
+    for (let i = 1; i <= state.maxPlugsCount; ++i) {
+      if (state.statistic.plugs[i] === PlugStateEnum.UNPLUGGED) {
+        state.switch.plugs.startTransaction[i] = true;
+        state.switch.plugs.stopTransaction[i] = true;
+        state.switch.plugs.sendAuth[i] = true;
+        state.switch.plugs.chargeStart[i] = true;
+        state.state.plugs.transactionId[i] = 0;
+      }
 
-    if (
-      state.startTransactionStatus === 'Accepted' &&
-      state.chargeStartSwitch
-    ) {
-      state.startTransactionStatus = '';
-      state.chargeStartSwitch = false;
-      ComPort.emit('PROXIRE1:');
-    }
+      if (
+        state.statistic.plugs[i] === PlugStateEnum.PLUG_SOFT_LOCK &&
+        !state.switch.plugs.softLock[i]
+      ) {
+        state.switch.plugs.softLock[i] = true;
+        // lock
+      }
 
-    if (
-      data.plugState1 === PlugStateEnum.CHARGING &&
-      state.chargingPeriodAuthSwitch
-    ) {
-      state.chargingPeriodAuthSwitch = false;
-      await ping.sendAuthorize();
-    }
+      if (
+        state.statistic.plugs[i] === PlugStateEnum.CAR_DETECTED &&
+        state.switch.plugs[i].sendAuth
+      ) {
+        state.switch.plugs[i].sendAuth = false;
+        await ping.sendAuthorize();
+      }
 
-    if (
-      data.plugState1 === PlugStateEnum.CHARGE_COMPLETED &&
-      state.stopTransactionSwitch
-    ) {
-      state.stopTransactionSwitch = false;
-      await ping.sendStopTransaction();
-      state.idTagInfoStatus = '';
-    }
+      if (
+        state.state.plugs.idTagInfoStatus[i] === 'Accepted' &&
+        state.switch.plugs.startTransaction[i]
+      ) {
+        state.state.plugs.idTagInfoStatus[i] = '';
+        state.switch.plugs.startTransaction[i] = false;
 
-    if (state.stopTransactionStatus === 'Accepted') {
-      state.stopTransactionStatus = '';
-      state.idTagInfoStatus = '';
+        await ping.sendStartTransaction();
+      }
 
-      Logger.interval('Charge completed.');
+      if (
+        state.state.plugs.startTransactionStatus[i] === 'Accepted' &&
+        state.switch.plugs.chargeStart[i]
+      ) {
+        state.state.plugs.startTransactionStatus[i] = '';
+        state.switch.plugs.chargeStart[i] = false;
+
+        ComPort.emit('PROXIRE1:');
+      }
+
+      if (
+        state.statistic.plugs[i] === PlugStateEnum.CHARGING &&
+        state.switch.plugs.chargingPeriodAuth[i]
+      ) {
+        state.switch.plugs.chargingPeriodAuth[i] = false;
+        await ping.sendAuthorize();
+      }
+
+      if (
+        state.statistic.plugs[i] === PlugStateEnum.CHARGE_COMPLETED &&
+        state.switch.plugs.stopTransaction[i]
+      ) {
+        state.switch.plugs.stopTransaction[i] = false;
+        await ping.sendStopTransaction();
+
+        state.state.plugs.idTagInfoStatus[i] = '';
+      }
+
+      if (state.state.plugs.stopTransactionStatus[i] === 'Accepted') {
+        state.state.plugs.stopTransactionStatus[i] = '';
+        state.state.plugs.idTagInfoStatus[i] = '';
+
+        Logger.interval('Charge completed.');
+      }
     }
   }
 
@@ -128,27 +160,48 @@ WebSocket.onConnect(async function (connection) {
         state.stopTransactionStatus = stopTransactionResult.idTagInfo.status;
         break;
 
-      case EventCommandEnum.EVENT_CHANGE_AVAILABILITY:
-        console.log(parseData);
-        break;
-
       default:
         state.receiveCommand = parseData[2];
 
-        if (state.receiveCommand === 'ReserveNow') {
-          state.receiveServerId = parseData[1];
-          state.connectorId = parseData[3].connectorId;
-          if (state.connectorId === 1) {
-            state.expiryDateConnector1 = parseData[3].expiryDate;
-          } else if (connectorId === 2) {
-            state.expiryDateConnector2 = parseData[3].expiryDate;
-          } else {
-          }
+        switch (state.receiveCommand) {
+          case EventCommandNameEnum[EventCommandEnum.EVENT_RESERVATION]:
+            state.receiveServerId = parseData[1];
+            state.connectorId = parseData[3].connectorId;
+            if (state.connectorId === 1) {
+              state.expiryDateConnector1 = parseData[3].expiryDate;
+            } else if (connectorId === 2) {
+              state.expiryDateConnector2 = parseData[3].expiryDate;
+            } else {
+            }
 
-          state.reservationId = parseData[3].reservationId;
-          ping.sendReservation();
+            state.reservationId = parseData[3].reservationId;
+            ping.sendReservation();
+            break;
+
+          case EventCommandNameEnum[EventCommandEnum.EVENT_CHANGE_AVAILABILITY]:
+            if (parseData[3].connectorId > state.maxPlugsCount) {
+              ping.sendChangeAvailability({
+                status: 'Rejected',
+              });
+            } else {
+              if (!['Inoperative', 'Operative'].includes(parseData[3].type)) {
+                ping.sendChangeAvailability({
+                  status: 'Rejected',
+                });
+              } else {
+                ping.sendChangeAvailability({
+                  status: 'Scheduled',
+                });
+
+                if (parseData[3].type == 'Inoperative') {
+                  ComPort.emit(`PLUG${parseData[3].connectorId}OFF:`);
+                } else if (parseData[3].type == 'Operative') {
+                  ComPort.emit(`PLUG${parseData[3].connectorId}ONN:`);
+                }
+              }
+            }
+            break;
         }
-        break;
     }
 
     EventQueue.cleanup();

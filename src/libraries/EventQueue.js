@@ -6,7 +6,7 @@ const EventCommandEnum = {
   EVENT_AUTHORIZE: 3,
   EVENT_TRANSACTION_START: 4,
   EVENT_TRANSACTION_STOP: 5,
-  EVENT_RESERVE_ACCEPT: 6,
+  EVENT_RESERVATION: 6,
   EVENT_CHANGE_AVAILABILITY: 7,
 };
 
@@ -16,7 +16,7 @@ const EventCommandNameEnum = {
   [EventCommandEnum.EVENT_AUTHORIZE]: 'Authorize',
   [EventCommandEnum.EVENT_TRANSACTION_START]: 'StartTransaction',
   [EventCommandEnum.EVENT_TRANSACTION_STOP]: 'StopTransaction',
-  [EventCommandEnum.EVENT_RESERVE_ACCEPT]: 'ReserveNow',
+  [EventCommandEnum.EVENT_RESERVATION]: 'ReserveNow',
   [EventCommandEnum.EVENT_CHANGE_AVAILABILITY]: 'ChangeAvailability',
 };
 

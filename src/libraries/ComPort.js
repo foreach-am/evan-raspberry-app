@@ -1,5 +1,6 @@
 const { SerialPort } = require('serialport');
 const { Logger } = require('./Logger');
+const state = require('../state');
 
 const serialPort = new SerialPort({
   baudRate: 9600,
@@ -8,26 +9,6 @@ const serialPort = new SerialPort({
 
 let onReadyCallbackIndex = 0;
 let onReadyCallbacks = {};
-
-const flagData = {
-  pilotFeedBackA: '',
-  pilotFeedBackB: '',
-  currentMeasureA: '',
-  currentMeasureB: '',
-  currentMeasureC: '',
-  currentMeasureD: '',
-  highVoltageMeasure: '',
-  plugState1: '',
-  plugState2: '',
-  highVoltError: '',
-  lowVoltError: '',
-  pow1Kwh: '',
-  pow2Kwh: '',
-  overCurrent1Error: '',
-  overCurrent2Error: '',
-  temperature: '',
-  counter: '',
-};
 
 let intervalRunning = false;
 
@@ -60,7 +41,7 @@ serialPort.on('data', function (data) {
   Object.keys(onReadyCallbacks).forEach(function (callIndex) {
     const callback = onReadyCallbacks[callIndex];
     if (typeof callback === 'function') {
-      callback(flagData);
+      callback();
     }
   });
 
@@ -97,45 +78,45 @@ function InputDataParser(text) {
         }
 
         if (iteration == 1) {
-          flagData.pilotFeedBackA = Number(result) / 100;
+          state.statistic.plugs.pilotFeedBack[1] = Number(result) / 100;
         } else if (iteration == 2) {
-          flagData.pilotFeedBackB = Number(result) / 100;
+          state.statistic.plugs.pilotFeedBack[2] = Number(result) / 100;
         } else if (iteration == 3) {
-          flagData.currentMeasureA = Number(result) / 100;
+          state.statistic.plugs.currentMeasureA[1] = Number(result) / 100;
         } else if (iteration == 4) {
-          flagData.currentMeasureB = Number(result) / 100;
+          state.statistic.plugs.currentMeasureA[2] = Number(result) / 100;
         } else if (iteration == 5) {
-          flagData.currentMeasureC = Number(result) / 100;
+          state.statistic.plugs.currentMeasureB[2] = Number(result) / 100;
         } else if (iteration == 6) {
-          flagData.currentMeasureD = Number(result) / 100;
+          state.statistic.plugs.currentMeasureC[2] = Number(result) / 100;
         } else if (iteration == 7) {
-          flagData.highVoltageMeasure = Number(result) / 100;
+          state.statistic.common.highVoltageMeasure = Number(result) / 100;
         } else if (iteration == 8) {
-          flagData.plugState1 = Number(result);
+          state.statistic.plugs.plugState[1] = Number(result);
         } else if (iteration == 9) {
-          flagData.plugState2 = Number(result);
+          state.statistic.plugs.plugState[2] = Number(result);
         } else if (iteration == 10) {
-          flagData.highVoltError = Number(result);
+          state.statistic.common.highVoltError = Number(result);
         } else if (iteration == 11) {
-          flagData.lowVoltError = Number(result);
+          state.statistic.common.lowVoltError = Number(result);
         } else if (iteration == 12) {
-          flagData.pow1Kwh = Number(result) / 100;
+          state.statistic.plugs.powerKwh[1] = Number(result) / 100;
         } else if (iteration == 13) {
-          flagData.pow2Kwh = Number(result) / 100;
+          state.statistic.plugs.powerKwh[2] = Number(result) / 100;
         } else if (iteration == 14) {
-          flagData.overCurrent1Error = Number(result);
+          state.statistic.plugs.overCurrentError[1] = Number(result);
         } else if (iteration == 15) {
-          flagData.overCurrent2Error = Number(result);
+          state.statistic.plugs.overCurrentError[2] = Number(result);
         } else if (iteration == 16) {
-          //flagData.pilotFeedBackA =  result
+          //state.statistic.plugs.pilotFeedBack[1] =  result
         } else if (iteration == 17) {
-          //flagData.pilotFeedBackB = result
+          //state.statistic.plugs.pilotFeedBack[2] = result
         } else if (iteration == 18) {
-          flagData.temperature = Number(result) / 100;
+          state.statistic.common.temperature = Number(result) / 100;
         } else if (iteration == 19) {
-          flagData.counter = Number(result);
+          state.statistic.common.counter = Number(result);
         } else if (iteration == 20) {
-          //flagData.pilotFeedBackB = result
+          //state.statistic.plugs.pilotFeedBack[2] = result
         }
 
         break;
@@ -144,8 +125,6 @@ function InputDataParser(text) {
       iteration++;
     }
   }
-
-  // Logger.json(flagData);
 }
 
 function emitMessage(message, callback) {

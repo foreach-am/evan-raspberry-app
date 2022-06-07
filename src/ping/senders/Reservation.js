@@ -1,7 +1,7 @@
 const { EventQueue, EventCommandEnum } = require('../../libraries/EventQueue');
 const { WebSocketSender } = require('../../libraries/WebSocket');
 
-const event = EventCommandEnum.EVENT_RESERVE_ACCEPT;
+const event = EventCommandEnum.EVENT_RESERVATION;
 
 function sendReservation(data) {
   WebSocketSender.send(event, {
