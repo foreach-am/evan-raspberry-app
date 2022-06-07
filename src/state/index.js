@@ -21,8 +21,6 @@ const state = {
       bootNotStatus: '',
       bootNotCurrentTime: '',
       bootNotRequireTime: 1000,
-      receiveCommand: '',
-      connectorId: '',
       reservationId: '',
       expiryDateConnector1: '',
       expiryDateConnector2: '',

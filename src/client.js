@@ -1,11 +1,7 @@
 const { Logger } = require('./libraries/Logger');
 const { WebSocket } = require('./libraries/WebSocket');
 const { ComPort } = require('./libraries/ComPort');
-const {
-  EventQueue,
-  EventCommandEnum,
-  EventCommandNameEnum,
-} = require('./libraries/EventQueue');
+const { EventQueue, EventCommandEnum, EventCommandNameEnum } = require('./libraries/EventQueue');
 const { PlugStateEnum } = require('./libraries/PlugState');
 // const { Raspberry } = require('./libraries/Raspberry');
 
@@ -26,8 +22,7 @@ function logParseData() {
 
   const logResult = {};
 
-  const { temperature, highVoltError, lowVoltError, highVoltageMeasure } =
-    state.statistic.common;
+  const { temperature, highVoltError, lowVoltError, highVoltageMeasure } = state.statistic.common;
 
   const {
     pilotFeedBack,
@@ -89,20 +84,14 @@ WebSocket.onConnect(async function (connection) {
         await ping.sendAuthorize();
       }
 
-      if (
-        state.state.plugs.idTagInfoStatus[i] === 'Accepted' &&
-        state.switch.plugs.startTransaction[i]
-      ) {
+      if (state.state.plugs.idTagInfoStatus[i] === 'Accepted' && state.switch.plugs.startTransaction[i]) {
         state.state.plugs.idTagInfoStatus[i] = '';
         state.switch.plugs.startTransaction[i] = false;
 
         await ping.sendStartTransaction();
       }
 
-      if (
-        state.state.plugs.startTransactionStatus[i] === 'Accepted' &&
-        state.switch.plugs.chargeStart[i]
-      ) {
+      if (state.state.plugs.startTransactionStatus[i] === 'Accepted' && state.switch.plugs.chargeStart[i]) {
         state.state.plugs.startTransactionStatus[i] = '';
         state.switch.plugs.chargeStart[i] = false;
 
@@ -142,84 +131,86 @@ WebSocket.onConnect(async function (connection) {
     }
 
     const commandId = EventQueue.getPreviousCommandId();
+    const connectorId = 1;
+
     const parseData = JSON.parse(message.utf8Data);
 
     Logger.json('WebSocket data received:', parseData);
-    switch (commandId) {
-      case EventCommandEnum.EVENT_BOOT_NOTIFICATION:
-        const bootNotificationResult = parseData[2];
-        state.bootNotStatus = bootNotificationResult.status;
-        state.bootNotCurrentTime = bootNotificationResult.currentTime;
-        state.bootNotRequireTime = Number(bootNotificationResult.interval);
 
-        await ping.sendHearthBeat(bootNotificationResult);
-        break;
+    if (EventQueue.isServerCommand(parseData[2])) {
+      switch (parseData[2]) {
+        case EventCommandNameEnum[EventCommandEnum.EVENT_RESERVATION]:
+          state.receiveServerId = parseData[1];
+          state.connectorId = parseData[3].connectorId;
+          if (state.connectorId === 1) {
+            state.expiryDateConnector1 = parseData[3].expiryDate;
+          } else if (connectorId === 2) {
+            state.expiryDateConnector2 = parseData[3].expiryDate;
+          } else {
+          }
 
-      case EventCommandEnum.EVENT_HEARTH_BEAT:
-        break;
+          state.reservationId = parseData[3].reservationId;
+          ping.sendReservation();
+          break;
 
-      case EventCommandEnum.EVENT_AUTHORIZE:
-        const authorizeResult = parseData[2];
-        state.idTagInfoStatus = authorizeResult.idTagInfo.status;
-        state.chargingPeriodAuthSwitch = true;
-        break;
-
-      case EventCommandEnum.EVENT_TRANSACTION_START:
-        const startTransactionResult = parseData[2];
-        state.transactionId = startTransactionResult.transactionId;
-        state.startTransactionStatus = startTransactionResult.idTagInfo.status;
-        break;
-
-      case EventCommandEnum.EVENT_TRANSACTION_STOP:
-        const stopTransactionResult = parseData[2];
-        state.stopTransactionStatus = stopTransactionResult.idTagInfo.status;
-        break;
-
-      default:
-        state.receiveCommand = parseData[2];
-
-        switch (state.receiveCommand) {
-          case EventCommandNameEnum[EventCommandEnum.EVENT_RESERVATION]:
-            state.receiveServerId = parseData[1];
-            state.connectorId = parseData[3].connectorId;
-            if (state.connectorId === 1) {
-              state.expiryDateConnector1 = parseData[3].expiryDate;
-            } else if (connectorId === 2) {
-              state.expiryDateConnector2 = parseData[3].expiryDate;
-            } else {
-            }
-
-            state.reservationId = parseData[3].reservationId;
-            ping.sendReservation();
-            break;
-
-          case EventCommandNameEnum[EventCommandEnum.EVENT_CHANGE_AVAILABILITY]:
-            if (parseData[3].connectorId > state.maxPlugsCount) {
+        case EventCommandNameEnum[EventCommandEnum.EVENT_CHANGE_AVAILABILITY]:
+          if (parseData[3].connectorId > state.maxPlugsCount) {
+            ping.sendChangeAvailability({
+              status: 'Rejected',
+            });
+          } else {
+            if (!['Inoperative', 'Operative'].includes(parseData[3].type)) {
               ping.sendChangeAvailability({
                 status: 'Rejected',
               });
             } else {
-              if (!['Inoperative', 'Operative'].includes(parseData[3].type)) {
-                ping.sendChangeAvailability({
-                  status: 'Rejected',
-                });
-              } else {
-                ping.sendChangeAvailability({
-                  status: 'Scheduled',
-                });
+              ping.sendChangeAvailability({
+                status: 'Scheduled',
+              });
 
-                if (parseData[3].type == 'Inoperative') {
-                  ComPort.emit(`PLUG${parseData[3].connectorId}OFF:`);
-                } else if (parseData[3].type == 'Operative') {
-                  ComPort.emit(`PLUG${parseData[3].connectorId}ONN:`);
-                }
+              if (parseData[3].type == 'Inoperative') {
+                ComPort.emit(`PLUG${parseData[3].connectorId}OFF:`);
+              } else if (parseData[3].type == 'Operative') {
+                ComPort.emit(`PLUG${parseData[3].connectorId}ONN:`);
               }
             }
-            break;
-        }
-    }
+          }
+          break;
+      }
+    } else {
+      switch (commandId) {
+        case EventCommandEnum.EVENT_BOOT_NOTIFICATION:
+          const bootNotificationResult = parseData[2];
+          state.state.common.bootNotStatus = bootNotificationResult.status;
+          state.state.common.bootNotCurrentTime = bootNotificationResult.currentTime;
+          state.state.common.bootNotRequireTime = Number(bootNotificationResult.interval);
 
-    EventQueue.cleanup();
+          await ping.sendHearthBeat(bootNotificationResult);
+          break;
+
+        case EventCommandEnum.EVENT_HEARTH_BEAT:
+          break;
+
+        case EventCommandEnum.EVENT_AUTHORIZE:
+          const authorizeResult = parseData[2];
+          state.state.plugs.idTagInfoStatus[connectorId] = authorizeResult.idTagInfo.status;
+          state.switch.plugs.chargingPeriodAuth[connectorId] = true;
+          break;
+
+        case EventCommandEnum.EVENT_TRANSACTION_START:
+          const startTransactionResult = parseData[2];
+          state.state.plugs.transactionId[connectorId] = startTransactionResult.transactionId;
+          state.state.plugs.startTransactionStatus[connectorId] = startTransactionResult.idTagInfo.status;
+          break;
+
+        case EventCommandEnum.EVENT_TRANSACTION_STOP:
+          const stopTransactionResult = parseData[2];
+          state.state.plugs.stopTransactionStatus[connectorId] = stopTransactionResult.idTagInfo.status;
+          break;
+      }
+
+      EventQueue.cleanup();
+    }
   });
 
   comportHandlerId = ComPort.register(onDataReady);

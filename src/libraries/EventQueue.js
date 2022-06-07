@@ -20,6 +20,11 @@ const EventCommandNameEnum = {
   [EventCommandEnum.EVENT_CHANGE_AVAILABILITY]: 'ChangeAvailability',
 };
 
+const serverCommandList = [
+  EventCommandNameEnum[EventCommandEnum.EVENT_RESERVATION],
+  EventCommandNameEnum[EventCommandEnum.EVENT_CHANGE_AVAILABILITY],
+];
+
 let queue = [];
 
 function register(commandId, packetData, callback) {
@@ -110,6 +115,14 @@ function print() {
   );
 }
 
+function isServerCommand(command) {
+  if (typeof command !== 'string') {
+    return false;
+  }
+
+  return serverCommandList.includes(command);
+}
+
 // setInterval(function () {
 //   print();
 // }, 200);
@@ -123,5 +136,6 @@ module.exports = {
     cleanup: cleanup,
     process: process,
     print: print,
+    isServerCommand: isServerCommand,
   },
 };
