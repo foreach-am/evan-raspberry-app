@@ -83,9 +83,9 @@ WebSocket.onConnect(async function (connection) {
 
       if (
         state.statistic.plugs.plugState[i] === PlugStateEnum.CAR_DETECTED &&
-        state.switch.plugs[i].sendAuth
+        state.switch.plugs.sendAuth[i]
       ) {
-        state.switch.plugs[i].sendAuth = false;
+        state.switch.plugs.sendAuth[i] = false;
         await ping.sendAuthorize();
       }
 
