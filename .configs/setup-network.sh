@@ -1,21 +1,26 @@
 #!/usr/bin/env bash
+cd "$(dirname "$0")" || exit 1
 
 # require sudo for first
 sudo -v
 
 # variables
-SERVICE_FILE=/lib/systemd/system/setmac.service
+CONFIG_OVERLAS=/boot/overlays
 CONFIG_FILE=/boot/config.txt
-MAC_ADDRESS=""
+CONFIG_DTS_FILE="w5500-spi1-overlay.dts"
+CONFIG_DTBO_FILE="w5500-spi1.dtbo"
 
-# reacmac address
-echo -n "Please enter MAC address: "
-read MAC_ADDRESS
+# configure
+cd stubs
 
-# update configs
-if [[ ! -f "$CONFIG_FILE" ]]; then
-  sudo touch "$CONFIG_FILE"
-fi
+dtc \
+  --symbols \
+  --in-format dts \
+  --out-format dtb \
+  --out "$CONFIG_DTBO_FILE" \
+  "$CONFIG_DTS_FILE"
+
+cp "$CONFIG_DTBO_FILE" "$CONFIG_OVERLAS"
 
 FOUND="$(cat "$CONFIG_FILE" | grep dtparam | wc -l)"
 if [[ "$FOUND" != "0" ]]; then
@@ -24,38 +29,5 @@ if [[ "$FOUND" != "0" ]]; then
 fi
 
 sudo echo "dtparam=spi=on" | sudo tee -a "$CONFIG_FILE" > /dev/null
-sudo echo "dtoverlay=anyspi,spi0-0,dev=\"w5500\",speed=30000000" | sudo tee -a "$CONFIG_FILE" > /dev/null
-sudo echo "dtoverlay=w5500" | sudo tee -a "$CONFIG_FILE" > /dev/null
+sudo echo "dtoverlay=w5500-spi1,spi1-1cs,cs1_pin=12" | sudo tee -a "$CONFIG_FILE" > /dev/null
 sudo echo "" | sudo tee -a "$CONFIG_FILE" > /dev/null
-
-# generate service
-if [[ -f "$SERVICE_FILE" ]]; then
-  sudo mv "$SERVICE_FILE" "$SERVICE_FILE.backup.$(date +%Y.%m.%d.%H.%M.%S)"
-fi
-
-sudo touch "$SERVICE_FILE"
-sudo echo "[Unit]" | sudo tee -a "$SERVICE_FILE" > /dev/null
-sudo echo "Description=Set MAC address for W5500 module" | sudo tee -a "$SERVICE_FILE" > /dev/null
-sudo echo "Wants=network-pre.target" | sudo tee -a "$SERVICE_FILE" > /dev/null
-sudo echo "Before=network-pre.target" | sudo tee -a "$SERVICE_FILE" > /dev/null
-sudo echo "BindsTo=sys-subsystem-net-devices-eth0.device" | sudo tee -a "$SERVICE_FILE" > /dev/null
-sudo echo "After=sys-subsystem-net-devices-eth0.device" | sudo tee -a "$SERVICE_FILE" > /dev/null
-sudo echo "" | sudo tee -a "$SERVICE_FILE" > /dev/null
-sudo echo "[Service]" | sudo tee -a "$SERVICE_FILE" > /dev/null
-sudo echo "Type=oneshot" | sudo tee -a "$SERVICE_FILE" > /dev/null
-sudo echo "ExecStart=/sbin/ip link set dev eth0 address $MAC_ADDRESS" | sudo tee -a "$SERVICE_FILE" > /dev/null
-sudo echo "ExecStart=/sbin/ip link set dev eth0 up" | sudo tee -a "$SERVICE_FILE" > /dev/null
-sudo echo "" | sudo tee -a "$SERVICE_FILE" > /dev/null
-sudo echo "[Install]" | sudo tee -a "$SERVICE_FILE" > /dev/null
-sudo echo "WantedBy=multi-user.target" | sudo tee -a "$SERVICE_FILE" > /dev/null
-sudo echo "" | sudo tee -a "$SERVICE_FILE" > /dev/null
-
-sudo chmod 644 "$SERVICE_FILE"
-sudo systemctl daemon-reload
-sudo systemctl enable "$(basename "$SERVICE_FILE")"
-
-# install driver
-cd /tmp
-
-# reboot
-sudo reboot
