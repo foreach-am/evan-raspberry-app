@@ -7,6 +7,7 @@ const EventCommandEnum = {
   EVENT_TRANSACTION_START: 4,
   EVENT_TRANSACTION_STOP: 5,
   EVENT_RESERVE_ACCEPT: 6,
+  EVENT_CHANGE_AVAILABILITY: 7,
 };
 
 const EventCommandNameEnum = {
@@ -16,6 +17,7 @@ const EventCommandNameEnum = {
   [EventCommandEnum.EVENT_TRANSACTION_START]: 'StartTransaction',
   [EventCommandEnum.EVENT_TRANSACTION_STOP]: 'StopTransaction',
   [EventCommandEnum.EVENT_RESERVE_ACCEPT]: 'ReserveNow',
+  [EventCommandEnum.EVENT_CHANGE_AVAILABILITY]: 'ChangeAvailability',
 };
 
 let queue = [];

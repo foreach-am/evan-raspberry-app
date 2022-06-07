@@ -52,7 +52,7 @@ serialPort.on('data', function (data) {
   }
 
   inputData = inputData.substring(indexStart, indexEnd + 1);
-  console.log(inputData);
+  Logger.info('Input data received:', inputData);
 
   InputDataParser(inputData);
   inputData = '';

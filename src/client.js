@@ -127,6 +127,11 @@ WebSocket.onConnect(async function (connection) {
         const stopTransactionResult = parseData[2];
         state.stopTransactionStatus = stopTransactionResult.idTagInfo.status;
         break;
+
+      case EventCommandEnum.EVENT_CHANGE_AVAILABILITY:
+        console.log(parseData);
+        break;
+
       default:
         state.receiveCommand = parseData[2];
 
