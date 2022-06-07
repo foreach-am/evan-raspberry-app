@@ -10,7 +10,7 @@ function sendHeartBeat(data) {
 
   setTimeout(function () {
     sendHeartBeatHandler(data);
-  }, state.bootNotRequireTime * 1000);
+  }, state.state.common.bootNotRequireTime * 1000);
 }
 
 function sendHeartBeatHandler(data) {

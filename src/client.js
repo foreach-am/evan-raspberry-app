@@ -139,21 +139,6 @@ WebSocket.onConnect(async function (connection) {
 
     const isServerCommand = EventQueue.isServerCommand(parseData[2]);
 
-    console.log('-----------------------------------------');
-    console.log('-----------------------------------------');
-    console.log('-----------------------------------------');
-    console.log('-----------------------------------------');
-    console.log('-----------------------------------------');
-    console.log('-----------------------------------------');
-    console.log('-----------------------------------------');
-    console.log(isServerCommand, parseData[2]);
-    console.log('-----------------------------------------');
-    console.log('-----------------------------------------');
-    console.log('-----------------------------------------');
-    console.log('-----------------------------------------');
-    console.log('-----------------------------------------');
-    console.log('-----------------------------------------');
-
     if (isServerCommand) {
       switch (parseData[2]) {
         case EventCommandNameEnum[EventCommandEnum.EVENT_RESERVATION]:
