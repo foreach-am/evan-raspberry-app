@@ -14,40 +14,61 @@ const ping = require('./ping');
 
 let comportHandlerId = -1;
 
+function logParseData() {
+  /**
+   *
+   * @param {string} key
+   * @param {*} value
+   */
+  const append = function (key, value) {
+    logResult[key.padStart(20, ' ')] = value;
+  };
+
+  const logResult = {};
+
+  padStart('Temperature', `${state.statistic.common.temperature} C`);
+  padStart('HighVoltError', `${state.statistic.common.highVoltError} State`);
+  padStart('LowVoltError', `${state.statistic.common.lowVoltError} State`);
+  padStart(
+    'HighVoltageMeasure',
+    `${state.statistic.common.highVoltageMeasure} V.AC`
+  );
+
+  for (let i = 1; i <= state.maxPlugsCount; ++i) {
+    padStart(
+      `FeedBackVolt[${i}]`,
+      `${state.statistic.plugs.pilotFeedBack[i]} V`
+    );
+    padStart(
+      `CurrentMeasureA[${i}]`,
+      `${state.statistic.plugs.currentMeasureA[i]} A`
+    );
+    padStart(
+      `CurrentMeasureB[${i}]`,
+      `${state.statistic.plugs.currentMeasureB[i]} A`
+    );
+    padStart(
+      `CurrentMeasureC[${i}]`,
+      `${state.statistic.plugs.currentMeasureC[i]} A`
+    );
+    padStart(`PlugState[${i}]`, `${state.statistic.plugs.plugState[i]} State`);
+    padStart(
+      `PlugPowerKwPerHour[${i}]`,
+      `${state.statistic.plugs.powerKwh[i]} KW/h`
+    );
+    padStart(
+      `OverCurrentError[${i}]`,
+      `${state.statistic.plugs.overCurrentError[i]} State`
+    );
+  }
+
+  Logger.json('Received data is ready:', logResult);
+}
+
 WebSocket.onConnect(async function (connection) {
   async function onDataReady() {
     //connection.emit(data);
-
-    const logResult = {
-      '       Temperature': `${state.statistic.common.temperature} C`,
-      '     HighVoltError': `${state.statistic.common.highVoltError} State`,
-      '      LowVoltError': `${state.statistic.common.lowVoltError} State`,
-      'HighVoltageMeasure': `${state.statistic.common.highVoltageMeasure} V.AC`,
-    };
-
-    for (let i = 1; i <= state.maxPlugsCount; ++i) {
-      logResult[
-        `FeedBackVolt[${i}]`
-      ] = `${state.statistic.plugs.pilotFeedBack[i]} V`;
-      logResult[
-        `CurrentMeasureA[${i}]`
-      ] = `${state.statistic.plugs.currentMeasureA[i]} A`;
-      logResult[
-        `CurrentMeasureB[${i}]`
-      ] = `${state.statistic.plugs.currentMeasureB[i]} A`;
-      logResult[
-        `CurrentMeasureC[${i}]`
-      ] = `${state.statistic.plugs.currentMeasureC[i]} A`;
-      logResult[
-        `PlugState[${i}]`
-      ] = `${state.statistic.plugs.plugState[i]} State`;
-      logResult[`PowerKwh[${i}]`] = `${state.statistic.plugs.powerKwh[i]} KW/h`;
-      logResult[
-        `OverCurrentError[${i}]`
-      ] = `${state.statistic.plugs.overCurrentError[i]} State`;
-    }
-
-    Logger.json('Received data is ready:', logResult);
+    logParseData();
 
     for (let i = 1; i <= state.maxPlugsCount; ++i) {
       if (state.statistic.plugs[i] === PlugStateEnum.UNPLUGGED) {
