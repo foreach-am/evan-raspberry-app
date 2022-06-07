@@ -35,6 +35,8 @@ function logParseData() {
   );
 
   for (let i = 1; i <= state.maxPlugsCount; ++i) {
+    append(`PlugState[${i}]`, `${state.statistic.plugs.plugState[i]} State`);
+    append(`PowerKwH[${i}]`, `${state.statistic.plugs.powerKwh[i]} KW/h`);
     append(`FeedBackVolt[${i}]`, `${state.statistic.plugs.pilotFeedBack[i]} V`);
     append(
       `CurrentMeasureA[${i}]`,
@@ -48,8 +50,6 @@ function logParseData() {
       `CurrentMeasureC[${i}]`,
       `${state.statistic.plugs.currentMeasureC[i]} A`
     );
-    append(`PlugState[${i}]`, `${state.statistic.plugs.plugState[i]} State`);
-    append(`PowerKwH[${i}]`, `${state.statistic.plugs.powerKwh[i]} KW/h`);
     append(
       `OverCurrentError[${i}]`,
       `${state.statistic.plugs.overCurrentError[i]} State`
