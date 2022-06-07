@@ -20,7 +20,7 @@ dtc \
   --out "$CONFIG_DTBO_FILE" \
   "$CONFIG_DTS_FILE"
 
-cp "$CONFIG_DTBO_FILE" "$CONFIG_OVERLAS"
+sudo cp "$CONFIG_DTBO_FILE" "$CONFIG_OVERLAS"
 
 FOUND="$(cat "$CONFIG_FILE" | grep dtparam | wc -l)"
 if [[ "$FOUND" != "0" ]]; then
