@@ -91,10 +91,7 @@ function send(commandId, commandArgs) {
     );
   }
 
-  Logger.info(
-    ` Calling ${commandName}`
-    // args.transactionId
-  );
+  Logger.json(` Calling ${commandName} with arguments:`, commandArgs);
 
   const dataToSend = JSON.stringify([2, process.env.STATION_TOKEN, commandName, commandArgs]);
 
