@@ -7,4 +7,6 @@ module.exports = {
   Reservation: require('./senders/Reservation'),
   ChangeAvailability: require('./senders/ChangeAvailability'),
   StatusNotification: require('./senders/StatusNotification'),
+  RemoteStartTransaction: require('./senders/RemoteStartTransaction'),
+  RemoteStopTransaction: require('./senders/RemoteStopTransaction'),
 };

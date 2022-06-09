@@ -184,18 +184,14 @@ WebSocket.onConnect(async function (connection) {
     const isServerCommand = EventQueue.isServerCommand(parseData[2]);
 
     if (isServerCommand) {
+      // state.receiveServerId = parseData[1];
+      const serverAskedConnectorId = parseData[3].connectorId;
+
       switch (parseData[2]) {
         case EventCommandNameEnum[EventCommandEnum.EVENT_RESERVATION]:
-          state.receiveServerId = parseData[1];
-          state.connectorId = parseData[3].connectorId;
-          if (state.connectorId === 1) {
-            state.expiryDateConnector1 = parseData[3].expiryDate;
-          } else if (connectorId === 2) {
-            state.expiryDateConnector2 = parseData[3].expiryDate;
-          } else {
-          }
+          state.state.plugs.reservationId[serverAskedConnectorId] = parseData[3].reservationId;
+          state.state.plugs.expiryDate[serverAskedConnectorId] = parseData[3].expiryDate;
 
-          state.reservationId = parseData[3].reservationId;
           ping.Reservation.execute(connectorId, ping.Reservation.enums.StatusEnum.Accepted);
 
           ping.StatusNotification.execute(
@@ -236,6 +232,25 @@ WebSocket.onConnect(async function (connection) {
               }
             }
           }
+          break;
+
+        case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_TRANSACTION_START]:
+          state.state.plugs.idTags[serverAskedConnectorId] = parseData[3].idTag;
+          state.state.plugs.transactionId[serverAskedConnectorId] =
+            parseData[3].chargingProfile.transactionId;
+
+          ping.RemoteStartTransaction.execute(
+            serverAskedConnectorId,
+            ping.RemoteStartTransaction.enums.StatusEnum.Accepted
+          );
+          break;
+
+        case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_TRANSACTION_STOP]:
+          const currentTransactionId = state.state.plugs.transactionId[serverAskedConnectorId];
+          state.state.plugs.idTags[serverAskedConnectorId] = '';
+          state.state.plugs.transactionId[serverAskedConnectorId] = '';
+
+          ping.RemoteStopTransaction.execute(serverAskedConnectorId, currentTransactionId);
           break;
       }
     } else {
