@@ -243,7 +243,7 @@ WebSocket.onConnect(async function (connection) {
           await ping.StartTransaction.execute(connectorId);
 
           ping.StatusNotification.execute(
-            connectorId,
+            serverAskedConnectorId,
             ping.StatusNotification.enums.StatusEnum.Charging,
             ping.StatusNotification.enums.ErrorCodeEnum.NoError
           );
