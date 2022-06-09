@@ -88,7 +88,7 @@ WebSocket.onConnect(async function (connection) {
         state.switch.plugs.sendAuth[connectorId]
       ) {
         state.switch.plugs.sendAuth[connectorId] = false;
-        // await ping.Authorize.execute(connectorId, state.state.plugs.idTags[connectorId]);
+        await ping.Authorize.execute(connectorId, state.state.plugs.idTags[connectorId]);
 
         ping.StatusNotification.execute(
           connectorId,
@@ -238,6 +238,14 @@ WebSocket.onConnect(async function (connection) {
           ping.RemoteStartTransaction.execute(
             serverAskedConnectorId,
             ping.RemoteStartTransaction.enums.StatusEnum.Accepted
+          );
+
+          await ping.StartTransaction.execute(connectorId);
+
+          ping.StatusNotification.execute(
+            connectorId,
+            ping.StatusNotification.enums.StatusEnum.Charging,
+            ping.StatusNotification.enums.ErrorCodeEnum.NoError
           );
 
           ComPort.emit('PROXIRE1:');
