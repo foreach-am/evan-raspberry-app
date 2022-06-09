@@ -1,7 +1,7 @@
 const { EventQueue, EventCommandEnum } = require('../../libraries/EventQueue');
 const { WebSocketSender } = require('../../libraries/WebSocket');
 
-const event = EventCommandEnum.EVENT_TRANSACTION_STOP;
+const event = EventCommandEnum.EVENT_STATUS_NOTIFICATION;
 
 function sendStatusNotification({ connectorId, status, error }) {
   WebSocketSender.send(event, {

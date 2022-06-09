@@ -8,6 +8,7 @@ const EventCommandEnum = {
   EVENT_TRANSACTION_STOP: 5,
   EVENT_RESERVATION: 6,
   EVENT_CHANGE_AVAILABILITY: 7,
+  EVENT_STATUS_NOTIFICATION: 8,
 };
 
 const EventCommandNameEnum = {
@@ -18,6 +19,7 @@ const EventCommandNameEnum = {
   [EventCommandEnum.EVENT_TRANSACTION_STOP]: 'StopTransaction',
   [EventCommandEnum.EVENT_RESERVATION]: 'ReserveNow',
   [EventCommandEnum.EVENT_CHANGE_AVAILABILITY]: 'ChangeAvailability',
+  [EventCommandEnum.EVENT_STATUS_NOTIFICATION]: 'StatusNotification',
 };
 
 const serverCommandList = [
