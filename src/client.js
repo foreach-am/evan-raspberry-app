@@ -240,7 +240,7 @@ WebSocket.onConnect(async function (connection) {
             ping.RemoteStartTransaction.enums.StatusEnum.Accepted
           );
 
-          await ping.StartTransaction.execute(connectorId);
+          await ping.StartTransaction.execute(serverAskedConnectorId);
 
           ping.StatusNotification.execute(
             serverAskedConnectorId,
