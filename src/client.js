@@ -170,8 +170,12 @@ WebSocket.onConnect(async function (connection) {
 
   WebSocket.register('message', async function (message) {
     if (message.type !== 'utf8') {
+      Logger.warning('Not UTF-8 data was received:', message);
       return;
     }
+
+    const parseData = JSON.parse(message.utf8Data);
+    Logger.json('WebSocket data received:', parseData);
 
     const previousIds = EventQueue.getPreviousIds();
     if (!previousIds) {
@@ -179,10 +183,6 @@ WebSocket.onConnect(async function (connection) {
     }
 
     const { commandId, connectorId } = previousIds;
-    const parseData = JSON.parse(message.utf8Data);
-
-    Logger.json('WebSocket data received:', parseData);
-
     const isServerCommand = EventQueue.isServerCommand(parseData[2]);
 
     if (isServerCommand) {
