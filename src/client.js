@@ -233,8 +233,8 @@ WebSocket.onConnect(async function (connection) {
 
         case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_TRANSACTION_START]:
           state.state.plugs.idTags[serverAskedConnectorId] = parseData[3].idTag;
-          state.state.plugs.transactionId[serverAskedConnectorId] =
-            parseData[3].chargingProfile.transactionId;
+          // state.state.plugs.transactionId[serverAskedConnectorId] =
+          //   parseData[3].chargingProfile.transactionId;
 
           ping.RemoteStartTransaction.execute(
             serverAskedConnectorId,
@@ -242,13 +242,13 @@ WebSocket.onConnect(async function (connection) {
           );
           break;
 
-        case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_TRANSACTION_STOP]:
-          const currentTransactionId = state.state.plugs.transactionId[serverAskedConnectorId];
-          state.state.plugs.idTags[serverAskedConnectorId] = '';
-          state.state.plugs.transactionId[serverAskedConnectorId] = '';
+        // case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_TRANSACTION_STOP]:
+        //   const currentTransactionId = state.state.plugs.transactionId[serverAskedConnectorId];
+        //   state.state.plugs.idTags[serverAskedConnectorId] = '';
+        //   state.state.plugs.transactionId[serverAskedConnectorId] = '';
 
-          ping.RemoteStopTransaction.execute(serverAskedConnectorId, currentTransactionId);
-          break;
+        //   ping.RemoteStopTransaction.execute(serverAskedConnectorId, currentTransactionId);
+        //   break;
       }
     } else {
       const previousIds = EventQueue.getPreviousIds();
