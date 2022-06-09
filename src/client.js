@@ -249,19 +249,22 @@ WebSocket.onConnect(async function (connection) {
 
         case EventCommandEnum.EVENT_AUTHORIZE:
           const authorizeResult = parseData[2];
-          state.state.plugs.idTagInfoStatus[connectorId] = authorizeResult.idTagInfo.status;
+          state.state.plugs.idTagInfoStatus[connectorId] =
+            (authorizeResult.idTagInfo || {}).status || 'Accepted';
           state.switch.plugs.chargingPeriodAuth[connectorId] = true;
           break;
 
         case EventCommandEnum.EVENT_TRANSACTION_START:
           const startTransactionResult = parseData[2];
           state.state.plugs.transactionId[connectorId] = startTransactionResult.transactionId;
-          state.state.plugs.startTransactionStatus[connectorId] = startTransactionResult.idTagInfo.status;
+          state.state.plugs.startTransactionStatus[connectorId] =
+            (startTransactionResult.idTagInfo || {}).status || 'Accepted';
           break;
 
         case EventCommandEnum.EVENT_TRANSACTION_STOP:
           const stopTransactionResult = parseData[2];
-          state.state.plugs.stopTransactionStatus[connectorId] = stopTransactionResult.idTagInfo.status;
+          state.state.plugs.stopTransactionStatus[connectorId] =
+            (stopTransactionResult.idTagInfo || {}).status || 'Accepted';
           break;
       }
 
