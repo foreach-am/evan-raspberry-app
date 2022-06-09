@@ -178,7 +178,6 @@ WebSocket.onConnect(async function (connection) {
     Logger.json('WebSocket data received:', parseData);
 
     const isServerCommand = EventQueue.isServerCommand(parseData[2]);
-    Logger.info(isServerCommand ? 'Received server command.' : 'Received non-server command.');
 
     if (isServerCommand) {
       // state.receiveServerId = parseData[1];

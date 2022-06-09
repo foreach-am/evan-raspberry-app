@@ -6,7 +6,7 @@ const event = EventCommandEnum.EVENT_REMOTE_TRANSACTION_START;
 
 function sendRemoteStartTransaction({ connectorId, status }) {
   WebSocketSender.send(event, {
-    connectorId: connectorId,
+    // connectorId: connectorId,
     status: status,
   });
 }
