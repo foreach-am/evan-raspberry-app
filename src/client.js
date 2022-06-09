@@ -177,12 +177,6 @@ WebSocket.onConnect(async function (connection) {
     const parseData = JSON.parse(message.utf8Data);
     Logger.json('WebSocket data received:', parseData);
 
-    const previousIds = EventQueue.getPreviousIds();
-    if (!previousIds) {
-      return;
-    }
-
-    const { commandId, connectorId } = previousIds;
     const isServerCommand = EventQueue.isServerCommand(parseData[2]);
 
     if (isServerCommand) {
@@ -256,6 +250,13 @@ WebSocket.onConnect(async function (connection) {
           break;
       }
     } else {
+      const previousIds = EventQueue.getPreviousIds();
+      if (!previousIds) {
+        return;
+      }
+
+      const { commandId, connectorId } = previousIds;
+
       switch (commandId) {
         case EventCommandEnum.EVENT_BOOT_NOTIFICATION:
           const bootNotificationResult = parseData[2];
