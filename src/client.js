@@ -50,7 +50,9 @@ function logParseData() {
 
 WebSocket.onConnect(async function (connection) {
   async function onDataReady() {
-    logParseData();
+    if (process.env.NODE_ENV !== 'production') {
+      logParseData();
+    }
 
     //connection.emit(data);
     for (let connectorId = 1; connectorId <= state.maxPlugsCount; ++connectorId) {
