@@ -239,6 +239,8 @@ WebSocket.onConnect(async function (connection) {
             serverAskedConnectorId,
             ping.RemoteStartTransaction.enums.StatusEnum.Accepted
           );
+
+          ComPort.emit('PROXIRE1:');
           break;
 
         // case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_TRANSACTION_STOP]:
