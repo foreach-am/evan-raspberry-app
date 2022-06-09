@@ -258,12 +258,11 @@ WebSocket.onConnect(async function (connection) {
           });
 
           if (stopConnectorId) {
-            const currentTransactionId = state.state.plugs.transactionId[serverAskedConnectorId];
             state.state.plugs.idTags[serverAskedConnectorId] = '';
             state.state.plugs.transactionId[serverAskedConnectorId] = '';
 
-            ping.RemoteStopTransaction.execute(serverAskedConnectorId, currentTransactionId);
-            ComPort.emit(`PLUG${currentTransactionId}STOP:`);
+            await ping.RemoteStopTransaction.execute(serverAskedConnectorId, serverAskedTransactionId);
+            ComPort.emit(`PLUG${stopConnectorId}STOP:`);
           }
           break;
       }
