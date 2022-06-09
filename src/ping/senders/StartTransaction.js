@@ -3,20 +3,26 @@ const { WebSocketSender } = require('../../libraries/WebSocket');
 
 const event = EventCommandEnum.EVENT_TRANSACTION_START;
 
-function sendStartTransaction(data) {
+function sendStartTransaction({ connectorId, idTag }) {
   WebSocketSender.send(event, {
-    connectorId: 1,
-    idTag: 'B4A63CDF',
+    connectorId: connectorId,
+    idTag: idTag,
     timestamp: new Date().toISOString(),
-    meterStart: 0, //data.pow1Kwh,
-    reservationId: 1,
+    meterStart: 0, // connector power KW/h
+    reservationId: state.state.plugs.reservationId[connectorId],
   });
 }
 
-function sendStartTransactionHandler(data) {
-  return EventQueue.register(event, data, function () {
-    sendStartTransaction(data);
-  });
+function sendStartTransactionHandler(connectorId, idTag = 'B4A63CDF') {
+  const data = {
+    connectorId: connectorId,
+    idTag: idTag,
+  };
+
+  return EventQueue.register(event, data, sendStartTransaction);
 }
 
-module.exports = sendStartTransactionHandler;
+module.exports = {
+  execute: sendStartTransactionHandler,
+  enums: {},
+};

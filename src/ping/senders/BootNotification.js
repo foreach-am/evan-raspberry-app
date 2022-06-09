@@ -3,7 +3,7 @@ const { WebSocketSender } = require('../../libraries/WebSocket');
 
 const event = EventCommandEnum.EVENT_BOOT_NOTIFICATION;
 
-function sendBootNotification(data) {
+function sendBootNotification({}) {
   WebSocketSender.send(event, {
     chargePointVendor: 'EVAN',
     chargePointModel: 'EVAN F7/22',
@@ -17,10 +17,13 @@ function sendBootNotification(data) {
   });
 }
 
-function sendBootNotificationHandler(data) {
-  return EventQueue.register(event, data, function () {
-    sendBootNotification(data);
-  });
+function sendBootNotificationHandler() {
+  const data = {};
+
+  return EventQueue.register(event, data, sendBootNotification);
 }
 
-module.exports = sendBootNotificationHandler;
+module.exports = {
+  execute: sendBootNotificationHandler,
+  enums: {},
+};

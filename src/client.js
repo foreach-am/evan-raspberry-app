@@ -11,17 +11,11 @@ const ping = require('./ping');
 let comportHandlerId = -1;
 
 function logParseData() {
-  /**
-   *
-   * @param {string} key
-   * @param {*} value
-   */
   const append = function (key, value, char = ' ') {
     logResult[key.padStart(22, char)] = value;
   };
 
   const logResult = {};
-
   const { temperature, highVoltError, lowVoltError, highVoltageMeasure } = state.statistic.common;
 
   const {
@@ -59,68 +53,110 @@ WebSocket.onConnect(async function (connection) {
     //connection.emit(data);
     logParseData();
 
-    for (let i = 1; i <= state.maxPlugsCount; ++i) {
-      if (state.statistic.plugs.plugState[i] === PlugStateEnum.UNPLUGGED) {
-        state.switch.plugs.startTransaction[i] = true;
-        state.switch.plugs.stopTransaction[i] = true;
-        state.switch.plugs.sendAuth[i] = true;
-        state.switch.plugs.chargeStart[i] = true;
-        state.state.plugs.transactionId[i] = 0;
+    for (let connectorId = 1; connectorId <= state.maxPlugsCount; ++connectorId) {
+      if (state.statistic.plugs.plugState[connectorId] === PlugStateEnum.UNPLUGGED) {
+        state.switch.plugs.startTransaction[connectorId] = true;
+        state.switch.plugs.stopTransaction[connectorId] = true;
+        state.switch.plugs.sendAuth[connectorId] = true;
+        state.switch.plugs.chargeStart[connectorId] = true;
+        state.state.plugs.transactionId[connectorId] = 0;
+
+        ping.StatusNotification.execute(
+          connectorId,
+          ping.StatusNotification.enums.StatusEnum.Available,
+          ping.StatusNotification.enums.ErrorCodeEnum.NoError
+        );
       }
 
       if (
-        state.statistic.plugs.plugState[i] === PlugStateEnum.PLUG_SOFT_LOCK &&
-        !state.switch.plugs.softLock[i]
+        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.PLUG_SOFT_LOCK &&
+        !state.switch.plugs.softLock[connectorId]
       ) {
-        state.switch.plugs.softLock[i] = true;
-        await ping.sendChangeAvailability();
+        state.switch.plugs.softLock[connectorId] = true;
+        await ping.ChangeAvailability.execute(connectorId, ping.ChangeAvailability.enums.StatusEnum.Accepted);
       }
 
       if (
-        state.statistic.plugs.plugState[i] === PlugStateEnum.CAR_DETECTED &&
-        state.switch.plugs.sendAuth[i]
+        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CAR_DETECTED &&
+        state.switch.plugs.sendAuth[connectorId]
       ) {
-        state.switch.plugs.sendAuth[i] = false;
-        await ping.sendAuthorize();
+        state.switch.plugs.sendAuth[connectorId] = false;
+        await ping.Authorize.execute(connectorId);
+
+        ping.StatusNotification.execute(
+          connectorId,
+          ping.StatusNotification.enums.StatusEnum.Preparing,
+          ping.StatusNotification.enums.ErrorCodeEnum.NoError
+        );
       }
 
-      if (state.state.plugs.idTagInfoStatus[i] === 'Accepted' && state.switch.plugs.startTransaction[i]) {
-        state.state.plugs.idTagInfoStatus[i] = '';
-        state.switch.plugs.startTransaction[i] = false;
+      if (
+        state.state.plugs.idTagInfoStatus[connectorId] === 'Accepted' &&
+        state.switch.plugs.startTransaction[connectorId]
+      ) {
+        state.state.plugs.idTagInfoStatus[connectorId] = '';
+        state.switch.plugs.startTransaction[connectorId] = false;
 
-        await ping.sendStartTransaction();
+        await ping.StartTransaction.execute(connectorId);
+
+        ping.StatusNotification.execute(
+          connectorId,
+          ping.StatusNotification.enums.StatusEnum.Charging,
+          ping.StatusNotification.enums.ErrorCodeEnum.NoError
+        );
       }
 
-      if (state.state.plugs.startTransactionStatus[i] === 'Accepted' && state.switch.plugs.chargeStart[i]) {
-        state.state.plugs.startTransactionStatus[i] = '';
-        state.switch.plugs.chargeStart[i] = false;
+      if (
+        state.state.plugs.startTransactionStatus[connectorId] === 'Accepted' &&
+        state.switch.plugs.chargeStart[connectorId]
+      ) {
+        state.state.plugs.startTransactionStatus[connectorId] = '';
+        state.switch.plugs.chargeStart[connectorId] = false;
 
         ComPort.emit('PROXIRE1:');
       }
 
       if (
-        state.statistic.plugs.plugState[i] === PlugStateEnum.CHARGING &&
-        state.switch.plugs.chargingPeriodAuth[i]
+        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CHARGING &&
+        state.switch.plugs.chargingPeriodAuth[connectorId]
       ) {
-        state.switch.plugs.chargingPeriodAuth[i] = false;
-        await ping.sendAuthorize();
+        state.switch.plugs.chargingPeriodAuth[connectorId] = false;
+        await ping.Authorize.execute(connectorId);
+
+        ping.StatusNotification.execute(
+          connectorId,
+          ping.StatusNotification.enums.StatusEnum.Charging,
+          ping.StatusNotification.enums.ErrorCodeEnum.NoError
+        );
       }
 
       if (
-        state.statistic.plugs.plugState[i] === PlugStateEnum.CHARGE_COMPLETED &&
-        state.switch.plugs.stopTransaction[i]
+        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CHARGE_COMPLETED &&
+        state.switch.plugs.stopTransaction[connectorId]
       ) {
-        state.switch.plugs.stopTransaction[i] = false;
-        await ping.sendStopTransaction();
+        state.switch.plugs.stopTransaction[connectorId] = false;
+        await ping.StopTransaction.execute(connectorId);
 
-        state.state.plugs.idTagInfoStatus[i] = '';
+        state.state.plugs.idTagInfoStatus[connectorId] = '';
+
+        ping.StatusNotification.execute(
+          connectorId,
+          ping.StatusNotification.enums.StatusEnum.Available,
+          ping.StatusNotification.enums.ErrorCodeEnum.NoError
+        );
       }
 
-      if (state.state.plugs.stopTransactionStatus[i] === 'Accepted') {
-        state.state.plugs.stopTransactionStatus[i] = '';
-        state.state.plugs.idTagInfoStatus[i] = '';
+      if (state.state.plugs.stopTransactionStatus[connectorId] === 'Accepted') {
+        state.state.plugs.stopTransactionStatus[connectorId] = '';
+        state.state.plugs.idTagInfoStatus[connectorId] = '';
 
         Logger.info('Charge completed.');
+
+        ping.StatusNotification.execute(
+          connectorId,
+          ping.StatusNotification.enums.StatusEnum.Available,
+          ping.StatusNotification.enums.ErrorCodeEnum.NoError
+        );
       }
     }
   }
@@ -152,28 +188,43 @@ WebSocket.onConnect(async function (connection) {
           }
 
           state.reservationId = parseData[3].reservationId;
-          ping.sendReservation();
+          ping.Reservation.execute(connectorId, ping.Reservation.enums.StatusEnum.Accepted);
+
+          ping.StatusNotification.execute(
+            connectorId,
+            ping.StatusNotification.enums.StatusEnum.Reserved,
+            ping.StatusNotification.enums.ErrorCodeEnum.NoError
+          );
           break;
 
         case EventCommandNameEnum[EventCommandEnum.EVENT_CHANGE_AVAILABILITY]:
           if (parseData[3].connectorId > state.maxPlugsCount) {
-            ping.sendChangeAvailability({
-              status: 'Rejected',
-            });
+            ping.ChangeAvailability.execute(connectorId, ping.ChangeAvailability.enums.StatusEnum.Rejected);
           } else {
             if (!['Inoperative', 'Operative'].includes(parseData[3].type)) {
-              ping.sendChangeAvailability({
-                status: 'Rejected',
-              });
+              ping.ChangeAvailability.execute(connectorId, ping.ChangeAvailability.enums.StatusEnum.Rejected);
             } else {
-              ping.sendChangeAvailability({
-                status: 'Scheduled',
-              });
+              ping.ChangeAvailability.execute(
+                connectorId,
+                ping.ChangeAvailability.enums.StatusEnum.Scheduled
+              );
 
               if (parseData[3].type == 'Inoperative') {
                 ComPort.emit(`PLUG${parseData[3].connectorId}OFF:`);
+
+                ping.StatusNotification.execute(
+                  connectorId,
+                  ping.StatusNotification.enums.StatusEnum.Unavailable,
+                  ping.StatusNotification.enums.ErrorCodeEnum.NoError
+                );
               } else if (parseData[3].type == 'Operative') {
                 ComPort.emit(`PLUG${parseData[3].connectorId}ONN:`);
+
+                ping.StatusNotification.execute(
+                  connectorId,
+                  ping.StatusNotification.enums.StatusEnum.Available,
+                  ping.StatusNotification.enums.ErrorCodeEnum.NoError
+                );
               }
             }
           }
@@ -187,7 +238,7 @@ WebSocket.onConnect(async function (connection) {
           state.state.common.bootNotCurrentTime = bootNotificationResult.currentTime;
           state.state.common.bootNotRequireTime = Number(bootNotificationResult.interval);
 
-          await ping.sendHearthBeat(bootNotificationResult);
+          await ping.HearthBeat.execute();
           break;
 
         case EventCommandEnum.EVENT_HEARTH_BEAT:
@@ -221,7 +272,7 @@ WebSocket.onConnect(async function (connection) {
     ComPort.unregister(comportHandlerId);
   });
 
-  ping.sendBootNotification();
+  ping.BootNotification.execute();
 });
 
 WebSocket.startServer();

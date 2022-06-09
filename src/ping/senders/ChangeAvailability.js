@@ -3,16 +3,30 @@ const { WebSocketSender } = require('../../libraries/WebSocket');
 
 const event = EventCommandEnum.EVENT_CHANGE_AVAILABILITY;
 
-function sendChangeAvailability(data) {
+function sendChangeAvailability({ status }) {
   WebSocketSender.send(event, {
-    status: 'Accepted',
+    status: status,
   });
 }
 
-function sendChangeAvailabilityHandler(data) {
-  return EventQueue.register(event, data, function () {
-    sendChangeAvailability(data);
-  });
+function sendChangeAvailabilityHandler(connectorId, status) {
+  const data = {
+    connectorId: connectorId,
+    status: status,
+  };
+
+  return EventQueue.register(event, data, sendChangeAvailability);
 }
 
-module.exports = sendChangeAvailabilityHandler;
+const StatusEnum = {
+  Rejected: 'Rejected',
+  Scheduled: 'Scheduled',
+  Accepted: 'Accepted',
+};
+
+module.exports = {
+  execute: sendChangeAvailabilityHandler,
+  enums: {
+    StatusEnum: StatusEnum,
+  },
+};

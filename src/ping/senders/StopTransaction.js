@@ -4,21 +4,27 @@ const state = require('../../state');
 
 const event = EventCommandEnum.EVENT_TRANSACTION_STOP;
 
-function sendStopTransaction(data) {
+function sendStopTransaction({ connectorId, idTag }) {
   const connectorId = 1;
 
   WebSocketSender.send(event, {
     transactionId: state.state.plugs.transactionId[connectorId],
-    idTag: 'B4A63CDF',
+    idTag: idTag,
     timestamp: new Date().toISOString(),
-    meterStop: 0, //data.pow1Kwh
+    meterStop: 0, // connector power KW/h
   });
 }
 
-function sendStopTransactionHandler(data) {
-  return EventQueue.register(event, data, function () {
-    sendStopTransaction(data);
-  });
+function sendStopTransactionHandler(connectorId, idTag = 'B4A63CDF') {
+  const data = {
+    connectorId: connectorId,
+    idTag: idTag,
+  };
+
+  return EventQueue.register(event, data, sendStopTransaction);
 }
 
-module.exports = sendStopTransactionHandler;
+module.exports = {
+  execute: sendStopTransactionHandler,
+  enums: {},
+};

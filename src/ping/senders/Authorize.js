@@ -3,16 +3,22 @@ const { WebSocketSender } = require('../../libraries/WebSocket');
 
 const event = EventCommandEnum.EVENT_AUTHORIZE;
 
-function sendAuthorize(data) {
+function sendAuthorize({ idTag }) {
   WebSocketSender.send(event, {
-    idTag: 'B4A63CDF',
+    idTag: idTag,
   });
 }
 
-function sendAuthorizeHandler(data) {
-  return EventQueue.register(event, data, function () {
-    sendAuthorize(data);
-  });
+function sendAuthorizeHandler(connectorId, idTag = 'B4A63CDF') {
+  const data = {
+    connectorId: connectorId,
+    idTag: idTag,
+  };
+
+  return EventQueue.register(event, data, sendAuthorize);
 }
 
-module.exports = sendAuthorizeHandler;
+module.exports = {
+  execute: sendAuthorizeHandler,
+  enums: {},
+};

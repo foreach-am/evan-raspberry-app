@@ -5,18 +5,21 @@ const state = require('../../state');
 
 const event = EventCommandEnum.EVENT_HEARTH_BEAT;
 
-function sendHeartBeat(data) {
+function sendHeartBeat({}) {
   WebSocketSender.send(event, {});
 
   setTimeout(function () {
-    sendHeartBeatHandler(data);
+    sendHeartBeatHandler();
   }, state.state.common.bootNotRequireTime * 1000);
 }
 
-function sendHeartBeatHandler(data) {
-  return EventQueue.register(event, data, function () {
-    sendHeartBeat(data);
-  });
+function sendHeartBeatHandler() {
+  const data = {};
+
+  return EventQueue.register(event, data, sendHeartBeat);
 }
 
-module.exports = sendHeartBeatHandler;
+module.exports = {
+  execute: sendHeartBeatHandler,
+  enums: {},
+};
