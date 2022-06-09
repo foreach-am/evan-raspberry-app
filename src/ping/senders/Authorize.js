@@ -15,7 +15,7 @@ function sendAuthorizeHandler(connectorId, idTag = 'B4A63CDF') {
     idTag: idTag,
   };
 
-  return EventQueue.register(event, data, sendAuthorize);
+  return EventQueue.register(event, connectorId, data, sendAuthorize);
 }
 
 module.exports = {

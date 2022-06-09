@@ -20,7 +20,7 @@ function sendBootNotification({}) {
 function sendBootNotificationHandler() {
   const data = {};
 
-  return EventQueue.register(event, data, sendBootNotification);
+  return EventQueue.register(event, null, data, sendBootNotification);
 }
 
 module.exports = {

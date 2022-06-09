@@ -15,7 +15,7 @@ function sendReservationHandler(connectorId, status) {
     status: status,
   };
 
-  return EventQueue.register(event, data, sendReservation);
+  return EventQueue.register(event, connectorId, data, sendReservation);
 }
 
 const StatusEnum = {

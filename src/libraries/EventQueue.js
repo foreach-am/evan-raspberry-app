@@ -27,7 +27,7 @@ const serverCommandList = [
 
 let queue = [];
 
-function register(commandId, packetData, callback) {
+function register(commandId, connectorId, packetData, callback) {
   const commandName = EventCommandNameEnum[commandId];
 
   Logger.info(
@@ -36,16 +36,17 @@ function register(commandId, packetData, callback) {
   );
 
   queue.push({
-    commandId,
-    packetData,
-    callback,
+    commandId: commandId,
+    connectorId: connectorId,
+    packetData: packetData,
+    callback: callback,
     status: 'queue',
   });
 
   return process();
 }
 
-function getPreviousCommandId() {
+function getPreviousIds() {
   const queueItem = queue.find(function (queue) {
     return queue.status == 'finished';
   });
@@ -54,7 +55,10 @@ function getPreviousCommandId() {
     return null;
   }
 
-  return queueItem.commandId;
+  return {
+    commandId: queueItem.commandId,
+    connectorId: queueItem.connectorId,
+  };
 }
 
 function cleanup() {
@@ -132,7 +136,7 @@ module.exports = {
   EventCommandNameEnum: EventCommandNameEnum,
   EventQueue: {
     register: register,
-    getPreviousCommandId: getPreviousCommandId,
+    getPreviousIds: getPreviousIds,
     cleanup: cleanup,
     process: process,
     print: print,

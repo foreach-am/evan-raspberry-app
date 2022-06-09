@@ -15,7 +15,7 @@ function sendChangeAvailabilityHandler(connectorId, status) {
     status: status,
   };
 
-  return EventQueue.register(event, data, sendChangeAvailability);
+  return EventQueue.register(event, connectorId, data, sendChangeAvailability);
 }
 
 const StatusEnum = {

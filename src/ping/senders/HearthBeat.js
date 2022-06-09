@@ -16,7 +16,7 @@ function sendHeartBeat({}) {
 function sendHeartBeatHandler() {
   const data = {};
 
-  return EventQueue.register(event, data, sendHeartBeat);
+  return EventQueue.register(event, null, data, sendHeartBeat);
 }
 
 module.exports = {

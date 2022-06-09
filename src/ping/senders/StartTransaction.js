@@ -19,7 +19,7 @@ function sendStartTransactionHandler(connectorId, idTag = 'B4A63CDF') {
     idTag: idTag,
   };
 
-  return EventQueue.register(event, data, sendStartTransaction);
+  return EventQueue.register(event, connectorId, data, sendStartTransaction);
 }
 
 module.exports = {

@@ -166,8 +166,7 @@ WebSocket.onConnect(async function (connection) {
       return;
     }
 
-    const commandId = EventQueue.getPreviousCommandId();
-    const connectorId = 1;
+    const { commandId, connectorId } = EventQueue.getPreviousIds();
 
     const parseData = JSON.parse(message.utf8Data);
 

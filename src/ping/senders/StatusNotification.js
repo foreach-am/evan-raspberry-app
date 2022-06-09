@@ -18,7 +18,7 @@ function sendStatusNotificationHandler(connectorId, status, error) {
     error: error,
   };
 
-  return EventQueue.register(event, data, sendStatusNotification);
+  return EventQueue.register(event, connectorId, data, sendStatusNotification);
 }
 
 const ErrorCodeEnum = {
