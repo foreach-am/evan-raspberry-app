@@ -50,9 +50,9 @@ function logParseData() {
 
 WebSocket.onConnect(async function (connection) {
   async function onDataReady() {
-    //connection.emit(data);
-    logParseData();
+    // logParseData();
 
+    //connection.emit(data);
     for (let connectorId = 1; connectorId <= state.maxPlugsCount; ++connectorId) {
       if (state.statistic.plugs.plugState[connectorId] === PlugStateEnum.UNPLUGGED) {
         state.switch.plugs.startTransaction[connectorId] = true;
