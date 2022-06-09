@@ -128,7 +128,7 @@ WebSocket.onConnect(async function (connection) {
         state.switch.plugs.chargingPeriodAuth[connectorId]
       ) {
         state.switch.plugs.chargingPeriodAuth[connectorId] = false;
-        // await ping.Authorize.execute(connectorId);
+        await ping.Authorize.execute(connectorId, state.state.plugs.idTags[connectorId]);
 
         ping.StatusNotification.execute(
           connectorId,
@@ -251,13 +251,13 @@ WebSocket.onConnect(async function (connection) {
           ComPort.emit('PROXIRE1:');
           break;
 
-        // case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_TRANSACTION_STOP]:
-        //   const currentTransactionId = state.state.plugs.transactionId[serverAskedConnectorId];
-        //   state.state.plugs.idTags[serverAskedConnectorId] = '';
-        //   state.state.plugs.transactionId[serverAskedConnectorId] = '';
+        case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_TRANSACTION_STOP]:
+          const currentTransactionId = state.state.plugs.transactionId[serverAskedConnectorId];
+          state.state.plugs.idTags[serverAskedConnectorId] = '';
+          state.state.plugs.transactionId[serverAskedConnectorId] = '';
 
-        //   ping.RemoteStopTransaction.execute(serverAskedConnectorId, currentTransactionId);
-        //   break;
+          ping.RemoteStopTransaction.execute(serverAskedConnectorId, currentTransactionId);
+          break;
       }
     } else {
       const previousIds = EventQueue.getPreviousIds();
