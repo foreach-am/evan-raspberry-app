@@ -86,7 +86,7 @@ WebSocket.onConnect(async function (connection) {
         state.switch.plugs.sendAuth[connectorId]
       ) {
         state.switch.plugs.sendAuth[connectorId] = false;
-        await ping.Authorize.execute(connectorId);
+        // await ping.Authorize.execute(connectorId, state.state.plugs.idTags[connectorId]);
 
         ping.StatusNotification.execute(
           connectorId,
@@ -126,7 +126,7 @@ WebSocket.onConnect(async function (connection) {
         state.switch.plugs.chargingPeriodAuth[connectorId]
       ) {
         state.switch.plugs.chargingPeriodAuth[connectorId] = false;
-        await ping.Authorize.execute(connectorId);
+        // await ping.Authorize.execute(connectorId);
 
         ping.StatusNotification.execute(
           connectorId,

@@ -32,6 +32,7 @@ const state = {
       stopTransactionStatus: {},
       reservationId: {},
       expiryDate: {},
+      // idTags: {},
     },
   },
 

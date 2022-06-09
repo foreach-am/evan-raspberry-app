@@ -9,7 +9,7 @@ function sendAuthorize({ idTag }) {
   });
 }
 
-function sendAuthorizeHandler(connectorId, idTag = 'B4A63CDF') {
+function sendAuthorizeHandler(connectorId, idTag) {
   const data = {
     connectorId: connectorId,
     idTag: idTag,
