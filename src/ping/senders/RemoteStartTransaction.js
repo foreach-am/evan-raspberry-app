@@ -1,11 +1,11 @@
 const { EventQueue, EventCommandEnum } = require('../../libraries/EventQueue');
-const { WebSocketSender } = require('../../libraries/WebSocket');
+const { WebSocketSender, SendTypeEnum } = require('../../libraries/WebSocket');
 const state = require('../../state');
 
 const event = EventCommandEnum.EVENT_REMOTE_TRANSACTION_START;
 
 function sendRemoteStartTransaction({ connectorId, status }) {
-  WebSocketSender.send(event, {
+  WebSocketSender.send(SendTypeEnum.Response, event, {
     // connectorId: connectorId,
     status: status,
   });

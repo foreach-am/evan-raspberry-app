@@ -1,10 +1,10 @@
 const { EventQueue, EventCommandEnum } = require('../../libraries/EventQueue');
-const { WebSocketSender } = require('../../libraries/WebSocket');
+const { WebSocketSender, SendTypeEnum } = require('../../libraries/WebSocket');
 
 const event = EventCommandEnum.EVENT_BOOT_NOTIFICATION;
 
 function sendBootNotification({}) {
-  WebSocketSender.send(event, {
+  WebSocketSender.send(SendTypeEnum.Request, event, {
     chargePointVendor: 'EVAN',
     chargePointModel: 'EVAN F7/22',
     chargePointSerialNumber: 'Evan.000.00.1',

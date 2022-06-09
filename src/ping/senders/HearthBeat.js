@@ -1,12 +1,12 @@
 const { EventQueue, EventCommandEnum } = require('../../libraries/EventQueue');
-const { WebSocketSender } = require('../../libraries/WebSocket');
+const { WebSocketSender, SendTypeEnum } = require('../../libraries/WebSocket');
 
 const state = require('../../state');
 
 const event = EventCommandEnum.EVENT_HEARTH_BEAT;
 
 function sendHeartBeat({}) {
-  WebSocketSender.send(event, {});
+  WebSocketSender.send(SendTypeEnum.Request, event, {});
 
   setTimeout(function () {
     sendHeartBeatHandler();

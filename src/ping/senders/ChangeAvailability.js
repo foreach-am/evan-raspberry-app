@@ -1,10 +1,10 @@
 const { EventQueue, EventCommandEnum } = require('../../libraries/EventQueue');
-const { WebSocketSender } = require('../../libraries/WebSocket');
+const { WebSocketSender, SendTypeEnum } = require('../../libraries/WebSocket');
 
 const event = EventCommandEnum.EVENT_CHANGE_AVAILABILITY;
 
 function sendChangeAvailability({ status }) {
-  WebSocketSender.send(event, {
+  WebSocketSender.send(SendTypeEnum.Response, event, {
     status: status,
   });
 }
