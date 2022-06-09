@@ -6,6 +6,7 @@ const state = {
   switch: {
     common: {},
     plugs: {
+      sendStatusNotification: {},
       sendAuth: {},
       startTransaction: {},
       stopTransaction: {},

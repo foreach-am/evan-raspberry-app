@@ -61,11 +61,16 @@ WebSocket.onConnect(async function (connection) {
         state.switch.plugs.chargeStart[connectorId] = true;
         state.state.plugs.transactionId[connectorId] = 0;
 
-        ping.StatusNotification.execute(
-          connectorId,
-          ping.StatusNotification.enums.StatusEnum.Available,
-          ping.StatusNotification.enums.ErrorCodeEnum.NoError
-        );
+        if (state.switch.plugs.sendStatusNotification[connectorId]) {
+          state.switch.plugs.sendStatusNotification[connectorId] = false;
+          ping.StatusNotification.execute(
+            connectorId,
+            ping.StatusNotification.enums.StatusEnum.Available,
+            ping.StatusNotification.enums.ErrorCodeEnum.NoError
+          );
+        }
+      } else {
+        state.switch.plugs.sendStatusNotification[connectorId] = true;
       }
 
       if (
