@@ -120,7 +120,7 @@ WebSocket.onConnect(async function (connection) {
         state.state.plugs.startTransactionStatus[connectorId] = '';
         state.switch.plugs.chargeStart[connectorId] = false;
 
-        ComPort.emit('PROXIRE1:');
+        ComPort.emit(`PROXIRE${connectorId}:`);
       }
 
       if (
@@ -182,6 +182,7 @@ WebSocket.onConnect(async function (connection) {
     if (isServerCommand) {
       // state.receiveServerId = parseData[1];
       const serverAskedConnectorId = parseData[3].connectorId;
+      const serverAskedTransactionId = parseData[3].transactionId;
 
       switch (parseData[2]) {
         case EventCommandNameEnum[EventCommandEnum.EVENT_RESERVATION]:
@@ -248,15 +249,22 @@ WebSocket.onConnect(async function (connection) {
             ping.StatusNotification.enums.ErrorCodeEnum.NoError
           );
 
-          ComPort.emit('PROXIRE1:');
+          ComPort.emit(`PROXIRE${serverAskedConnectorId}:`);
           break;
 
         case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_TRANSACTION_STOP]:
-          const currentTransactionId = state.state.plugs.transactionId[serverAskedConnectorId];
-          state.state.plugs.idTags[serverAskedConnectorId] = '';
-          state.state.plugs.transactionId[serverAskedConnectorId] = '';
+          const stopConnectorId = Object.keys(state.state.plugs.transactionId).find((itemConnectorId) => {
+            return state.state.plugs.transactionId[itemConnectorId] === serverAskedTransactionId;
+          });
 
-          ping.RemoteStopTransaction.execute(serverAskedConnectorId, currentTransactionId);
+          if (stopConnectorId) {
+            const currentTransactionId = state.state.plugs.transactionId[serverAskedConnectorId];
+            state.state.plugs.idTags[serverAskedConnectorId] = '';
+            state.state.plugs.transactionId[serverAskedConnectorId] = '';
+
+            ping.RemoteStopTransaction.execute(serverAskedConnectorId, currentTransactionId);
+            ComPort.emit(`PLUG${currentTransactionId}STOP:`);
+          }
           break;
       }
     } else {
