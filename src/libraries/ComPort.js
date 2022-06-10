@@ -33,7 +33,7 @@ serialPort.on('data', function (data) {
   }
 
   inputData = inputData.substring(indexStart, indexEnd + 1);
-  Logger.info('Input data received:', inputData);
+  // Logger.info('Input data received:', inputData);
 
   InputDataParser(inputData);
   inputData = '';
@@ -128,7 +128,7 @@ function InputDataParser(text) {
 }
 
 function emitMessage(message, callback) {
-  Logger.info('SerialPort emitting message:', message);
+  // Logger.info('Emitting SerialPort message:', message);
   serialPort.write(message, callback);
 }
 

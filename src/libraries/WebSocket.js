@@ -93,7 +93,7 @@ function send(sendType, commandId, commandArgs) {
 
   const dataToSend = JSON.stringify([sendType, process.env.STATION_TOKEN, commandName, commandArgs]);
   Logger.json(` Calling ${commandName} with arguments:`, commandArgs);
-  Logger.json(` Sending ${commandName} with json data:`, dataToSend);
+  // Logger.json(` Sending ${commandName} with json data:`, dataToSend);
 
   connection.sendUTF(dataToSend);
 }
