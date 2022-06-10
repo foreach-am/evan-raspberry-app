@@ -28,6 +28,7 @@ function logParseData() {
     powerKwh,
   } = state.statistic.plugs;
 
+  console.log('------------------------------------------------------------');
   // append(` DEVICE LOG`, '----------------------------------------', '-');
   // append('Device Temperature', `${temperature} C`);
   // append('HighVoltError', `${highVoltError} State`);
@@ -45,7 +46,7 @@ function logParseData() {
     // append(`OverCurrentError[${i}]`, `${overCurrentError[i]} State`);
   }
 
-  Logger.json('Received data is ready:', logResult);
+  Logger.json('Device measurement data is ready:', logResult);
 }
 
 WebSocket.onConnect(async function (connection) {
@@ -231,7 +232,7 @@ WebSocket.onConnect(async function (connection) {
           }
           break;
 
-        case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_TRANSACTION_START]:
+        case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_START_TRANSACTION]:
           state.state.plugs.idTags[serverAskedConnectorId] = parseData[3].idTag;
           // state.state.plugs.transactionId[serverAskedConnectorId] =
           //   parseData[3].chargingProfile.transactionId;
@@ -241,7 +242,7 @@ WebSocket.onConnect(async function (connection) {
             ping.RemoteStartTransaction.enums.StatusEnum.Accepted
           );
 
-          await ping.StartTransaction.execute(serverAskedConnectorId, parseData[3].idTag);
+          await ping.StartTransaction.execute(serverAskedConnectorId);
 
           ping.StatusNotification.execute(
             serverAskedConnectorId,
@@ -252,15 +253,12 @@ WebSocket.onConnect(async function (connection) {
           ComPort.emit(`PROXIRE${serverAskedConnectorId}:`);
           break;
 
-        case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_TRANSACTION_STOP]:
+        case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_STOP_TRANSACTION]:
           const stopConnectorId = Object.keys(state.state.plugs.transactionId).find((itemConnectorId) => {
             return state.state.plugs.transactionId[itemConnectorId] === serverAskedTransactionId;
           });
 
           if (stopConnectorId) {
-            state.state.plugs.idTags[serverAskedConnectorId] = '';
-            state.state.plugs.transactionId[serverAskedConnectorId] = '';
-
             await ping.RemoteStopTransaction.execute(serverAskedConnectorId, serverAskedTransactionId);
             ComPort.emit(`PLUG${stopConnectorId}STOP:`);
           }

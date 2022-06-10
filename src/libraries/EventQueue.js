@@ -9,8 +9,8 @@ const EventCommandEnum = {
   EVENT_RESERVATION: 6,
   EVENT_CHANGE_AVAILABILITY: 7,
   EVENT_STATUS_NOTIFICATION: 8,
-  EVENT_REMOTE_TRANSACTION_START: 9,
-  EVENT_REMOTE_TRANSACTION_STOP: 10,
+  EVENT_REMOTE_START_TRANSACTION: 9,
+  EVENT_REMOTE_STOP_TRANSACTION: 10,
 };
 
 const EventCommandNameEnum = {
@@ -22,15 +22,15 @@ const EventCommandNameEnum = {
   [EventCommandEnum.EVENT_RESERVATION]: 'ReserveNow',
   [EventCommandEnum.EVENT_CHANGE_AVAILABILITY]: 'ChangeAvailability',
   [EventCommandEnum.EVENT_STATUS_NOTIFICATION]: 'StatusNotification',
-  [EventCommandEnum.EVENT_REMOTE_TRANSACTION_START]: 'RemoteStartTransaction',
-  [EventCommandEnum.EVENT_REMOTE_TRANSACTION_STOP]: 'RemoteStopTransaction',
+  [EventCommandEnum.EVENT_REMOTE_START_TRANSACTION]: 'RemoteStartTransaction',
+  [EventCommandEnum.EVENT_REMOTE_STOP_TRANSACTION]: 'RemoteStopTransaction',
 };
 
 const serverCommandList = [
   EventCommandNameEnum[EventCommandEnum.EVENT_RESERVATION],
   EventCommandNameEnum[EventCommandEnum.EVENT_CHANGE_AVAILABILITY],
-  EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_TRANSACTION_START],
-  EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_TRANSACTION_STOP],
+  EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_START_TRANSACTION],
+  EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_STOP_TRANSACTION],
 ];
 
 let queue = [];

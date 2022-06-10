@@ -14,7 +14,7 @@ function sendStartTransaction({ connectorId, idTag }) {
   });
 }
 
-function sendStartTransactionHandler(connectorId, idTag = 'B4A63CDF') {
+function sendStartTransactionHandler(connectorId, idTag) {
   const data = {
     connectorId: connectorId,
     idTag: idTag,
