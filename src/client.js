@@ -28,7 +28,6 @@ function logParseData() {
     powerKwh,
   } = state.statistic.plugs;
 
-  console.log('------------------------------------------------------------');
   // append(` DEVICE LOG`, '----------------------------------------', '-');
   // append('Device Temperature', `${temperature} C`);
   // append('HighVoltError', `${highVoltError} State`);
@@ -46,6 +45,7 @@ function logParseData() {
     // append(`OverCurrentError[${i}]`, `${overCurrentError[i]} State`);
   }
 
+  Logger.divider();
   Logger.json('Device measurement data is ready:', logResult);
 }
 

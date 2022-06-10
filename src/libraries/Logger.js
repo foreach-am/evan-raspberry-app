@@ -25,11 +25,16 @@ function logJson(title, ...args) {
   });
 }
 
+function logDivider() {
+  console.log('---------------------------------------------------------------------------------');
+}
+
 module.exports = {
   Logger: {
     info: logInfo,
     warning: logWarning,
     error: logError,
     json: logJson,
+    divider: logDivider,
   },
 };
