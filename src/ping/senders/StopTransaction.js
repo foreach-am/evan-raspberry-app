@@ -9,7 +9,7 @@ function sendStopTransaction({ connectorId, idTag }) {
     transactionId: state.state.plugs.transactionId[connectorId],
     idTag: idTag,
     timestamp: new Date().toISOString(),
-    meterStop: 0, // connector power KW/h
+    meterStop: 20, // connector power KW/h
   });
 }
 
