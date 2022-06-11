@@ -3,8 +3,8 @@ const { WebSocketSender, SendTypeEnum } = require('../../libraries/WebSocket');
 
 const event = EventCommandEnum.EVENT_BOOT_NOTIFICATION;
 
-function sendBootNotification({}) {
-  WebSocketSender.send(SendTypeEnum.Request, event, {
+function sendBootNotification({ messageId }) {
+  WebSocketSender.send(SendTypeEnum.Request, event, messageId, {
     chargePointVendor: 'EVAN',
     chargePointModel: 'EVAN F7/22',
     chargePointSerialNumber: 'Evan.000.00.1',
@@ -17,13 +17,14 @@ function sendBootNotification({}) {
   });
 }
 
-function sendBootNotificationHandler() {
-  const data = {};
+function sendBootNotificationHandler(messageId) {
+  const data = {
+    messageId: messageId,
+  };
 
-  return EventQueue.register(event, null, data, sendBootNotification);
+  return EventQueue.register(event, null, messageId, data, sendBootNotification);
 }
 
 module.exports = {
   execute: sendBootNotificationHandler,
-  enums: {},
 };

@@ -81,7 +81,7 @@ function startServer() {
   connectWithUri();
 }
 
-function send(sendType, commandId, commandArgs) {
+function send(sendType, commandId, messageId, commandArgs) {
   const commandName = EventCommandNameEnum[commandId];
 
   if (!connection.connected) {
@@ -91,7 +91,7 @@ function send(sendType, commandId, commandArgs) {
     );
   }
 
-  const dataToSend = JSON.stringify([sendType, process.env.STATION_TOKEN, commandName, commandArgs]);
+  const dataToSend = JSON.stringify([sendType, messageId, commandName, commandArgs]);
   Logger.json(` Calling ${commandName} with arguments:`, commandArgs);
   // Logger.json(` Sending ${commandName} with json data:`, dataToSend);
 

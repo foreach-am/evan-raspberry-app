@@ -4,22 +4,22 @@ const state = require('../../state');
 
 const event = EventCommandEnum.EVENT_REMOTE_STOP_TRANSACTION;
 
-function sendRemoteStopTransaction({ connectorId, transactionId }) {
+function sendRemoteStopTransaction({ messageId, connectorId, transactionId }) {
   WebSocketSender.send(SendTypeEnum.Response, event, {
     transactionId: transactionId,
   });
 }
 
-function sendRemoteStopTransactionHandler(connectorId, transactionId) {
+function sendRemoteStopTransactionHandler(messageId, connectorId, transactionId) {
   const data = {
     connectorId: connectorId,
+    messageId: messageId,
     transactionId: transactionId,
   };
 
-  return EventQueue.register(event, connectorId, data, sendRemoteStopTransaction);
+  return EventQueue.register(event, connectorId, messageId, data, sendRemoteStopTransaction);
 }
 
 module.exports = {
   execute: sendRemoteStopTransactionHandler,
-  enums: {},
 };

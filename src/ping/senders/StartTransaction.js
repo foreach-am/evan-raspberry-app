@@ -4,8 +4,8 @@ const state = require('../../state');
 
 const event = EventCommandEnum.EVENT_TRANSACTION_START;
 
-function sendStartTransaction({ connectorId, idTag }) {
-  WebSocketSender.send(SendTypeEnum.Request, event, {
+function sendStartTransaction({ messageId, connectorId, idTag }) {
+  WebSocketSender.send(SendTypeEnum.Request, event, messageId, {
     connectorId: connectorId,
     idTag: idTag,
     timestamp: new Date().toISOString(),
@@ -14,16 +14,16 @@ function sendStartTransaction({ connectorId, idTag }) {
   });
 }
 
-function sendStartTransactionHandler(connectorId, idTag) {
+function sendStartTransactionHandler(messageId, connectorId, idTag) {
   const data = {
     connectorId: connectorId,
+    messageId: messageId,
     idTag: idTag,
   };
 
-  return EventQueue.register(event, connectorId, data, sendStartTransaction);
+  return EventQueue.register(event, connectorId, messageId, data, sendStartTransaction);
 }
 
 module.exports = {
   execute: sendStartTransactionHandler,
-  enums: {},
 };

@@ -9,16 +9,16 @@ function sendAuthorize({ idTag }) {
   });
 }
 
-function sendAuthorizeHandler(connectorId, idTag) {
+function sendAuthorizeHandler(messageId, connectorId, idTag) {
   const data = {
     connectorId: connectorId,
+    messageId: messageId,
     idTag: idTag,
   };
 
-  return EventQueue.register(event, connectorId, data, sendAuthorize);
+  return EventQueue.register(event, connectorId, messageId, data, sendAuthorize);
 }
 
 module.exports = {
   execute: sendAuthorizeHandler,
-  enums: {},
 };

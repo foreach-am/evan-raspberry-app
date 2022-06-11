@@ -35,7 +35,7 @@ const serverCommandList = [
 
 let queue = [];
 
-function register(commandId, connectorId, packetData, callback) {
+function register(commandId, connectorId, messageId, packetData, callback) {
   const commandName = EventCommandNameEnum[commandId];
 
   Logger.info(
@@ -46,6 +46,7 @@ function register(commandId, connectorId, packetData, callback) {
   queue.push({
     commandId: commandId,
     connectorId: connectorId,
+    messageId: messageId,
     packetData: packetData,
     callback: callback,
     status: 'queue',
@@ -54,9 +55,31 @@ function register(commandId, connectorId, packetData, callback) {
   return process();
 }
 
-function getPreviousIds() {
+// function getPreviousIds() {
+//   const foundQueueItem = queue.find(function (queueItem) {
+//     return queueItem.status == 'finished';
+//   });
+
+//   if (!foundQueueItem) {
+//     return null;
+//   }
+
+//   return {
+//     commandId: foundQueueItem.commandId,
+//     connectorId: foundQueueItem.connectorId,
+//     messageId: foundQueueItem.messageId,
+//   };
+// }
+
+// function cleanup() {
+//   queue = queue.filter(function (queueItem) {
+//     return queueItem.status != 'finished';
+//   });
+// }
+
+function getByMessageId(messageId) {
   const queueItem = queue.find(function (queue) {
-    return queue.status == 'finished';
+    return queue.messageId == messageId;
   });
 
   if (!queueItem) {
@@ -69,10 +92,21 @@ function getPreviousIds() {
   };
 }
 
-function cleanup() {
-  queue = queue.filter(function (queue) {
-    return queue.status != 'finished';
+function makeFinished(messageId) {
+  const queueItemIndex = queue.findIndex(function (queueItem) {
+    if (!queueItem) {
+      return false;
+    }
+
+    return queueItem.messageId == messageId;
   });
+
+  if (queueItemIndex === -1) {
+    return;
+  }
+
+  // queue[queueItemIndex].status = 'finished';
+  queue[queueItemIndex] = undefined;
 }
 
 function process() {
@@ -144,8 +178,10 @@ module.exports = {
   EventCommandNameEnum: EventCommandNameEnum,
   EventQueue: {
     register: register,
-    getPreviousIds: getPreviousIds,
-    cleanup: cleanup,
+    // getPreviousIds: getPreviousIds,
+    // cleanup: cleanup,
+    getByMessageId: getByMessageId,
+    makeFinished: makeFinished,
     process: process,
     print: print,
     isServerCommand: isServerCommand,

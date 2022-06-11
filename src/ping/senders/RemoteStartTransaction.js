@@ -4,16 +4,17 @@ const state = require('../../state');
 
 const event = EventCommandEnum.EVENT_REMOTE_START_TRANSACTION;
 
-function sendRemoteStartTransaction({ connectorId, status }) {
-  WebSocketSender.send(SendTypeEnum.Response, event, {
+function sendRemoteStartTransaction({ messageId, connectorId, status }) {
+  WebSocketSender.send(SendTypeEnum.Response, event, messageId, {
     // connectorId: connectorId,
     status: status,
   });
 }
 
-function sendRemoteStartTransactionHandler(connectorId, status) {
+function sendRemoteStartTransactionHandler(messageId, connectorId, status) {
   const data = {
     connectorId: connectorId,
+    messageId: messageId,
     status: status,
   };
 
@@ -21,13 +22,11 @@ function sendRemoteStartTransactionHandler(connectorId, status) {
 }
 
 const StatusEnum = {
-  Accepted: 'Accepted',
-  Rejected: 'Rejected',
+  ACCEPTED: 'Accepted',
+  REJECTED: 'Rejected',
 };
 
 module.exports = {
   execute: sendRemoteStartTransactionHandler,
-  enums: {
-    StatusEnum: StatusEnum,
-  },
+  StatusEnum: StatusEnum,
 };

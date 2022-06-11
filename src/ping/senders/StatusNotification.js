@@ -3,17 +3,18 @@ const { WebSocketSender, SendTypeEnum } = require('../../libraries/WebSocket');
 
 const event = EventCommandEnum.EVENT_STATUS_NOTIFICATION;
 
-function sendStatusNotification({ connectorId, status, error }) {
-  WebSocketSender.send(SendTypeEnum.Request, event, {
+function sendStatusNotification({ messageId, connectorId, status, error }) {
+  WebSocketSender.send(SendTypeEnum.Request, event, messageId, {
     connectorId: connectorId,
     errorCode: error,
     status: status,
   });
 }
 
-function sendStatusNotificationHandler(connectorId, status, error) {
+function sendStatusNotificationHandler(messageId, connectorId, status, error) {
   const data = {
     connectorId: connectorId,
+    messageId: messageId,
     status: status,
     error: error,
   };
@@ -22,40 +23,38 @@ function sendStatusNotificationHandler(connectorId, status, error) {
 }
 
 const ErrorCodeEnum = {
-  ConnectorLockFailure: 'ConnectorLockFailure',
-  EVCommunicationError: 'EVCommunicationError',
-  GroundFailure: 'GroundFailure',
-  HighTemperature: 'HighTemperature',
-  InternalError: 'InternalError',
-  LocalListConflict: 'LocalListConflict',
-  NoError: 'NoError',
-  OtherError: 'OtherError',
-  OverCurrentFailure: 'OverCurrentFailure',
-  PowerMeterFailure: 'PowerMeterFailure',
-  PowerSwitchFailure: 'PowerSwitchFailure',
-  ReaderFailure: 'ReaderFailure',
-  ResetFailure: 'ResetFailure',
-  UnderVoltage: 'UnderVoltage',
-  OverVoltage: 'OverVoltage',
-  WeakSignal: 'WeakSignal',
+  CONNECTOR_LOCK_FAILURE: 'ConnectorLockFailure',
+  EV_COMMUNICATION_ERROR: 'EVCommunicationError',
+  GROUND_FAILURE: 'GroundFailure',
+  HIGH_TEMPERATURE: 'HighTemperature',
+  INTERNAL_ERROR: 'InternalError',
+  LOCAL_LIST_CONFLICT: 'LocalListConflict',
+  NO_ERROR: 'NoError',
+  OTHER_ERROR: 'OtherError',
+  OVER_CURRENT_FAILURE: 'OverCurrentFailure',
+  POWER_METER_ERROR: 'PowerMeterFailure',
+  POWER_SWITCH_FAILURE: 'PowerSwitchFailure',
+  READER_FAILURE: 'ReaderFailure',
+  RESET_FAILURE: 'ResetFailure',
+  UNDER_VOLTAGE: 'UnderVoltage',
+  OVER_VOLTAGE: 'OverVoltage',
+  WEAK_SIGNAL: 'WeakSignal',
 };
 
 const StatusEnum = {
-  Available: 'Available',
-  Preparing: 'Preparing',
-  Charging: 'Charging',
-  SuspendedEVSE: 'SuspendedEVSE',
-  SuspendedEV: 'SuspendedEV',
-  Finishing: 'Finishing',
-  Reserved: 'Reserved',
-  Unavailable: 'Unavailable',
-  Faulted: 'Faulted',
+  AVAILABLE: 'Available',
+  PREPARING: 'Preparing',
+  CHARGING: 'Charging',
+  SUSPENDED_EVSE: 'SuspendedEVSE',
+  SUSPENDED_EV: 'SuspendedEV',
+  FINISHING: 'Finishing',
+  RESERVED: 'Reserved',
+  UNAVAILABLE: 'Unavailable',
+  FAULTED: 'Faulted',
 };
 
 module.exports = {
   execute: sendStatusNotificationHandler,
-  enums: {
-    ErrorCodeEnum: ErrorCodeEnum,
-    StatusEnum: StatusEnum,
-  },
+  ErrorCodeEnum: ErrorCodeEnum,
+  StatusEnum: StatusEnum,
 };
