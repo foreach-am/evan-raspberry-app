@@ -1,30 +1,33 @@
 const { EventQueue, EventCommandEnum } = require('../../libraries/EventQueue');
 const { WebSocketSender, SendTypeEnum } = require('../../libraries/WebSocket');
 
-const event = EventCommandEnum.EVENT_RESERVATION;
+const event = EventCommandEnum.EVENT_RESERVE_NOW;
 
-function sendReservation({ messageId, connectorId, status }) {
+function sendReserveNow({ messageId, connectorId, status }) {
   WebSocketSender.send(SendTypeEnum.Response, event, messageId, {
     status: status,
   });
 }
 
-function sendReservationHandler(messageId, connectorId, status) {
+function sendReserveNowHandler(messageId, connectorId, status) {
   const data = {
     connectorId: connectorId,
     messageId: messageId,
     status: status,
   };
 
-  return EventQueue.register(event, connectorId, messageId, data, sendReservation);
+  return EventQueue.register(event, connectorId, messageId, data, sendReserveNow);
 }
 
 const StatusEnum = {
   ACCEPTED: 'Accepted',
-  // @TODO: more statuses from json scheme
+  FAULTED: 'Faulted',
+  OCCUPIED: 'Occupied',
+  REJECTED: 'Rejected',
+  UNAVAILABLE: 'Unavailable',
 };
 
 module.exports = {
-  execute: sendReservationHandler,
+  execute: sendReserveNowHandler,
   StatusEnum: StatusEnum,
 };

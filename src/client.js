@@ -199,11 +199,11 @@ WebSocket.onConnect(async function (connection) {
       const serverAskedTransactionId = parseData[3].transactionId;
 
       switch (parseData[2]) {
-        case EventCommandNameEnum[EventCommandEnum.EVENT_RESERVATION]:
+        case EventCommandNameEnum[EventCommandEnum.EVENT_RESERVE_NOW]:
           state.state.plugs.reservationId[serverAskedConnectorId] = parseData[3].reservationId;
           state.state.plugs.expiryDate[serverAskedConnectorId] = parseData[3].expiryDate;
 
-          ping.Reservation.execute(receivedMessageId, connectorId, ping.Reservation.StatusEnum.ACCEPTED);
+          ping.ReserveNow.execute(receivedMessageId, connectorId, ping.ReserveNow.StatusEnum.ACCEPTED);
 
           ping.StatusNotification.execute(
             uuid(),

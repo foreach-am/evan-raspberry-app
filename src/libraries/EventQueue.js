@@ -6,7 +6,7 @@ const EventCommandEnum = {
   EVENT_AUTHORIZE: 3,
   EVENT_TRANSACTION_START: 4,
   EVENT_TRANSACTION_STOP: 5,
-  EVENT_RESERVATION: 6,
+  EVENT_RESERVE_NOW: 6,
   EVENT_CHANGE_AVAILABILITY: 7,
   EVENT_STATUS_NOTIFICATION: 8,
   EVENT_REMOTE_START_TRANSACTION: 9,
@@ -19,7 +19,7 @@ const EventCommandNameEnum = {
   [EventCommandEnum.EVENT_AUTHORIZE]: 'Authorize',
   [EventCommandEnum.EVENT_TRANSACTION_START]: 'StartTransaction',
   [EventCommandEnum.EVENT_TRANSACTION_STOP]: 'StopTransaction',
-  [EventCommandEnum.EVENT_RESERVATION]: 'ReserveNow',
+  [EventCommandEnum.EVENT_RESERVE_NOW]: 'ReserveNow',
   [EventCommandEnum.EVENT_CHANGE_AVAILABILITY]: 'ChangeAvailability',
   [EventCommandEnum.EVENT_STATUS_NOTIFICATION]: 'StatusNotification',
   [EventCommandEnum.EVENT_REMOTE_START_TRANSACTION]: 'RemoteStartTransaction',
@@ -27,7 +27,7 @@ const EventCommandNameEnum = {
 };
 
 const serverCommandList = [
-  EventCommandNameEnum[EventCommandEnum.EVENT_RESERVATION],
+  EventCommandNameEnum[EventCommandEnum.EVENT_RESERVE_NOW],
   EventCommandNameEnum[EventCommandEnum.EVENT_CHANGE_AVAILABILITY],
   EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_START_TRANSACTION],
   EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_STOP_TRANSACTION],

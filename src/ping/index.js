@@ -4,7 +4,7 @@ module.exports = {
   HearthBeat: require('./senders/HearthBeat'),
   StartTransaction: require('./senders/StartTransaction'),
   StopTransaction: require('./senders/StopTransaction'),
-  Reservation: require('./senders/Reservation'),
+  ReserveNow: require('./senders/ReserveNow'),
   ChangeAvailability: require('./senders/ChangeAvailability'),
   StatusNotification: require('./senders/StatusNotification'),
   RemoteStartTransaction: require('./senders/RemoteStartTransaction'),
