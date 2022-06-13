@@ -1,5 +1,8 @@
 const { Raspberry } = require('../../libraries/Raspberry');
 
+const state = require('../../state');
+const ping = require('../../ping');
+
 module.exports = async function (parsedSocketData) {
   let canReset = true;
   for (let connectorId = 1; connectorId <= state.maxPlugsCount; ++connectorId) {

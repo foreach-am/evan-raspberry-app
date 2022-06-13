@@ -190,25 +190,7 @@ WebSocket.onConnect(async function (connection) {
 
     const parsedSocketData = DataParser.parse(message.utf8Data);
 
-    // const isServerCommand =
-    //   parsedSocketData.messageType === MessageTypeEnum.TYPE_REQUEST &&
-    //   EventQueue.isServerCommand(parsedSocketData.command);
-
     const isServerCommand = parsedSocketData.messageType === MessageTypeEnum.TYPE_REQUEST;
-
-    console.log('------------------------------------------------');
-    console.log('------------------------------------------------');
-    console.log('------------------------------------------------');
-    console.log('------------------------------------------------');
-    console.log('------------------------------------------------');
-    console.log(
-      'parsedSocketData',
-      isServerCommand,
-      parsedSocketData.messageType === MessageTypeEnum.TYPE_REQUEST,
-      EventQueue.isServerCommand(parsedSocketData.body),
-      parsedSocketData
-    );
-
     if (isServerCommand) {
       switch (parsedSocketData.command) {
         case EventCommandNameEnum[EventCommandEnum.EVENT_RESERVE_NOW]:
