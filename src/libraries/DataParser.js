@@ -9,7 +9,7 @@ function parse(message) {
     messageId: parsedSocketData[1],
   };
 
-  if (typeof parsedSocketData[2] === 'string') {
+  if (parsedSocketData.length === 4) {
     result.command = parsedSocketData[2];
     result.body = parsedSocketData[3];
     result.messageType = MessageTypeEnum.TYPE_RESPONSE;
