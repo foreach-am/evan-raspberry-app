@@ -10,12 +10,13 @@ function parse(message) {
   };
 
   if (typeof parsedSocketData[2] === 'string') {
-    result.messageType = MessageTypeEnum.TYPE_RESPONSE;
-    result.body = parsedSocketData[2];
-  } else {
-    result.messageType = MessageTypeEnum.TYPE_REQUEST;
     result.command = parsedSocketData[2];
     result.body = parsedSocketData[3];
+    result.messageType = MessageTypeEnum.TYPE_RESPONSE;
+  } else {
+    result.command = undefined;
+    result.body = parsedSocketData[2];
+    result.messageType = MessageTypeEnum.TYPE_REQUEST;
   }
 
   return result;
