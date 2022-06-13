@@ -195,7 +195,7 @@ WebSocket.onConnect(async function (connection) {
       EventQueue.isServerCommand(parsedSocketData.body);
 
     if (isServerCommand) {
-      switch (parsedSocketData.body) {
+      switch (parsedSocketData.command) {
         case EventCommandNameEnum[EventCommandEnum.EVENT_RESERVE_NOW]:
           await execute.PingReserveNow(parsedSocketData);
           break;
