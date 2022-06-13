@@ -16,7 +16,13 @@ function sendAuthorizeHandler(messageId, connectorId, idTag) {
     idTag: idTag,
   };
 
-  return EventQueue.register(event, connectorId, messageId, data, sendAuthorize);
+  return EventQueue.register({
+    commandId: event,
+    connectorId: connectorId,
+    messageId: messageId,
+    packetData: data,
+    callback: sendAuthorize,
+  });
 }
 
 module.exports = {
