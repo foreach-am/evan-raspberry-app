@@ -1,4 +1,5 @@
 const { Raspberry } = require('../../libraries/Raspberry');
+const { PlugStateEnum } = require('../../libraries/PlugState');
 
 const state = require('../../state');
 const ping = require('../../ping');
