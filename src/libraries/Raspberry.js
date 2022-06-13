@@ -9,6 +9,7 @@ const buttonReset = new Gpio(5, 'out', 'rising', {
 function restartSoftware() {
   return new Promise(function (resolve, reject) {
     // @TODO: restart software.
+    resolve();
   });
 }
 
@@ -27,7 +28,13 @@ function restartHardware() {
           return reject(error);
         }
 
-        resolve();
+        restartSoftware()
+          .then(function () {
+            resolve();
+          })
+          .catch(function (error) {
+            reject(error);
+          });
       });
     });
   });

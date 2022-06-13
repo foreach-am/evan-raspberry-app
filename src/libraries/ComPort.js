@@ -128,7 +128,7 @@ function InputDataParser(text) {
 }
 
 function emitMessage(message, callback) {
-  // Logger.info('Emitting SerialPort message:', message);
+  Logger.info('Emitting SerialPort message:', message);
   serialPort.write(message, callback);
 }
 
