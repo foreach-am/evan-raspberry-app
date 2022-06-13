@@ -16,7 +16,13 @@ function sendChangeAvailabilityHandler(messageId, connectorId, status) {
     status: status,
   };
 
-  return EventQueue.register(event, connectorId, messageId, data, sendChangeAvailability);
+  return EventQueue.register({
+    commandId: event,
+    connectorId: connectorId,
+    messageId: messageId,
+    packetData: data,
+    callback: sendChangeAvailability,
+  });
 }
 
 const PointStateEnum = {

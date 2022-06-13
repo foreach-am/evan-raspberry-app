@@ -18,7 +18,13 @@ function sendHeartBeatHandler(messageId) {
     messageId: messageId,
   };
 
-  return EventQueue.register(event, null, messageId, data, sendHeartBeat);
+  return EventQueue.register({
+    commandId: event,
+    connectorId: null,
+    messageId: messageId,
+    packetData: data,
+    callback: sendHeartBeat,
+  });
 }
 
 module.exports = {

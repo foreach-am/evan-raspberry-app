@@ -16,7 +16,13 @@ function sendReserveNowHandler(messageId, connectorId, status) {
     status: status,
   };
 
-  return EventQueue.register(event, connectorId, messageId, data, sendReserveNow);
+  return EventQueue.register({
+    commandId: event,
+    connectorId: connectorId,
+    messageId: messageId,
+    packetData: data,
+    callback: sendReserveNow,
+  });
 }
 
 const StatusEnum = {

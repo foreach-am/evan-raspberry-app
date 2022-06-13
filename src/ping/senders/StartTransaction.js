@@ -21,7 +21,13 @@ function sendStartTransactionHandler(messageId, connectorId, idTag) {
     idTag: idTag,
   };
 
-  return EventQueue.register(event, connectorId, messageId, data, sendStartTransaction);
+  return EventQueue.register({
+    commandId: event,
+    connectorId: connectorId,
+    messageId: messageId,
+    packetData: data,
+    callback: sendStartTransaction,
+  });
 }
 
 module.exports = {

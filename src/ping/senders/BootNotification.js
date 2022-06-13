@@ -22,7 +22,13 @@ function sendBootNotificationHandler(messageId) {
     messageId: messageId,
   };
 
-  return EventQueue.register(event, null, messageId, data, sendBootNotification);
+  return EventQueue.register({
+    commandId: event,
+    connectorId: null,
+    messageId: messageId,
+    packetData: data,
+    callback: sendBootNotification,
+  });
 }
 
 module.exports = {

@@ -17,7 +17,13 @@ function sendRemoteStopTransactionHandler(messageId, connectorId, transactionId)
     transactionId: transactionId,
   };
 
-  return EventQueue.register(event, connectorId, messageId, data, sendRemoteStopTransaction);
+  return EventQueue.register({
+    commandId: event,
+    connectorId: connectorId,
+    messageId: messageId,
+    packetData: data,
+    callback: sendRemoteStopTransaction,
+  });
 }
 
 module.exports = {

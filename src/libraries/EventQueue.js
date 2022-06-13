@@ -35,7 +35,7 @@ const serverCommandList = [
 
 let queue = [];
 
-function register(commandId, connectorId, messageId, packetData, callback) {
+function register({ commandId, connectorId, messageId, packetData, callback }) {
   const commandName = EventCommandNameEnum[commandId];
 
   Logger.info(

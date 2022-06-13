@@ -22,7 +22,13 @@ function sendStopTransactionHandler(messageId, connectorId) {
     messageId: messageId,
   };
 
-  return EventQueue.register(event, connectorId, data, sendStopTransaction);
+  return EventQueue.register({
+    commandId: event,
+    connectorId: connectorId,
+    messageId: data,
+    packetData: messageId,
+    callback: sendStopTransaction,
+  });
 }
 
 module.exports = {

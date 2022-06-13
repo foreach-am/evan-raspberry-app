@@ -19,7 +19,13 @@ function sendStatusNotificationHandler(messageId, connectorId, status, error) {
     error: error,
   };
 
-  return EventQueue.register(event, connectorId, data, sendStatusNotification);
+  return EventQueue.register({
+    commandId: event,
+    connectorId: connectorId,
+    messageId: messageId,
+    packetData: data,
+    callback: sendStatusNotification,
+  });
 }
 
 const ErrorCodeEnum = {
