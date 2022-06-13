@@ -86,7 +86,7 @@ function startServer() {
   connectWithUri();
 }
 
-function send(sendType, commandId, messageId, commandArgs) {
+function send({ sendType, commandId, messageId, commandArgs }) {
   const commandName = EventCommandNameEnum[commandId];
 
   if (!connection.connected) {

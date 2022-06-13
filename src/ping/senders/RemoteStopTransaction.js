@@ -5,7 +5,7 @@ const state = require('../../state');
 const event = EventCommandEnum.EVENT_REMOTE_STOP_TRANSACTION;
 
 function sendRemoteStopTransaction({ messageId, connectorId, transactionId }) {
-  WebSocketSender.send(SendTypeEnum.Response, event, {
+  WebSocketSender.send(SendTypeEnum.Response, event, messageId, {
     transactionId: transactionId,
   });
 }
