@@ -189,6 +189,12 @@ WebSocket.onConnect(async function (connection) {
     }
 
     const parsedSocketData = DataParser.parse(message.utf8Data);
+    console.log('------------------------------------------------');
+    console.log('------------------------------------------------');
+    console.log('------------------------------------------------');
+    console.log('------------------------------------------------');
+    console.log('------------------------------------------------');
+    console.log('parsedSocketData', parsedSocketData);
 
     const isServerCommand =
       parsedSocketData.messageType === MessageTypeEnum.TYPE_REQUEST &&
