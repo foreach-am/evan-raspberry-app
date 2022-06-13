@@ -1,6 +1,6 @@
 const { Gpio } = require('onoff');
 const { CoreEvent, CoreEventEnum } = require('./CoreEvent');
-const { ComPort } = require('./libraries/ComPort');
+const { ComPort } = require('./ComPort');
 
 const buttonReset = new Gpio(5, 'out', 'rising', {
   debounceTimeout: 500,
