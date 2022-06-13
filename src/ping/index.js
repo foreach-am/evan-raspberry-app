@@ -9,4 +9,5 @@ module.exports = {
   StatusNotification: require('./senders/StatusNotification'),
   RemoteStartTransaction: require('./senders/RemoteStartTransaction'),
   RemoteStopTransaction: require('./senders/RemoteStopTransaction'),
+  Reset: require('./senders/Reset'),
 };

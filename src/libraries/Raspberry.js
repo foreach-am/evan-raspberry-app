@@ -1,13 +1,23 @@
 const { Gpio } = require('onoff');
 const { CoreEvent, CoreEventEnum } = require('./CoreEvent');
+const { ComPort } = require('./libraries/ComPort');
 
 const buttonReset = new Gpio(5, 'out', 'rising', {
   debounceTimeout: 500,
 });
 
-function restart() {
+function restartSoftware() {
   return new Promise(function (resolve, reject) {
+    // @TODO: restart software.
+  });
+}
+
+function restartHardware() {
+  return new Promise(function (resolve, reject) {
+    ComPort.emit(`EXTLEDON:`);
     buttonReset.write(1, function (error, value) {
+      ComPort.emit(`EXTLEDOFF:`);
+
       if (error) {
         return reject(error);
       }
@@ -30,6 +40,7 @@ CoreEvent.register(CoreEventEnum.EVENT_USIGNINT, function () {
 
 module.exports = {
   Raspberry: {
-    restart,
+    restartSoftware: restartSoftware,
+    restartHardware: restartHardware,
   },
 };

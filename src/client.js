@@ -1,20 +1,19 @@
+const { DataParser, MessageTypeEnum } = require('./libraries/DataParser');
 const { Logger } = require('./libraries/Logger');
 const { WebSocket } = require('./libraries/WebSocket');
 const { ComPort } = require('./libraries/ComPort');
 const { EventQueue, EventCommandEnum, EventCommandNameEnum } = require('./libraries/EventQueue');
 const { PlugStateEnum } = require('./libraries/PlugState');
-// const { Raspberry } = require('./libraries/Raspberry');
 
 const uuid = require('./utils/uuid');
 
 const state = require('./state');
 const ping = require('./ping');
+const execute = require('./execute');
 
 let comportHandlerId = -1;
 
-ComPort.emit(`EXTLEDON:`);
-
-function logParseData() {
+function logparsedSocketData() {
   const append = function (key, value, char = ' ') {
     logResult[key.padStart(22, char)] = value;
   };
@@ -56,7 +55,7 @@ function logParseData() {
 WebSocket.onConnect(async function (connection) {
   async function onDataReady() {
     if (process.env.NODE_ENV !== 'production') {
-      logParseData();
+      logparsedSocketData();
     }
 
     //connection.emit(data);
@@ -189,116 +188,36 @@ WebSocket.onConnect(async function (connection) {
       return;
     }
 
-    const parseData = JSON.parse(message.utf8Data);
-    Logger.json('WebSocket data received:', parseData);
+    const parsedSocketData = DataParser.parse(message.utf8Data);
 
-    const receivedMessageId = parseData[1];
-    const isServerCommand = EventQueue.isServerCommand(parseData[2]);
+    const isServerCommand =
+      parsedSocketData.messageType === MessageTypeEnum.TYPE_REQUEST &&
+      EventQueue.isServerCommand(parsedSocketData.body);
 
     if (isServerCommand) {
-      // state.receiveServerId = parseData[1];
-      const serverAskedConnectorId = parseData[3].connectorId;
-      const serverAskedTransactionId = parseData[3].transactionId;
-
-      switch (parseData[2]) {
+      switch (parsedSocketData.body) {
         case EventCommandNameEnum[EventCommandEnum.EVENT_RESERVE_NOW]:
-          state.state.plugs.reservationId[serverAskedConnectorId] = parseData[3].reservationId;
-          state.state.plugs.expiryDate[serverAskedConnectorId] = parseData[3].expiryDate;
-
-          ping.ReserveNow.execute(receivedMessageId, connectorId, ping.ReserveNow.StatusEnum.ACCEPTED);
-
-          ping.StatusNotification.execute(
-            uuid(),
-            connectorId,
-            ping.StatusNotification.StatusEnum.RESERVED,
-            ping.StatusNotification.ErrorCodeEnum.NO_ERROR
-          );
+          await execute.PingReserveNow(parsedSocketData);
           break;
 
         case EventCommandNameEnum[EventCommandEnum.EVENT_CHANGE_AVAILABILITY]:
-          if (parseData[3].connectorId > state.maxPlugsCount) {
-            ping.ChangeAvailability.execute(
-              receivedMessageId,
-              connectorId,
-              ping.ChangeAvailability.StatusEnum.REJECTED
-            );
-          } else {
-            const possibleStates = Object.values(ping.ChangeAvailability.PointStateEnum);
-            if (!possibleStates.includes(parseData[3].type)) {
-              ping.ChangeAvailability.execute(
-                receivedMessageId,
-                connectorId,
-                ping.ChangeAvailability.StatusEnum.REJECTED
-              );
-            } else {
-              ping.ChangeAvailability.execute(
-                receivedMessageId,
-                connectorId,
-                ping.ChangeAvailability.StatusEnum.SCHEDULED
-              );
-
-              if (parseData[3].type === ping.ChangeAvailability.PointStateEnum.INOPERATIVE) {
-                ComPort.emit(`PLUG${parseData[3].connectorId}OFF:`);
-
-                ping.StatusNotification.execute(
-                  uuid(),
-                  connectorId,
-                  ping.StatusNotification.StatusEnum.UNAVAILABLE,
-                  ping.StatusNotification.ErrorCodeEnum.NO_ERROR
-                );
-              } else if (parseData[3].type === ping.ChangeAvailability.PointStateEnum.OPERATIVE) {
-                ComPort.emit(`PLUG${parseData[3].connectorId}ONN:`);
-
-                ping.StatusNotification.execute(
-                  uuid(),
-                  connectorId,
-                  ping.StatusNotification.StatusEnum.AVAILABLE,
-                  ping.StatusNotification.ErrorCodeEnum.NO_ERROR
-                );
-              }
-            }
-          }
+          await execute.ChangeConnectorAvailability(parsedSocketData);
           break;
 
         case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_START_TRANSACTION]:
-          state.state.plugs.idTags[serverAskedConnectorId] = parseData[3].idTag;
-          // state.state.plugs.transactionId[serverAskedConnectorId] =
-          //   parseData[3].chargingProfile.transactionId;
-
-          ping.RemoteStartTransaction.execute(
-            receivedMessageId,
-            serverAskedConnectorId,
-            ping.RemoteStartTransaction.StatusEnum.ACCEPTED
-          );
-
-          await ping.StartTransaction.execute(uuid(), serverAskedConnectorId);
-
-          ping.StatusNotification.execute(
-            serverAskedConnectorId,
-            ping.StatusNotification.StatusEnum.CHARGING,
-            ping.StatusNotification.ErrorCodeEnum.NO_ERROR
-          );
-
-          ComPort.emit(`PROXIRE${serverAskedConnectorId}:`);
+          await execute.PingAndStartTransaction(parsedSocketData);
           break;
 
         case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_STOP_TRANSACTION]:
-          const stopConnectorId = Object.keys(state.state.plugs.transactionId).find((itemConnectorId) => {
-            return state.state.plugs.transactionId[itemConnectorId] === serverAskedTransactionId;
-          });
+          await execute.PingAndStopTransaction(parsedSocketData);
+          break;
 
-          if (stopConnectorId) {
-            await ping.RemoteStopTransaction.execute(
-              receivedMessageId,
-              serverAskedConnectorId,
-              serverAskedTransactionId
-            );
-            ComPort.emit(`PLUG${stopConnectorId}STOP:`);
-          }
+        case EventCommandNameEnum[EventCommandEnum.EVENT_RESET]:
+          await execute.PingAndReset(parsedSocketData);
           break;
       }
     } else {
-      const foundMessage = EventQueue.getByMessageId(receivedMessageId);
+      const foundMessage = EventQueue.getByMessageId(parsedSocketData.messageId);
       if (!foundMessage) {
         return;
       }
@@ -307,35 +226,23 @@ WebSocket.onConnect(async function (connection) {
 
       switch (commandId) {
         case EventCommandEnum.EVENT_BOOT_NOTIFICATION:
-          const bootNotificationResult = parseData[2];
-          state.state.common.bootNotStatus = bootNotificationResult.status;
-          state.state.common.bootNotCurrentTime = bootNotificationResult.currentTime;
-          state.state.common.bootNotRequireTime = Number(bootNotificationResult.interval);
-
-          await ping.HearthBeat.execute(uuid());
+          await execute.BootNotification(parsedSocketData);
           break;
 
         case EventCommandEnum.EVENT_HEARTH_BEAT:
+          await execute.HearthBeat(parsedSocketData);
           break;
 
         case EventCommandEnum.EVENT_AUTHORIZE:
-          const authorizeResult = parseData[2];
-          state.state.plugs.idTagInfoStatus[connectorId] =
-            (authorizeResult.idTagInfo || {}).status || 'Accepted';
-          state.switch.plugs.chargingPeriodAuth[connectorId] = true;
+          await execute.UpdateFlagAuthorize(parsedSocketData, connectorId);
           break;
 
         case EventCommandEnum.EVENT_TRANSACTION_START:
-          const startTransactionResult = parseData[2];
-          state.state.plugs.transactionId[connectorId] = startTransactionResult.transactionId;
-          state.state.plugs.startTransactionStatus[connectorId] =
-            (startTransactionResult.idTagInfo || {}).status || 'Accepted';
+          await execute.UpdateFlagStartTransaction(parsedSocketData, connectorId);
           break;
 
         case EventCommandEnum.EVENT_TRANSACTION_STOP:
-          const stopTransactionResult = parseData[2];
-          state.state.plugs.stopTransactionStatus[connectorId] =
-            (stopTransactionResult.idTagInfo || {}).status || 'Accepted';
+          await execute.UpdateFlagStopTransaction(parsedSocketData, connectorId);
           break;
       }
 

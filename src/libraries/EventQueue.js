@@ -11,6 +11,7 @@ const EventCommandEnum = {
   EVENT_STATUS_NOTIFICATION: 8,
   EVENT_REMOTE_START_TRANSACTION: 9,
   EVENT_REMOTE_STOP_TRANSACTION: 10,
+  EVENT_RESET: 11,
 };
 
 const EventCommandNameEnum = {
@@ -24,6 +25,7 @@ const EventCommandNameEnum = {
   [EventCommandEnum.EVENT_STATUS_NOTIFICATION]: 'StatusNotification',
   [EventCommandEnum.EVENT_REMOTE_START_TRANSACTION]: 'RemoteStartTransaction',
   [EventCommandEnum.EVENT_REMOTE_STOP_TRANSACTION]: 'RemoteStopTransaction',
+  [EventCommandEnum.EVENT_RESET]: 'Reset',
 };
 
 const QueueStatusEnum = {
@@ -37,6 +39,7 @@ const serverCommandList = [
   EventCommandNameEnum[EventCommandEnum.EVENT_CHANGE_AVAILABILITY],
   EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_START_TRANSACTION],
   EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_STOP_TRANSACTION],
+  EventCommandNameEnum[EventCommandEnum.EVENT_RESET],
 ];
 
 let queue = [];
