@@ -302,7 +302,7 @@ WebSocket.onConnect(async function (connection) {
         return;
       }
 
-      const { commandId, connectorId } = foundMessage;
+      const { commandId, connectorId, messageId } = foundMessage;
 
       switch (commandId) {
         case EventCommandEnum.EVENT_BOOT_NOTIFICATION:
@@ -338,7 +338,8 @@ WebSocket.onConnect(async function (connection) {
           break;
       }
 
-      EventQueue.cleanup();
+      // EventQueue.cleanup();
+      EventQueue.makeFinished(messageId);
     }
   });
 
