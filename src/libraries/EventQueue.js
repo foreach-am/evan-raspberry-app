@@ -62,17 +62,21 @@ function register({ commandId, connectorId, messageId, packetData, callback }) {
 }
 
 function getByMessageId(messageId) {
-  const queueItem = queue.find(function (queue) {
-    return queue.messageId == messageId;
+  const foundQueueItem = queue.find(function (queueItem) {
+    if (!queueItem) {
+      return false;
+    }
+
+    return queueItem.messageId === messageId;
   });
 
-  if (!queueItem) {
+  if (!foundQueueItem) {
     return null;
   }
 
   return {
-    commandId: queueItem.commandId,
-    connectorId: queueItem.connectorId,
+    commandId: foundQueueItem.commandId,
+    connectorId: foundQueueItem.connectorId,
   };
 }
 
