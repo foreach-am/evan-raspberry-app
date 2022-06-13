@@ -28,7 +28,7 @@ serialPort.on('data', function (data) {
 
   const indexStart = inputData.indexOf('*');
   const indexEnd = inputData.indexOf('@');
-  if (-1 == indexStart || -1 == indexEnd) {
+  if (-1 === indexStart || -1 === indexEnd) {
     return;
   }
 
@@ -77,45 +77,45 @@ function InputDataParser(text) {
           result += text[k];
         }
 
-        if (iteration == 1) {
+        if (iteration === 1) {
           state.statistic.plugs.pilotFeedBack[1] = Number(result) / 100;
-        } else if (iteration == 2) {
+        } else if (iteration === 2) {
           state.statistic.plugs.pilotFeedBack[2] = Number(result) / 100;
-        } else if (iteration == 3) {
+        } else if (iteration === 3) {
           state.statistic.plugs.currentMeasureA[1] = Number(result) / 100;
-        } else if (iteration == 4) {
+        } else if (iteration === 4) {
           state.statistic.plugs.currentMeasureA[2] = Number(result) / 100;
-        } else if (iteration == 5) {
+        } else if (iteration === 5) {
           state.statistic.plugs.currentMeasureB[2] = Number(result) / 100;
-        } else if (iteration == 6) {
+        } else if (iteration === 6) {
           state.statistic.plugs.currentMeasureC[2] = Number(result) / 100;
-        } else if (iteration == 7) {
+        } else if (iteration === 7) {
           state.statistic.common.highVoltageMeasure = Number(result) / 100;
-        } else if (iteration == 8) {
+        } else if (iteration === 8) {
           state.statistic.plugs.plugState[1] = Number(result);
-        } else if (iteration == 9) {
+        } else if (iteration === 9) {
           state.statistic.plugs.plugState[2] = Number(result);
-        } else if (iteration == 10) {
+        } else if (iteration === 10) {
           state.statistic.common.highVoltError = Number(result);
-        } else if (iteration == 11) {
+        } else if (iteration === 11) {
           state.statistic.common.lowVoltError = Number(result);
-        } else if (iteration == 12) {
+        } else if (iteration === 12) {
           state.statistic.plugs.powerKwh[1] = Number(result) / 100;
-        } else if (iteration == 13) {
+        } else if (iteration === 13) {
           state.statistic.plugs.powerKwh[2] = Number(result) / 100;
-        } else if (iteration == 14) {
+        } else if (iteration === 14) {
           state.statistic.plugs.overCurrentError[1] = Number(result);
-        } else if (iteration == 15) {
+        } else if (iteration === 15) {
           state.statistic.plugs.overCurrentError[2] = Number(result);
-        } else if (iteration == 16) {
+        } else if (iteration === 16) {
           //state.statistic.plugs.pilotFeedBack[1] =  result
-        } else if (iteration == 17) {
+        } else if (iteration === 17) {
           //state.statistic.plugs.pilotFeedBack[2] = result
-        } else if (iteration == 18) {
+        } else if (iteration === 18) {
           state.statistic.common.temperature = Number(result) / 100;
-        } else if (iteration == 19) {
+        } else if (iteration === 19) {
           state.statistic.common.counter = Number(result);
-        } else if (iteration == 20) {
+        } else if (iteration === 20) {
           //state.statistic.plugs.pilotFeedBack[2] = result
         }
 
@@ -138,7 +138,7 @@ function registerCallback(callback) {
 }
 
 function unregisterCallback(index) {
-  if (typeof onReadyCallbacks[index] == 'function') {
+  if (typeof onReadyCallbacks[index] === 'function') {
     delete onReadyCallbacks[index];
   }
 }

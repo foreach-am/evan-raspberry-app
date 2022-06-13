@@ -86,7 +86,7 @@ function makeFinished(messageId) {
       return false;
     }
 
-    return queueItem.messageId == messageId;
+    return queueItem.messageId === messageId;
   });
 
   if (queueItemIndex === -1) {
@@ -97,7 +97,7 @@ function makeFinished(messageId) {
 }
 
 function process() {
-  if (queue.length == 0) {
+  if (queue.length === 0) {
     return Promise.resolve();
   }
 
@@ -159,10 +159,6 @@ function isServerCommand(command) {
 
   return serverCommandList.includes(command);
 }
-
-// setInterval(function () {
-//   print();
-// }, 2000);
 
 module.exports = {
   EventCommandEnum: EventCommandEnum,
