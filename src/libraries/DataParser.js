@@ -12,11 +12,11 @@ function parse(message) {
   if (parsedSocketData.length === 4) {
     result.command = parsedSocketData[2];
     result.body = parsedSocketData[3];
-    result.messageType = MessageTypeEnum.TYPE_RESPONSE;
+    result.messageType = MessageTypeEnum.TYPE_REQUEST;
   } else {
     result.command = undefined;
     result.body = parsedSocketData[2];
-    result.messageType = MessageTypeEnum.TYPE_REQUEST;
+    result.messageType = MessageTypeEnum.TYPE_RESPONSE;
   }
 
   return result;
