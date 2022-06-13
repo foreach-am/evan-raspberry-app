@@ -1,7 +1,7 @@
 const { Logger } = require('../libraries/Logger');
 
 function parse(message) {
-  const parsedSocketData = JSON.parse(message.utf8Data);
+  const parsedSocketData = JSON.parse(message);
   Logger.json('WebSocket data received:', parsedSocketData);
 
   const result = {
