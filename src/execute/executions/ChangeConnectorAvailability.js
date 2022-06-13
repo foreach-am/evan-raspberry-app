@@ -3,11 +3,9 @@ const ping = require('../../ping');
 const uuid = require('../../utils/uuid');
 
 module.exports = async function (parsedSocketData) {
-  const receivedMessageId = parsedSocketData.messageId;
-
   if (parsedSocketData.body.connectorId > state.maxPlugsCount) {
     await ping.ChangeAvailability.execute(
-      receivedMessageId,
+      parsedSocketData.messageId,
       connectorId,
       ping.ChangeAvailability.StatusEnum.REJECTED
     );
@@ -18,7 +16,7 @@ module.exports = async function (parsedSocketData) {
   const possibleStates = Object.values(ping.ChangeAvailability.PointStateEnum);
   if (!possibleStates.includes(parsedSocketData.body.type)) {
     await ping.ChangeAvailability.execute(
-      receivedMessageId,
+      parsedSocketData.messageId,
       connectorId,
       ping.ChangeAvailability.StatusEnum.REJECTED
     );
@@ -27,7 +25,7 @@ module.exports = async function (parsedSocketData) {
   }
 
   await ping.ChangeAvailability.execute(
-    receivedMessageId,
+    parsedSocketData.messageId,
     connectorId,
     ping.ChangeAvailability.StatusEnum.SCHEDULED
   );

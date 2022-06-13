@@ -2,18 +2,19 @@ const state = require('../../state');
 const ping = require('../../ping');
 const uuid = require('../../utils/uuid');
 
-module.exports = function (parsedSocketData) {
-  const receivedMessageId = parsedSocketData[1];
-  const serverAskedConnectorId = parsedSocketData[3].connectorId;
+module.exports = async function (parsedSocketData) {
+  state.state.plugs.reservationId[parsedSocketData.body.connectorId] = parsedSocketData.body.reservationId;
+  state.state.plugs.expiryDate[parsedSocketData.body.connectorId] = parsedSocketData.body.expiryDate;
 
-  state.state.plugs.reservationId[serverAskedConnectorId] = parsedSocketData[3].reservationId;
-  state.state.plugs.expiryDate[serverAskedConnectorId] = parsedSocketData[3].expiryDate;
-
-  await ping.ReserveNow.execute(receivedMessageId, serverAskedConnectorId, ping.ReserveNow.StatusEnum.ACCEPTED);
+  await ping.ReserveNow.execute(
+    parsedSocketData.messageId,
+    parsedSocketData.body.connectorId,
+    ping.ReserveNow.StatusEnum.ACCEPTED
+  );
 
   await ping.StatusNotification.execute(
     uuid(),
-    serverAskedConnectorId,
+    parsedSocketData.body.connectorId,
     ping.StatusNotification.StatusEnum.RESERVED,
     ping.StatusNotification.ErrorCodeEnum.NO_ERROR
   );

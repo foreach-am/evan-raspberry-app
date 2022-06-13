@@ -4,7 +4,7 @@ const state = require('../../state');
 const ping = require('../../ping');
 const uuid = require('../../utils/uuid');
 
-module.exports = function (parsedSocketData) {
+module.exports = async function (parsedSocketData) {
   state.state.plugs.idTags[parsedSocketData.body.connectorId] = parsedSocketData.body.idTag;
   // state.state.plugs.transactionId[parsedSocketData.body.connectorId] =
   //   parsedSocketData.body.chargingProfile.transactionId;

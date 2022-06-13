@@ -1,9 +1,9 @@
 const { Raspberry } = require('../../libraries/Raspberry');
 
-module.exports = function (parsedSocketData) {
+module.exports = async function (parsedSocketData) {
   let canReset = true;
   for (let connectorId = 1; connectorId <= state.maxPlugsCount; ++connectorId) {
-    if (state.statistic.plugs.plugState[itemConnectorId] !== PlugStateEnum.UNPLUGGED) {
+    if (state.statistic.plugs.plugState[connectorId] !== PlugStateEnum.UNPLUGGED) {
       canReset = false;
       break;
     }
@@ -11,19 +11,19 @@ module.exports = function (parsedSocketData) {
 
   let restartTriggered = false;
   if (canReset) {
-    if (parsedSocketData[3].type === ping.Reset.ResetTypeEnum.TYPE_HARDWARE) {
+    if (parsedSocketData.body.type === ping.Reset.ResetTypeEnum.TYPE_HARDWARE) {
       await ping.Reset.execute(
         parsedSocketData.messageId,
-        parsedSocketData.connectorId,
+        parsedSocketData.body.connectorId,
         ping.Reset.ResetStatusEnum.STATUS_ACCEPTED
       );
 
       restartTriggered = true;
       await Raspberry.restartHardware();
-    } else if (parsedSocketData[3].type === ping.Reset.ResetTypeEnum.TYPE_SOFTWARE) {
+    } else if (parsedSocketData.body.type === ping.Reset.ResetTypeEnum.TYPE_SOFTWARE) {
       await ping.Reset.execute(
         parsedSocketData.messageId,
-        parsedSocketData.connectorId,
+        parsedSocketData.body.connectorId,
         ping.Reset.ResetStatusEnum.STATUS_ACCEPTED
       );
 
@@ -33,6 +33,10 @@ module.exports = function (parsedSocketData) {
   }
 
   if (!restartTriggered) {
-    await ping.Reset.execute(parsedSocketData.messageId, parsedSocketData.connectorId, ping.Reset.ResetStatusEnum.STATUS_REJECTED);
+    await ping.Reset.execute(
+      parsedSocketData.messageId,
+      parsedSocketData.body.connectorId,
+      ping.Reset.ResetStatusEnum.STATUS_REJECTED
+    );
   }
 };
