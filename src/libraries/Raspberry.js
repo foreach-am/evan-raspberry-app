@@ -15,10 +15,7 @@ function restartSoftware() {
 
 function restartHardware() {
   return new Promise(function (resolve, reject) {
-    ComPort.emit(`EXTLEDON:`);
     buttonReset.write(1, function (error, value) {
-      ComPort.emit(`EXTLEDOFF:`);
-
       if (error) {
         return reject(error);
       }
@@ -28,13 +25,10 @@ function restartHardware() {
           return reject(error);
         }
 
-        restartSoftware()
-          .then(function () {
-            resolve();
-          })
-          .catch(function (error) {
-            reject(error);
-          });
+        ComPort.emit('STARTRUN:');
+        ComPort.emit(`EXTLEDON:`);
+
+        resolve();
       });
     });
   });
