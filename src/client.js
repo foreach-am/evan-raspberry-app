@@ -1,7 +1,7 @@
 const { DataParser, MessageTypeEnum } = require('./libraries/DataParser');
 const { Logger } = require('./libraries/Logger');
 const { WebSocket } = require('./libraries/WebSocket');
-const { ComPort } = require('./libraries/ComPort');
+const { ComPort, Emitter } = require('./libraries/ComPort');
 const { EventQueue, EventCommandEnum, EventCommandNameEnum } = require('./libraries/EventQueue');
 const { PlugStateEnum } = require('./libraries/PlugState');
 
@@ -131,7 +131,7 @@ WebSocket.onConnect(async function (connection) {
         state.state.plugs.startTransactionStatus[connectorId] = '';
         state.switch.plugs.chargeStart[connectorId] = false;
 
-        ComPort.emit(`PROXIRE${connectorId}:`);
+        Emitter.proxier(connectorId);
       }
 
       if (

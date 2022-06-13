@@ -1,4 +1,4 @@
-const { ComPort } = require('../../libraries/ComPort');
+const { ComPort, Emitter } = require('../../libraries/ComPort');
 
 const state = require('../../state');
 const ping = require('../../ping');
@@ -15,6 +15,6 @@ module.exports = async function (parsedSocketData) {
       parsedSocketData.body.transactionId
     );
 
-    ComPort.emit(`PLUG${stopConnectorId}STOP:`);
+    Emitter.plugStop(stopConnectorId);
   }
 };

@@ -1,3 +1,5 @@
+const { Emitter } = require('../../libraries/ComPort');
+
 const state = require('../../state');
 const ping = require('../../ping');
 const uuid = require('../../utils/uuid');
@@ -31,7 +33,7 @@ module.exports = async function (parsedSocketData) {
   );
 
   if (parsedSocketData.body.type === ping.ChangeAvailability.PointStateEnum.INOPERATIVE) {
-    ComPort.emit(`PLUG${parsedSocketData.body.connectorId}OFF:`);
+    Emitter.plugOff(parsedSocketData.body.connectorId);
 
     await ping.StatusNotification.execute(
       uuid(),
@@ -40,7 +42,7 @@ module.exports = async function (parsedSocketData) {
       ping.StatusNotification.ErrorCodeEnum.NO_ERROR
     );
   } else if (parsedSocketData.body.type === ping.ChangeAvailability.PointStateEnum.OPERATIVE) {
-    ComPort.emit(`PLUG${parsedSocketData.body.connectorId}ONN:`);
+    Emitter.plugOn(parsedSocketData.body.connectorId);
 
     await ping.StatusNotification.execute(
       uuid(),

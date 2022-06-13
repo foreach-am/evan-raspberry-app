@@ -12,10 +12,10 @@ let onReadyCallbacks = {};
 
 let intervalRunning = false;
 
-serialPort.write('STARTRUN:');
+emitStartRun();
 serialPort.on('open', function () {
   intervalRunning = true;
-  emitMessage('MASTERREAD:');
+  emitMasterRead();
 });
 
 serialPort.on('close', function () {
@@ -50,7 +50,7 @@ serialPort.on('data', function (data) {
   }
 
   setTimeout(function () {
-    emitMessage('MASTERREAD:');
+    emitMasterRead();
   }, 2000);
 });
 
@@ -143,10 +143,52 @@ function unregisterCallback(index) {
   }
 }
 
+function emitMasterRead() {
+  emitMessage('MASTERREAD:');
+}
+
+function emitStartRun() {
+  serialPort.write('STARTRUN:');
+}
+
+function emitExtLedOn() {
+  serialPort.write('EXTLEDON:');
+}
+
+function emitExtLedOff() {
+  serialPort.write('EXTLEDOFF:');
+}
+
+function emitProxier(connectorId) {
+  serialPort.write(`PROXIRE${connectorId}:`);
+}
+
+function emitPlugStop(connectorId) {
+  serialPort.write(`PLUG${connectorId}STOP:`);
+}
+
+function emitPlugOn(connectorId) {
+  serialPort.write(`PLUG${connectorId}ONN:`);
+}
+
+function emitPlugOff(connectorId) {
+  serialPort.write(`PLUG${connectorId}OFF:`);
+}
+
 module.exports = {
   ComPort: {
     emit: emitMessage,
     register: registerCallback,
     unregister: unregisterCallback,
+  },
+  Emitter: {
+    masterRead: emitMasterRead,
+    startRun: emitStartRun,
+    extLedOn: emitExtLedOn,
+    extLedOff: emitExtLedOff,
+    proxier: emitProxier,
+    plugStop: emitPlugStop,
+    plugOn: emitPlugOn,
+    plugOff: emitPlugOff,
   },
 };

@@ -1,4 +1,4 @@
-const { ComPort } = require('../../libraries/ComPort');
+const { Emitter } = require('../../libraries/ComPort');
 
 const state = require('../../state');
 const ping = require('../../ping');
@@ -23,5 +23,5 @@ module.exports = async function (parsedSocketData) {
     ping.StatusNotification.ErrorCodeEnum.NO_ERROR
   );
 
-  ComPort.emit(`PROXIRE${parsedSocketData.body.connectorId}:`);
+  Emitter.proxier(parsedSocketData.body.connectorId);
 };
