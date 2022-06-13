@@ -16,7 +16,7 @@ function tryFillEvent(eventName) {
 function register(eventName, callback) {
   tryFillEvent(eventName);
 
-  const callbackId = ++events[eventName];
+  const callbackId = ++events[eventName].currentIndex;
   events[eventName].callbacks[callbackId] = callback;
 
   return {
