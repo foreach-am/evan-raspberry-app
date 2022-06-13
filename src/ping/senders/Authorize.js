@@ -4,8 +4,13 @@ const { WebSocketSender, SendTypeEnum } = require('../../libraries/WebSocket');
 const event = EventCommandEnum.EVENT_AUTHORIZE;
 
 function sendAuthorize({ idTag, messageId }) {
-  WebSocketSender.send(SendTypeEnum.Request, event, messageId, {
-    idTag: idTag,
+  WebSocketSender.send({
+    sendType: SendTypeEnum.Request,
+    commandId: event,
+    messageId: messageId,
+    commandArgs: {
+      idTag: idTag,
+    },
   });
 }
 

@@ -4,16 +4,21 @@ const { WebSocketSender, SendTypeEnum } = require('../../libraries/WebSocket');
 const event = EventCommandEnum.EVENT_BOOT_NOTIFICATION;
 
 function sendBootNotification({ messageId }) {
-  WebSocketSender.send(SendTypeEnum.Request, event, messageId, {
-    chargePointVendor: 'EVAN',
-    chargePointModel: 'EVAN F7/22',
-    chargePointSerialNumber: 'Evan.000.00.1',
-    chargeBoxSerialNumber: 'Evan.000.00.1',
-    firmwareVersion: 'TriplePhase_5.0',
-    iccid: '',
-    imsi: '',
-    meterType: 'CUR_SENSE_40A',
-    meterSerialNumber: 'Evan.000.00.1',
+  WebSocketSender.send({
+    sendType: SendTypeEnum.Request,
+    commandId: event,
+    messageId: messageId,
+    commandArgs: {
+      chargePointVendor: 'EVAN',
+      chargePointModel: 'EVAN F7/22',
+      chargePointSerialNumber: 'Evan.000.00.1',
+      chargeBoxSerialNumber: 'Evan.000.00.1',
+      firmwareVersion: 'TriplePhase_5.0',
+      iccid: '',
+      imsi: '',
+      meterType: 'CUR_SENSE_40A',
+      meterSerialNumber: 'Evan.000.00.1',
+    },
   });
 }
 

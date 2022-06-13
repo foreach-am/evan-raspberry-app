@@ -4,10 +4,15 @@ const { WebSocketSender, SendTypeEnum } = require('../../libraries/WebSocket');
 const event = EventCommandEnum.EVENT_STATUS_NOTIFICATION;
 
 function sendStatusNotification({ messageId, connectorId, status, error }) {
-  WebSocketSender.send(SendTypeEnum.Request, event, messageId, {
-    connectorId: connectorId,
-    errorCode: error,
-    status: status,
+  WebSocketSender.send({
+    sendType: SendTypeEnum.Request,
+    commandId: event,
+    messageId: messageId,
+    commandArgs: {
+      connectorId: connectorId,
+      errorCode: error,
+      status: status,
+    },
   });
 }
 

@@ -4,8 +4,13 @@ const { WebSocketSender, SendTypeEnum } = require('../../libraries/WebSocket');
 const event = EventCommandEnum.EVENT_RESERVE_NOW;
 
 function sendReserveNow({ messageId, connectorId, status }) {
-  WebSocketSender.send(SendTypeEnum.Response, event, messageId, {
-    status: status,
+  WebSocketSender.send({
+    sendType: SendTypeEnum.Response,
+    commandId: event,
+    messageId: messageId,
+    commandArgs: {
+      status: status,
+    },
   });
 }
 
