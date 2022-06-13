@@ -6,7 +6,7 @@ const buttonReset = new Gpio(5, 'out', 'rising', {
 });
 
 function restart() {
-  return new new Promise(function (resolve, reject) {
+  return new Promise(function (resolve, reject) {
     buttonReset.write(1, function (error, value) {
       if (error) {
         return reject(error);
@@ -20,7 +20,7 @@ function restart() {
         resolve();
       });
     });
-  })();
+  });
 }
 
 CoreEvent.register(CoreEventEnum.EVENT_USIGNINT, function () {

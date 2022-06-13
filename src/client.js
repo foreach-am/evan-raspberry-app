@@ -12,6 +12,8 @@ const ping = require('./ping');
 
 let comportHandlerId = -1;
 
+ComPort.emit(`EXTLEDON:`);
+
 function logParseData() {
   const append = function (key, value, char = ' ') {
     logResult[key.padStart(22, char)] = value;

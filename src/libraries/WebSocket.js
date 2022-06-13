@@ -19,7 +19,7 @@ const reconnectionDelays = {
 let reconnectionAttempts = 0;
 
 function connectWithUri() {
-  client.abort();
+  // client.abort();
 
   const uri = url.parse(process.env.WEBSOCKET_URL);
   client.connect(uri, ['ocpp1.6']);
