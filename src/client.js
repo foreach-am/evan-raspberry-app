@@ -296,7 +296,6 @@ WebSocket.onConnect(async function (connection) {
           break;
       }
     } else {
-      // const foundMessage = EventQueue.getPreviousIds();
       const foundMessage = EventQueue.getByMessageId(receivedMessageId);
       if (!foundMessage) {
         return;
@@ -338,7 +337,6 @@ WebSocket.onConnect(async function (connection) {
           break;
       }
 
-      // EventQueue.cleanup();
       EventQueue.makeFinished(messageId);
     }
   });

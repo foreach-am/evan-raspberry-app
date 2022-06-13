@@ -26,6 +26,12 @@ const EventCommandNameEnum = {
   [EventCommandEnum.EVENT_REMOTE_STOP_TRANSACTION]: 'RemoteStopTransaction',
 };
 
+const QueueStatusEnum = {
+  STATUS_INITIALIZED: 'initialized',
+  STATUS_RUNNING: 'running',
+  STATUS_FINISHED: 'finished',
+};
+
 const serverCommandList = [
   EventCommandNameEnum[EventCommandEnum.EVENT_RESERVE_NOW],
   EventCommandNameEnum[EventCommandEnum.EVENT_CHANGE_AVAILABILITY],
@@ -49,33 +55,11 @@ function register({ commandId, connectorId, messageId, packetData, callback }) {
     messageId: messageId,
     packetData: packetData,
     callback: callback,
-    status: 'queue',
+    status: QueueStatusEnum.STATUS_INITIALIZED,
   });
 
   return process();
 }
-
-// function getPreviousIds() {
-//   const foundQueueItem = queue.find(function (queueItem) {
-//     return queueItem.status == 'finished';
-//   });
-
-//   if (!foundQueueItem) {
-//     return null;
-//   }
-
-//   return {
-//     commandId: foundQueueItem.commandId,
-//     connectorId: foundQueueItem.connectorId,
-//     messageId: foundQueueItem.messageId,
-//   };
-// }
-
-// function cleanup() {
-//   queue = queue.filter(function (queueItem) {
-//     return queueItem.status != 'finished';
-//   });
-// }
 
 function getByMessageId(messageId) {
   const queueItem = queue.find(function (queue) {
@@ -105,7 +89,6 @@ function makeFinished(messageId) {
     return;
   }
 
-  // queue[queueItemIndex].status = 'finished';
   queue[queueItemIndex] = undefined;
 }
 
@@ -114,15 +97,19 @@ function process() {
     return Promise.resolve();
   }
 
-  const queueItem = queue.find(function (queue) {
-    return queue.status != 'finished';
+  const foundQueueItem = queue.find(function (queueItem) {
+    if (!queueItem) {
+      return false;
+    }
+
+    return queueItem.status !== QueueStatusEnum.STATUS_FINISHED;
   });
 
-  if (!queueItem) {
+  if (!foundQueueItem) {
     return Promise.resolve();
   }
 
-  if (queueItem.status == 'running') {
+  if (foundQueueItem.status === QueueStatusEnum.STATUS_RUNNING) {
     return new Promise(function (resolve) {
       setTimeout(function () {
         resolve(process());
@@ -130,15 +117,15 @@ function process() {
     });
   }
 
-  queueItem.status = 'running';
+  foundQueueItem.status = QueueStatusEnum.STATUS_RUNNING;
 
   const onFinish = function (resolve) {
-    queueItem.status = 'finished';
+    foundQueueItem.status = QueueStatusEnum.STATUS_FINISHED;
     resolve();
   };
 
   return new Promise(function (resolve) {
-    const result = queueItem.callback(queueItem.packetData);
+    const result = foundQueueItem.callback(foundQueueItem.packetData);
     if (result instanceof Promise) {
       result.finally(function () {
         onFinish(resolve);
@@ -171,15 +158,13 @@ function isServerCommand(command) {
 
 // setInterval(function () {
 //   print();
-// }, 200);
+// }, 2000);
 
 module.exports = {
   EventCommandEnum: EventCommandEnum,
   EventCommandNameEnum: EventCommandNameEnum,
   EventQueue: {
     register: register,
-    // getPreviousIds: getPreviousIds,
-    // cleanup: cleanup,
     getByMessageId: getByMessageId,
     makeFinished: makeFinished,
     process: process,
