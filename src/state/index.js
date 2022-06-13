@@ -1,6 +1,6 @@
 const state = {
   // constants
-  maxPlugsCount: 1, // @TODO: must be loaded from board.
+  maxPlugsCount: 2, // @TODO: must be loaded from board.
 
   // switch flags
   switch: {
