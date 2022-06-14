@@ -8,7 +8,7 @@ module.exports = async function (parsedServerData, connectorId) {
 
   console.log('---------------------------------------');
   console.log('---------------------------------------');
-  console.log(state.state.plugs);
+  console.log(state.state.plugs.idTags, state.state.plugs.transactionId, connectorId);
 
   await ping.StopTransaction.execute(
     uuid(),
