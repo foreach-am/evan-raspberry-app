@@ -1,3 +1,4 @@
+const uuid = require('../../utils/uuid');
 const ping = require('../../ping');
 
 module.exports = async function (connectorId) {
