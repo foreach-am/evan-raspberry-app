@@ -110,7 +110,7 @@ function send({ sendType, commandId, messageId, commandArgs }) {
 
   const dataToSenJson = JSON.stringify(dataToSend);
   Logger.json(` Calling ${commandName} with arguments:`, commandArgs);
-  // Logger.json(` Sending ${commandName} with json data:`, dataToSend);
+  Logger.json(` Sending ${commandName} with json data:`, dataToSenJson);
 
   connection.sendUTF(dataToSenJson);
 }

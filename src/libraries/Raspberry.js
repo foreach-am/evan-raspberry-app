@@ -1,6 +1,6 @@
 const { Gpio } = require('onoff');
 const { CoreEvent, CoreEventEnum } = require('./CoreEvent');
-const { ComPort, Emitter } = require('./ComPort');
+const { ComEmitter } = require('./ComEmitter');
 
 const buttonReset = new Gpio(5, 'out', 'rising', {
   debounceTimeout: 500,
@@ -15,7 +15,7 @@ function restartSoftware() {
 
 function restartHardware() {
   return new Promise(function (resolve, reject) {
-    // Emitter.extLedOff();
+    // ComEmitter.extLedOff();
 
     buttonReset.write(1, function (error, value) {
       if (error) {
@@ -27,8 +27,8 @@ function restartHardware() {
           return reject(error);
         }
 
-        Emitter.startRun();
-        Emitter.extLedOn();
+        ComEmitter.startRun();
+        ComEmitter.extLedOn();
 
         resolve();
       });

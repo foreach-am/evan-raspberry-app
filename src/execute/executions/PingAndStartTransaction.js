@@ -4,6 +4,7 @@ const ping = require('../../ping');
 
 module.exports = async function (connectorId) {
   await ping.StatusNotification.execute(
+    uuid(),
     connectorId,
     ping.StatusNotification.StatusEnum.CHARGING,
     ping.StatusNotification.ErrorCodeEnum.NO_ERROR

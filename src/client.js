@@ -95,7 +95,7 @@ WebSocket.onConnect(async function (connection) {
         state.state.plugs.startTransactionStatus[connectorId] = '';
         state.switch.plugs.chargeStart[connectorId] = false;
 
-        Emitter.proxire(connectorId);
+        ComEmitter.proxire(connectorId);
       }
 
       if (state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CHARGING) {
