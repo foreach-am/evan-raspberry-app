@@ -202,11 +202,11 @@ WebSocket.onConnect(async function (connection) {
           break;
 
         case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_START_TRANSACTION]:
-          await execute.PingAndStartTransaction(parsedSocketData);
+          await execute.PingAndRemoteStartTransaction(parsedSocketData);
           break;
 
         case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_STOP_TRANSACTION]:
-          await execute.PingAndStopTransaction(parsedSocketData);
+          await execute.PingAndRemoteStopTransaction(parsedSocketData);
           break;
 
         case EventCommandNameEnum[EventCommandEnum.EVENT_RESET]:

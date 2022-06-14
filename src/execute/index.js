@@ -1,8 +1,8 @@
 module.exports = {
   PingReserveNow: require('./executions/PingReserveNow'),
   ChangeConnectorAvailability: require('./executions/ChangeConnectorAvailability'),
-  PingAndStartTransaction: require('./executions/PingAndStartTransaction'),
-  PingAndStopTransaction: require('./executions/PingAndStopTransaction'),
+  PingAndRemoteStartTransaction: require('./executions/PingAndRemoteStartTransaction'),
+  PingAndRemoteStopTransaction: require('./executions/PingAndRemoteStopTransaction'),
   PingAndReset: require('./executions/PingAndReset'),
   BootNotification: require('./executions/BootNotification'),
   HearthBeat: require('./executions/HearthBeat'),
