@@ -1,3 +1,3 @@
-module.exports = async function (parsedSocketData) {
+module.exports = async function (parsedServerData) {
   // no action required
 };

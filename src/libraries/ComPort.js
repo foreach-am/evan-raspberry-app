@@ -12,10 +12,8 @@ let onReadyCallbacks = {};
 
 let intervalRunning = false;
 
-emitStartRun();
 serialPort.on('open', function () {
   intervalRunning = true;
-  emitMasterRead();
 });
 
 serialPort.on('close', function () {
@@ -24,6 +22,10 @@ serialPort.on('close', function () {
 
 let inputData = '';
 serialPort.on('data', function (data) {
+  if (!intervalRunning) {
+    return;
+  }
+
   inputData += data;
 
   const indexStart = inputData.indexOf('*');
@@ -44,14 +46,6 @@ serialPort.on('data', function (data) {
       callback();
     }
   });
-
-  if (!intervalRunning) {
-    return;
-  }
-
-  setTimeout(function () {
-    emitMasterRead();
-  }, 2000);
 });
 
 serialPort.on('error', function (error) {
@@ -128,8 +122,17 @@ function InputDataParser(text) {
 }
 
 function emitMessage(message, callback) {
-  Logger.info('Emitting SerialPort message:', message);
-  serialPort.write(message, callback);
+  return new Promise(function (resolve, reject) {
+    Logger.info('Emitting SerialPort message:', message);
+
+    serialPort.write(message, function (error, ...result) {
+      if (error) {
+        return reject(error);
+      }
+
+      return resolve(...result);
+    });
+  });
 }
 
 function registerCallback(callback) {
@@ -143,36 +146,8 @@ function unregisterCallback(index) {
   }
 }
 
-function emitMasterRead() {
-  emitMessage('MASTERREAD:');
-}
-
-function emitStartRun() {
-  serialPort.write('STARTRUN:');
-}
-
-function emitExtLedOn() {
-  serialPort.write('EXTLEDON:');
-}
-
-function emitExtLedOff() {
-  serialPort.write('EXTLEDOFF:');
-}
-
-function emitProxier(connectorId) {
-  serialPort.write(`PROXIRE${connectorId}:`);
-}
-
-function emitPlugStop(connectorId) {
-  serialPort.write(`PLUG${connectorId}STOP:`);
-}
-
-function emitPlugOn(connectorId) {
-  serialPort.write(`PLUG${connectorId}ONN:`);
-}
-
-function emitPlugOff(connectorId) {
-  serialPort.write(`PLUG${connectorId}OFF:`);
+function onSerialPort(event, callback) {
+  serialPort.on(event, callback);
 }
 
 module.exports = {
@@ -180,15 +155,6 @@ module.exports = {
     emit: emitMessage,
     register: registerCallback,
     unregister: unregisterCallback,
-  },
-  Emitter: {
-    masterRead: emitMasterRead,
-    startRun: emitStartRun,
-    extLedOn: emitExtLedOn,
-    extLedOff: emitExtLedOff,
-    proxier: emitProxier,
-    plugStop: emitPlugStop,
-    plugOn: emitPlugOn,
-    plugOff: emitPlugOff,
+    onSerialPort: onSerialPort,
   },
 };

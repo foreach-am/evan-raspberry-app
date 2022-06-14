@@ -1,8 +1,8 @@
 const state = require('../../state');
 
-module.exports = async function (parsedSocketData, connectorId) {
-  state.state.plugs.transactionId[connectorId] = parsedSocketData.body.transactionId;
+module.exports = async function (parsedServerData, connectorId) {
+  state.state.plugs.transactionId[connectorId] = parsedServerData.body.transactionId;
 
   state.state.plugs.startTransactionStatus[connectorId] =
-    (parsedSocketData.body.idTagInfo || {}).status || 'Accepted';
+    (parsedServerData.body.idTagInfo || {}).status || 'Accepted';
 };

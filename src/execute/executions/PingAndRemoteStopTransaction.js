@@ -1,12 +1,12 @@
 const { Logger } = require('../../libraries/Logger');
-const { Emitter } = require('../../libraries/ComPort');
+const { ComEmitter } = require('../../libraries/ComEmitter');
 
 const state = require('../../state');
 const ping = require('../../ping');
 
-module.exports = async function (parsedSocketData) {
+module.exports = async function (parsedServerData) {
   const stopConnectorId = Object.keys(state.state.plugs.transactionId).find(function (itemConnectorId) {
-    return state.state.plugs.transactionId[itemConnectorId] === parsedSocketData.body.transactionId;
+    return state.state.plugs.transactionId[itemConnectorId] === parsedServerData.body.transactionId;
   });
 
   if (!stopConnectorId) {
@@ -15,10 +15,10 @@ module.exports = async function (parsedSocketData) {
   }
 
   await ping.RemoteStopTransaction.execute(
-    parsedSocketData.messageId,
-    parsedSocketData.body.connectorId,
+    parsedServerData.messageId,
+    parsedServerData.body.connectorId,
     ping.RemoteStopTransaction.StatusEnum.ACCEPTED
   );
 
-  Emitter.plugStop(stopConnectorId);
+  ComEmitter.plugStop(stopConnectorId);
 };

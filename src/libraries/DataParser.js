@@ -1,21 +1,21 @@
 const { Logger } = require('../libraries/Logger');
 
 function parse(message) {
-  const parsedSocketData = JSON.parse(message);
-  Logger.json('WebSocket data received:', parsedSocketData);
+  const parsedServerData = JSON.parse(message);
+  Logger.json('WebSocket data received:', parsedServerData);
 
   const result = {
-    requester: parsedSocketData[0],
-    messageId: parsedSocketData[1],
+    requester: parsedServerData[0],
+    messageId: parsedServerData[1],
   };
 
-  if (parsedSocketData.length === 4) {
-    result.command = parsedSocketData[2];
-    result.body = parsedSocketData[3];
+  if (parsedServerData.length === 4) {
+    result.command = parsedServerData[2];
+    result.body = parsedServerData[3];
     result.messageType = MessageTypeEnum.TYPE_REQUEST;
   } else {
     result.command = undefined;
-    result.body = parsedSocketData[2];
+    result.body = parsedServerData[2];
     result.messageType = MessageTypeEnum.TYPE_RESPONSE;
   }
 

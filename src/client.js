@@ -1,61 +1,28 @@
 const { DataParser, MessageTypeEnum } = require('./libraries/DataParser');
 const { Logger } = require('./libraries/Logger');
 const { WebSocket } = require('./libraries/WebSocket');
-const { ComPort, Emitter } = require('./libraries/ComPort');
+const { ComPort } = require('./libraries/ComPort');
+const { ComEmitter } = require('./libraries/ComEmitter');
 const { EventQueue, EventCommandEnum, EventCommandNameEnum } = require('./libraries/EventQueue');
 const { PlugStateEnum } = require('./libraries/PlugState');
 
 const uuid = require('./utils/uuid');
-
+const logParsedServerData = require('./helpers/logParsedServerData');
 const state = require('./state');
 const ping = require('./ping');
 const execute = require('./execute');
 
 let comportHandlerId = -1;
 
-function logparsedSocketData() {
-  const append = function (key, value, char = ' ') {
-    logResult[key.padStart(22, char)] = value;
-  };
-
-  const logResult = {};
-  const { temperature, highVoltError, lowVoltError, highVoltageMeasure } = state.statistic.common;
-
-  const {
-    pilotFeedBack,
-    currentMeasureA,
-    currentMeasureB,
-    currentMeasureC,
-    overCurrentError,
-    plugState,
-    powerKwh,
-  } = state.statistic.plugs;
-
-  append(` DEVICE LOG`, '----------------------------------------', '-');
-  append('Device Temperature', `${temperature} C`);
-  append('HighVoltError', `${highVoltError} State`);
-  append('LowVoltError', `${lowVoltError} State`);
-  append('HighVoltageMeasure', `${highVoltageMeasure} V.AC`);
-
-  for (let i = 1; i <= state.maxPlugsCount; ++i) {
-    append(` PLUG LOG [${i}]`, '----------------------------------------', '-');
-    append(`PlugState[${i}]`, `${plugState[i]} State`);
-    append(`PowerKwH[${i}]`, `${powerKwh[i]} KW/h`);
-    append(`FeedBackVolt[${i}]`, `${pilotFeedBack[i]} V`);
-    append(`CurrentMeasureA[${i}]`, `${currentMeasureA[i]} A`);
-    append(`CurrentMeasureB[${i}]`, `${currentMeasureB[i]} A`);
-    append(`CurrentMeasureC[${i}]`, `${currentMeasureC[i]} A`);
-    append(`OverCurrentError[${i}]`, `${overCurrentError[i]} State`);
-  }
-
-  Logger.divider();
-  Logger.json('Device measurement data is ready:', logResult);
-}
+ComEmitter.startRun();
+ComPort.onSerialPort('open', function () {
+  ComEmitter.masterRead();
+});
 
 WebSocket.onConnect(async function (connection) {
   async function onDataReady() {
     if (process.env.NODE_ENV !== 'production') {
-      logparsedSocketData();
+      logParsedServerData();
     }
 
     //connection.emit(data);
@@ -131,7 +98,7 @@ WebSocket.onConnect(async function (connection) {
         state.state.plugs.startTransactionStatus[connectorId] = '';
         state.switch.plugs.chargeStart[connectorId] = false;
 
-        Emitter.proxier(connectorId);
+        Emitter.proxire(connectorId);
       }
 
       if (state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CHARGING) {
@@ -169,41 +136,45 @@ WebSocket.onConnect(async function (connection) {
         );
       }
     }
+
+    setTimeout(function () {
+      ComEmitter.masterRead();
+    }, 2000);
   }
 
   WebSocket.register('message', async function (message) {
     if (message.type !== 'utf8') {
-      Logger.warning('Not UTF-8 data was received:', message);
+      Logger.warning('Non UTF-8 data was received:', message);
       return;
     }
 
-    const parsedSocketData = DataParser.parse(message.utf8Data);
+    const parsedServerData = DataParser.parse(message.utf8Data);
 
-    const isServerCommand = parsedSocketData.messageType === MessageTypeEnum.TYPE_REQUEST;
+    const isServerCommand = parsedServerData.messageType === MessageTypeEnum.TYPE_REQUEST;
     if (isServerCommand) {
-      switch (parsedSocketData.command) {
+      switch (parsedServerData.command) {
         case EventCommandNameEnum[EventCommandEnum.EVENT_RESERVE_NOW]:
-          await execute.PingReserveNow(parsedSocketData);
+          await execute.PingReserveNow(parsedServerData);
           break;
 
         case EventCommandNameEnum[EventCommandEnum.EVENT_CHANGE_AVAILABILITY]:
-          await execute.ChangeConnectorAvailability(parsedSocketData);
+          await execute.ChangeConnectorAvailability(parsedServerData);
           break;
 
         case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_START_TRANSACTION]:
-          await execute.PingAndRemoteStartTransaction(parsedSocketData);
+          await execute.PingAndRemoteStartTransaction(parsedServerData);
           break;
 
         case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_STOP_TRANSACTION]:
-          await execute.PingAndRemoteStopTransaction(parsedSocketData);
+          await execute.PingAndRemoteStopTransaction(parsedServerData);
           break;
 
         case EventCommandNameEnum[EventCommandEnum.EVENT_RESET]:
-          await execute.PingAndReset(parsedSocketData);
+          await execute.PingAndReset(parsedServerData);
           break;
       }
     } else {
-      const foundMessage = EventQueue.getByMessageId(parsedSocketData.messageId);
+      const foundMessage = EventQueue.getByMessageId(parsedServerData.messageId);
       if (!foundMessage) {
         return;
       }
@@ -212,23 +183,23 @@ WebSocket.onConnect(async function (connection) {
 
       switch (commandId) {
         case EventCommandEnum.EVENT_BOOT_NOTIFICATION:
-          await execute.BootNotification(parsedSocketData);
+          await execute.BootNotification(parsedServerData);
           break;
 
         case EventCommandEnum.EVENT_HEARTH_BEAT:
-          await execute.HearthBeat(parsedSocketData);
+          await execute.HearthBeat(parsedServerData);
           break;
 
         case EventCommandEnum.EVENT_AUTHORIZE:
-          await execute.UpdateFlagAuthorize(parsedSocketData, connectorId);
+          await execute.UpdateFlagAuthorize(parsedServerData, connectorId);
           break;
 
         case EventCommandEnum.EVENT_START_TRANSACTION:
-          await execute.UpdateFlagStartTransaction(parsedSocketData, connectorId);
+          await execute.UpdateFlagStartTransaction(parsedServerData, connectorId);
           break;
 
         case EventCommandEnum.EVENT_STOP_TRANSACTION:
-          await execute.UpdateFlagStopTransaction(parsedSocketData, connectorId);
+          await execute.UpdateFlagStopTransaction(parsedServerData, connectorId);
           break;
       }
 
