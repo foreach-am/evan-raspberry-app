@@ -1,5 +1,6 @@
 const { ComEmitter } = require('../../libraries/ComEmitter');
 
+const uuid = require('../../utils/uuid');
 const state = require('../../state');
 const ping = require('../../ping');
 
@@ -15,6 +16,7 @@ module.exports = async function (parsedServerData) {
   );
 
   await ping.StatusNotification.execute(
+    uuid(),
     parsedServerData.body.connectorId,
     ping.StatusNotification.StatusEnum.PREPARING,
     ping.StatusNotification.ErrorCodeEnum.NO_ERROR
