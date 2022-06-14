@@ -1,3 +1,6 @@
+const { Logger } = require('../libraries/Logger');
+const state = require('../state');
+
 module.exports = function () {
   const logResult = {};
   const append = function (key, value, char = ' ') {
