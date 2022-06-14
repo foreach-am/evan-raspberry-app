@@ -199,7 +199,7 @@ WebSocket.onConnect(async function (connection) {
           break;
 
         case EventCommandEnum.EVENT_STOP_TRANSACTION:
-          await execute.UpdateFlagStopTransaction(parsedServerData, connectorId);
+          // await execute.UpdateFlagStopTransaction(parsedServerData, connectorId);
           break;
       }
 
