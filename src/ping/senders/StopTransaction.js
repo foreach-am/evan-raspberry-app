@@ -1,30 +1,28 @@
 const { EventQueue, EventCommandEnum } = require('../../libraries/EventQueue');
 const { WebSocketSender, SendTypeEnum } = require('../../libraries/WebSocket');
-const state = require('../../state');
 
 const event = EventCommandEnum.EVENT_STOP_TRANSACTION;
 
-function sendStopTransaction({ messageId, connectorId }) {
+function sendStopTransaction({ messageId, connectorId, idTag, transactionId }) {
   WebSocketSender.send({
     sendType: SendTypeEnum.Request,
     commandId: event,
     messageId: messageId,
     commandArgs: {
-      transactionId: state.state.plugs.transactionId[connectorId],
-      idTag: state.state.plugs.idTags[connectorId],
+      transactionId: transactionId,
+      idTag: idTag,
       timestamp: new Date().toISOString(),
       meterStop: 20, // connector power KW/h
     },
   });
-
-  state.state.plugs.transactionId[connectorId] = '';
-  state.state.plugs.idTags[connectorId] = '';
 }
 
-function sendStopTransactionHandler(messageId, connectorId) {
+function sendStopTransactionHandler(messageId, connectorId, idTag, transactionId) {
   const data = {
     connectorId: connectorId,
     messageId: messageId,
+    idTag: idTag,
+    transactionId: transactionId,
   };
 
   return EventQueue.register({

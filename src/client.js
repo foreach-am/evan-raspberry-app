@@ -107,8 +107,15 @@ WebSocket.onConnect(async function (connection) {
         state.switch.plugs.stopTransaction[connectorId]
       ) {
         state.switch.plugs.stopTransaction[connectorId] = false;
-        await ping.StopTransaction.execute(uuid(), connectorId);
+        await ping.StopTransaction.execute(
+          uuid(),
+          connectorId,
+          state.state.plugs.idTags[connectorId],
+          state.state.plugs.transactionId[connectorId]
+        );
 
+        state.state.plugs.transactionId[connectorId] = '';
+        state.state.plugs.idTags[connectorId] = '';
         state.state.plugs.idTagInfoStatus[connectorId] = '';
 
         ping.StatusNotification.execute(
