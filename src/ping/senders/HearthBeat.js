@@ -1,5 +1,6 @@
 const { EventQueue, EventCommandEnum } = require('../../libraries/EventQueue');
 const { WebSocketSender, SendTypeEnum } = require('../../libraries/WebSocket');
+const uuid = require('../../utils/uuid');
 
 const state = require('../../state');
 
@@ -14,7 +15,7 @@ function sendHeartBeat({ messageId }) {
   });
 
   setTimeout(function () {
-    sendHeartBeatHandler();
+    sendHeartBeatHandler(uuid());
   }, state.state.common.bootNotRequireTime * 1000);
 }
 

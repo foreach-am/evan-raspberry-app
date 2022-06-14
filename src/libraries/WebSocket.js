@@ -96,11 +96,16 @@ function send({ sendType, commandId, messageId, commandArgs }) {
     );
   }
 
-  const dataToSend = JSON.stringify([sendType, messageId, commandName, commandArgs]);
+  const dataToSend =
+    sendType !== SendTypeEnum.Request
+      ? [sendType, messageId, commandName, commandArgs]
+      : [sendType, messageId, commandArgs];
+
+  const dataToSenJson = JSON.stringify(dataToSend);
   Logger.json(` Calling ${commandName} with arguments:`, commandArgs);
   // Logger.json(` Sending ${commandName} with json data:`, dataToSend);
 
-  connection.sendUTF(dataToSend);
+  connection.sendUTF(dataToSenJson);
 }
 
 const SendTypeEnum = {
