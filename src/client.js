@@ -134,19 +134,8 @@ WebSocket.onConnect(async function (connection) {
         Emitter.proxier(connectorId);
       }
 
-      if (
-        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CHARGING &&
-        state.switch.plugs.chargingPeriodAuth[connectorId]
-      ) {
-        state.switch.plugs.chargingPeriodAuth[connectorId] = false;
-        // await ping.Authorize.execute(uuid(), connectorId, state.state.plugs.idTags[connectorId]);
-
-        // ping.StatusNotification.execute(
-        //   uuid(),
-        //   connectorId,
-        //   ping.StatusNotification.StatusEnum.CHARGING,
-        //   ping.StatusNotification.ErrorCodeEnum.NO_ERROR
-        // );
+      if (state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CHARGING) {
+        await execute.PingAndStartTransaction(connectorId);
       }
 
       if (
@@ -234,11 +223,11 @@ WebSocket.onConnect(async function (connection) {
           await execute.UpdateFlagAuthorize(parsedSocketData, connectorId);
           break;
 
-        case EventCommandEnum.EVENT_TRANSACTION_START:
+        case EventCommandEnum.EVENT_START_TRANSACTION:
           await execute.UpdateFlagStartTransaction(parsedSocketData, connectorId);
           break;
 
-        case EventCommandEnum.EVENT_TRANSACTION_STOP:
+        case EventCommandEnum.EVENT_STOP_TRANSACTION:
           await execute.UpdateFlagStopTransaction(parsedSocketData, connectorId);
           break;
       }

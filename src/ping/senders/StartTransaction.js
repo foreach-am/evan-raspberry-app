@@ -2,7 +2,7 @@ const { EventQueue, EventCommandEnum } = require('../../libraries/EventQueue');
 const { WebSocketSender, SendTypeEnum } = require('../../libraries/WebSocket');
 const state = require('../../state');
 
-const event = EventCommandEnum.EVENT_TRANSACTION_START;
+const event = EventCommandEnum.EVENT_START_TRANSACTION;
 
 function sendStartTransaction({ messageId, connectorId, idTag }) {
   WebSocketSender.send({
