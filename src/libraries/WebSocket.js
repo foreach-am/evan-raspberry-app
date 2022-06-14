@@ -29,8 +29,10 @@ function connectWithUri() {
 }
 
 function reconnect() {
-  connection.close();
-  connection = null;
+  if (connection) {
+    connection.close();
+    connection = null;
+  }
 
   client.abort();
 
