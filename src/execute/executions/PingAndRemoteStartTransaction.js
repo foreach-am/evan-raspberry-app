@@ -20,13 +20,5 @@ module.exports = async function (parsedServerData) {
     ping.StatusNotification.ErrorCodeEnum.NO_ERROR
   );
 
-  // await ping.StartTransaction.execute(uuid(), parsedServerData.body.connectorId);
-
-  // await ping.StatusNotification.execute(
-  //   parsedServerData.body.connectorId,
-  //   ping.StatusNotification.StatusEnum.CHARGING,
-  //   ping.StatusNotification.ErrorCodeEnum.NO_ERROR
-  // );
-
   ComEmitter.proxire(parsedServerData.body.connectorId);
 };

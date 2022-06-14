@@ -69,13 +69,6 @@ WebSocket.onConnect(async function (connection) {
       ) {
         state.switch.plugs.sendAuth[connectorId] = false;
         // await ping.Authorize.execute(uuid(), connectorId, state.state.plugs.idTags[connectorId]);
-
-        ping.StatusNotification.execute(
-          uuid(),
-          connectorId,
-          ping.StatusNotification.StatusEnum.PREPARING,
-          ping.StatusNotification.ErrorCodeEnum.NO_ERROR
-        );
       }
 
       if (
