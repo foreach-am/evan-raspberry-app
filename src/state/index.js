@@ -32,6 +32,8 @@ const state = {
       stopTransactionStatus: {},
       reservationId: {},
       expiryDate: {},
+
+      previousPlugState: {},
     },
   },
 

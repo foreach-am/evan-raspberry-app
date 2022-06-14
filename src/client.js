@@ -31,7 +31,12 @@ WebSocket.onConnect(async function (connection) {
 
     //connection.emit(data);
     for (let connectorId = 1; connectorId <= state.maxPlugsCount; ++connectorId) {
-      if (state.statistic.plugs.plugState[connectorId] === PlugStateEnum.UNPLUGGED) {
+      if (
+        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.UNPLUGGED &&
+        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
+      ) {
+        state.statistic.plugs.plugState[connectorId] = state.state.plugs.previousPlugState[connectorId];
+
         state.switch.plugs.startTransaction[connectorId] = true;
         state.switch.plugs.stopTransaction[connectorId] = true;
         state.switch.plugs.sendAuth[connectorId] = true;
@@ -53,9 +58,10 @@ WebSocket.onConnect(async function (connection) {
 
       if (
         state.statistic.plugs.plugState[connectorId] === PlugStateEnum.PLUG_SOFT_LOCK &&
-        !state.switch.plugs.softLock[connectorId]
+        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
       ) {
-        state.switch.plugs.softLock[connectorId] = true;
+        state.statistic.plugs.plugState[connectorId] = state.state.plugs.previousPlugState[connectorId];
+
         await ping.ChangeAvailability.execute(
           uuid(),
           connectorId,
@@ -65,8 +71,10 @@ WebSocket.onConnect(async function (connection) {
 
       if (
         state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CAR_DETECTED &&
-        state.switch.plugs.sendAuth[connectorId]
+        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
       ) {
+        state.statistic.plugs.plugState[connectorId] = state.state.plugs.previousPlugState[connectorId];
+
         state.switch.plugs.sendAuth[connectorId] = false;
         // await ping.Authorize.execute(uuid(), connectorId, state.state.plugs.idTags[connectorId]);
       }
@@ -98,14 +106,19 @@ WebSocket.onConnect(async function (connection) {
         ComEmitter.proxire(connectorId);
       }
 
-      if (state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CHARGING) {
+      if (
+        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CHARGING &&
+        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
+      ) {
+        state.statistic.plugs.plugState[connectorId] = state.state.plugs.previousPlugState[connectorId];
         await execute.PingAndStartTransaction(connectorId);
       }
 
       if (
         state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CHARGE_COMPLETED &&
-        state.switch.plugs.stopTransaction[connectorId]
+        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
       ) {
+        state.statistic.plugs.plugState[connectorId] = state.state.plugs.previousPlugState[connectorId];
         state.switch.plugs.stopTransaction[connectorId] = false;
         // await ping.StopTransaction.execute(
         //   uuid(),
