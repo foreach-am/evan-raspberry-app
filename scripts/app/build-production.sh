@@ -80,7 +80,7 @@ if [[ "$(command -v pm2)" != "" ]]; then
     "Failed to update PM2 in-memory cache."
 
   if [[ "$(command -v systemctl)" != "" ]]; then
-    SYSTEM_EXISTS="$(systemctl --all --type service | grep 'pm2-root.service' | wc -l)"
+    SYSTEM_EXISTS="$(systemctl --all --type service | grep 'pm2-$USER.service' | wc -l)"
     if [[ "$SYSTEM_EXISTS" == "0" ]]; then
       NODE_INSTALL_DIR="$(npm config get prefix)"
       NODE_PATH_BON="$NODE_INSTALL_DIR/bin"
@@ -89,8 +89,8 @@ if [[ "$(command -v pm2)" != "" ]]; then
       execute_action "$BUILD_LOG_FILE" \
         "\
           sudo env PATH=\$PATH:$NODE_BON_PATH $NODE_PATH_LIB/pm2/bin/pm2 startup systemd -u $USER --hp $HOME && \
-          sudo systemctl enable pm2-root.service && \
-          sudo systemctl start pm2-root.service\
+          sudo systemctl enable pm2-$USER.service && \
+          sudo systemctl start pm2-$USER.service\
         " \
         "Creating PM2 system service." \
         "Failed to create PM2 system service."
