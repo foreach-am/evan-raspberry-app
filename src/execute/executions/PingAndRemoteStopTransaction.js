@@ -10,8 +10,12 @@ module.exports = async function (parsedServerData) {
     return state.state.plugs.transactionId[itemConnectorId] === parsedServerData.body.transactionId;
   });
 
+  console.log(stopConnectorId, state.state.plugs.transactionId, parsedServerData.body.transactionId);
+
   if (!stopConnectorId) {
-    Logger.warning(`There is no any transaction fund with server provided id: ${stopConnectorId}`);
+    Logger.warning(
+      `There is no any transaction fund with server provided ID: ${parsedServerData.body.transactionId}`
+    );
     return;
   }
 

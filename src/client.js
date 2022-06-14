@@ -25,9 +25,9 @@ setTimeout(function () {
 
 WebSocket.onConnect(async function (connection) {
   async function onDataReady() {
-    if (process.env.NODE_ENV !== 'production') {
-      logParsedServerData();
-    }
+    // if (process.env.NODE_ENV !== 'production') {
+    //   logParsedServerData();
+    // }
 
     //connection.emit(data);
     for (let connectorId = 1; connectorId <= state.maxPlugsCount; ++connectorId) {
@@ -41,7 +41,7 @@ WebSocket.onConnect(async function (connection) {
         state.switch.plugs.stopTransaction[connectorId] = true;
         state.switch.plugs.sendAuth[connectorId] = true;
         state.switch.plugs.chargeStart[connectorId] = true;
-        state.state.plugs.transactionId[connectorId] = 0;
+        state.state.plugs.transactionId[connectorId] = '';
 
         if (state.switch.plugs.sendStatusNotification[connectorId]) {
           state.switch.plugs.sendStatusNotification[connectorId] = false;
@@ -121,17 +121,6 @@ WebSocket.onConnect(async function (connection) {
         state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
         state.switch.plugs.stopTransaction[connectorId] = false;
         await execute.UpdateFlagStopTransaction({}, connectorId);
-
-        state.state.plugs.transactionId[connectorId] = '';
-        state.state.plugs.idTags[connectorId] = '';
-        state.state.plugs.idTagInfoStatus[connectorId] = '';
-
-        ping.StatusNotification.execute(
-          uuid(),
-          connectorId,
-          ping.StatusNotification.StatusEnum.AVAILABLE,
-          ping.StatusNotification.ErrorCodeEnum.NO_ERROR
-        );
       }
 
       if (state.state.plugs.stopTransactionStatus[connectorId] === 'Accepted') {
