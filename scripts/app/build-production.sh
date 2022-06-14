@@ -82,11 +82,15 @@ if [[ "$(command -v pm2)" != "" ]]; then
   if [[ "$(command -v systemctl)" != "" ]]; then
     SYSTEM_EXISTS="$(systemctl --all --type service | grep 'pm2-root.service' | wc -l)"
     if [[ "$SYSTEM_EXISTS" == "0" ]]; then
+      NODE_INSTALL_DIR="$(npm config get prefix)"
+      NODE_PATH_BON="$NODE_INSTALL_DIR/bin"
+      NODE_PATH_LIB="$NODE_INSTALL_DIR/lib/node_modules"
+
       execute_action "$BUILD_LOG_FILE" \
         "\
-          pm2 startup systemd && \
-          systemctl enable pm2-root.service && \
-          systemctl start pm2-root.service\
+          sudo env PATH=\$PATH:$NODE_BON_PATH $NODE_PATH_LIB/pm2/bin/pm2 startup systemd -u $USER --hp $HOME && \
+          sudo systemctl enable pm2-root.service && \
+          sudo systemctl start pm2-root.service\
         " \
         "Creating PM2 system service." \
         "Failed to create PM2 system service."
