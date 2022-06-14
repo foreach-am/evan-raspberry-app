@@ -1,7 +1,14 @@
 module.exports = {
   sourceType: 'unambiguous',
   compact: false,
-  presets: ['@babel/preset-env'],
+  presets: [
+    '@babel/preset-env',
+    {
+      targets: {
+        node: 'current',
+      },
+    },
+  ],
   comments: false,
   targets: {
     chrome: '58',
