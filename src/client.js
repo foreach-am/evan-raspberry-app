@@ -78,14 +78,14 @@ WebSocket.onConnect(async function (connection) {
         state.state.plugs.idTagInfoStatus[connectorId] = '';
         state.switch.plugs.startTransaction[connectorId] = false;
 
-        await ping.StartTransaction.execute(uuid(), connectorId);
+        // await ping.StartTransaction.execute(uuid(), connectorId);
 
-        ping.StatusNotification.execute(
-          uuid(),
-          connectorId,
-          ping.StatusNotification.StatusEnum.CHARGING,
-          ping.StatusNotification.ErrorCodeEnum.NO_ERROR
-        );
+        // ping.StatusNotification.execute(
+        //   uuid(),
+        //   connectorId,
+        //   ping.StatusNotification.StatusEnum.CHARGING,
+        //   ping.StatusNotification.ErrorCodeEnum.NO_ERROR
+        // );
       }
 
       if (
@@ -107,12 +107,12 @@ WebSocket.onConnect(async function (connection) {
         state.switch.plugs.stopTransaction[connectorId]
       ) {
         state.switch.plugs.stopTransaction[connectorId] = false;
-        await ping.StopTransaction.execute(
-          uuid(),
-          connectorId,
-          state.state.plugs.idTags[connectorId],
-          state.state.plugs.transactionId[connectorId]
-        );
+        // await ping.StopTransaction.execute(
+        //   uuid(),
+        //   connectorId,
+        //   state.state.plugs.idTags[connectorId],
+        //   state.state.plugs.transactionId[connectorId]
+        // );
 
         state.state.plugs.transactionId[connectorId] = '';
         state.state.plugs.idTags[connectorId] = '';
