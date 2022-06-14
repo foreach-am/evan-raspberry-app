@@ -28,8 +28,8 @@ function sendStopTransactionHandler(messageId, connectorId, idTag, transactionId
   return EventQueue.register({
     commandId: event,
     connectorId: connectorId,
-    messageId: data,
-    packetData: messageId,
+    messageId: messageId,
+    packetData: data,
     callback: sendStopTransaction,
   });
 }
