@@ -5,6 +5,9 @@ const { Logger } = require('./Logger');
 
 const client = new WebSocketClient();
 
+/**
+ * @type {import('websocket').connection}
+ */
 let connection = null;
 function getConnection() {
   return connection;
@@ -26,7 +29,9 @@ function connectWithUri() {
 }
 
 function reconnect() {
+  connection.close();
   connection = null;
+
   client.abort();
 
   setTimeout(function () {
@@ -54,6 +59,16 @@ function onConnect(callback) {
   client.on('connect', function (currentConnection) {
     connection = currentConnection;
 
+    connection.on('error', function (error) {
+      Logger.error('WebSocket connection error:', error);
+      reconnect();
+    });
+
+    connection.on('close', function (code, description) {
+      Logger.error(`WebSocket connection closed [${code}]: ${description}`);
+      reconnect();
+    });
+
     Logger.info('WebSocket connected successfully.');
   });
 
@@ -66,18 +81,8 @@ function onConnectionFailure(callback) {
 
 function register(event, callback) {
   if (!connection) {
-    return Logger.warn('WebSocket is not connected right now.');
+    return Logger.warn('WebSocket is not connected to server right now.');
   }
-
-  connection.on('error', function (error) {
-    Logger.error('WebSocket connection error:', error);
-    reconnect();
-  });
-
-  connection.on('close', function () {
-    Logger.error('WebSocket connection closed.');
-    reconnect();
-  });
 
   connection.on(event, callback);
 }
@@ -89,7 +94,7 @@ function startServer() {
 function send({ sendType, commandId, messageId, commandArgs }) {
   const commandName = EventCommandNameEnum[commandId];
 
-  if (!connection.connected) {
+  if (!connection || !connection.connected) {
     return Logger.info(
       `Skipping ${commandName}`
       // transactionId
