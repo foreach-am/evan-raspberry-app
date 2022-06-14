@@ -97,7 +97,7 @@ function send({ sendType, commandId, messageId, commandArgs }) {
   }
 
   const dataToSend =
-    sendType !== SendTypeEnum.Request
+    sendType === SendTypeEnum.Request
       ? [sendType, messageId, commandName, commandArgs]
       : [sendType, messageId, commandArgs];
 
