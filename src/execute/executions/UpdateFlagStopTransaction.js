@@ -6,6 +6,10 @@ module.exports = async function (parsedServerData, connectorId) {
   // state.state.plugs.stopTransactionStatus[connectorId] =
   //   (parsedServerData.body.idTagInfo || {}).status || 'Accepted';
 
+  console.log('---------------------------------------');
+  console.log('---------------------------------------');
+  console.log(state.state.plugs);
+
   await ping.StopTransaction.execute(
     uuid(),
     connectorId,
