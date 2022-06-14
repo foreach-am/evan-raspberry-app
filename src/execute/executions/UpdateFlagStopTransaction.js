@@ -19,12 +19,12 @@ module.exports = async function (parsedServerData, connectorId) {
   state.state.plugs.idTags[connectorId] = '';
   state.state.plugs.idTagInfoStatus[connectorId] = '';
 
-  await ping.StatusNotification.execute(
-    uuid(),
-    connectorId,
-    ping.StatusNotification.StatusEnum.AVAILABLE,
-    ping.StatusNotification.ErrorCodeEnum.NO_ERROR
-  );
+  // await ping.StatusNotification.execute(
+  //   uuid(),
+  //   connectorId,
+  //   ping.StatusNotification.StatusEnum.AVAILABLE,
+  //   ping.StatusNotification.ErrorCodeEnum.NO_ERROR
+  // );
 
   Logger.info('Charge completed.');
 };
