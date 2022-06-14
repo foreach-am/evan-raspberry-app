@@ -20,5 +20,12 @@ module.exports = async function (parsedServerData) {
     ping.RemoteStopTransaction.StatusEnum.ACCEPTED
   );
 
+  await ping.StatusNotification.execute(
+    uuid(),
+    parsedServerData.body.connectorId,
+    ping.StatusNotification.StatusEnum.FINISHING,
+    ping.StatusNotification.ErrorCodeEnum.NO_ERROR
+  );
+
   ComEmitter.plugStop(stopConnectorId);
 };
