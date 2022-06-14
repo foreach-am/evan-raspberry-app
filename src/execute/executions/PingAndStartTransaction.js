@@ -1,6 +1,6 @@
-const uuid = require('../../utils/uuid');
 const state = require('../../state');
 const ping = require('../../ping');
+const uuid = require('../../utils/uuid');
 
 module.exports = async function (connectorId) {
   await ping.StatusNotification.execute(

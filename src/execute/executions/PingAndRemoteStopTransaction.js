@@ -3,6 +3,7 @@ const { ComEmitter } = require('../../libraries/ComEmitter');
 
 const state = require('../../state');
 const ping = require('../../ping');
+const uuid = require('../../utils/uuid');
 
 module.exports = async function (parsedServerData) {
   const stopConnectorId = Object.keys(state.state.plugs.transactionId).find(function (itemConnectorId) {

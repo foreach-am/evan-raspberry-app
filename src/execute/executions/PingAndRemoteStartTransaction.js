@@ -1,8 +1,8 @@
 const { ComEmitter } = require('../../libraries/ComEmitter');
 
-const uuid = require('../../utils/uuid');
 const state = require('../../state');
 const ping = require('../../ping');
+const uuid = require('../../utils/uuid');
 
 module.exports = async function (parsedServerData) {
   state.state.plugs.idTags[parsedServerData.body.connectorId] = parsedServerData.body.idTag;

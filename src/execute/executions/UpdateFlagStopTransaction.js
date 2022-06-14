@@ -1,5 +1,6 @@
 const state = require('../../state');
 const ping = require('../../ping');
+const uuid = require('../../utils/uuid');
 
 module.exports = async function (parsedServerData, connectorId) {
   // state.state.plugs.stopTransactionStatus[connectorId] =

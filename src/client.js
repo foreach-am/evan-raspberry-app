@@ -120,7 +120,7 @@ WebSocket.onConnect(async function (connection) {
       ) {
         state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
         state.switch.plugs.stopTransaction[connectorId] = false;
-        await execute.UpdateFlagStopTransaction(connectorId);
+        await execute.UpdateFlagStopTransaction({}, connectorId);
 
         state.state.plugs.transactionId[connectorId] = '';
         state.state.plugs.idTags[connectorId] = '';
