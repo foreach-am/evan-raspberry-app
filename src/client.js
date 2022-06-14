@@ -19,6 +19,10 @@ ComPort.onSerialPort('open', function () {
   ComEmitter.masterRead();
 });
 
+setTimeout(function () {
+  ComPort.open();
+}, 1000);
+
 WebSocket.onConnect(async function (connection) {
   async function onDataReady() {
     if (process.env.NODE_ENV !== 'production') {

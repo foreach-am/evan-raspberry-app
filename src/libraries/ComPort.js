@@ -5,6 +5,7 @@ const state = require('../state');
 const serialPort = new SerialPort({
   baudRate: 9600,
   path: process.env.SERIAL_PORT_PATH,
+  autoOpen: false,
 });
 
 let onReadyCallbackIndex = 0;
@@ -150,11 +151,16 @@ function onSerialPort(event, callback) {
   serialPort.on(event, callback);
 }
 
+function openSerialPort() {
+  serialPort.open();
+}
+
 module.exports = {
   ComPort: {
     emit: emitMessage,
     register: registerCallback,
     unregister: unregisterCallback,
     onSerialPort: onSerialPort,
+    open: openSerialPort,
   },
 };
