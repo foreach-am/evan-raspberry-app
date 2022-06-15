@@ -215,5 +215,8 @@ ComPort.onSerialPort('open', function () {
 
 setTimeout(function () {
   ComPort.open();
-  ComEmitter.startRun();
-}, 1000);
+
+  setTimeout(function () {
+    ComEmitter.startRun();
+  }, 1000);
+}, 100);
