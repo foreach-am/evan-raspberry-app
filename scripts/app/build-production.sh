@@ -91,6 +91,7 @@ if [[ "$(command -v pm2)" != "" ]]; then
           sudo env PATH=\$PATH:$NODE_BON_PATH $NODE_PATH_LIB/pm2/bin/pm2 startup systemd -u $USER --hp $HOME && \
           sudo systemctl enable pm2-$USER.service && \
           sudo systemctl start pm2-$USER.service &&
+          pm2 save && \
           sudo reboot \
         " \
         "Creating PM2 system service." \
