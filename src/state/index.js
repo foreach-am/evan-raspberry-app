@@ -44,13 +44,11 @@ const state = {
       highVoltError: 0,
       lowVoltError: 0,
       highVoltageMeasure: 0,
-      counter: 0,
     },
     plugs: {
       plugState: {},
       powerKwh: {},
       overCurrentError: {},
-      counter: {},
       pilotFeedBack: {},
       currentMeasureA: {},
       currentMeasureB: {},

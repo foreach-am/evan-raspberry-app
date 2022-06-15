@@ -44,7 +44,7 @@ serialPort.on('data', function (data) {
   inputData = inputData.substring(indexStart, indexEnd + 1);
   Logger.info('SerialPort data received:', inputData);
 
-  InputDataParser(inputData);
+  parseInputData(inputData);
   inputData = '';
 
   Object.keys(onReadyCallbacks).forEach(function (callIndex) {
@@ -55,73 +55,98 @@ serialPort.on('data', function (data) {
   });
 });
 
-function InputDataParser(text) {
-  let iteration = 1;
+function getSegmentValue(segment) {
+  const [segmentKey, segmentValue] = segment.split('=');
 
-  for (var i = 0; i < text.length; i++) {
-    if (text[i] === ':') {
-      const firstIndex = i + 1;
-
-      for (var y = firstIndex; y < text.length; y++) {
-        if (text[y] !== ':') {
-          continue;
-        }
-
-        const lastIndex = y - 1;
-        let result = '';
-
-        for (let k = firstIndex; k <= lastIndex; k++) {
-          result += text[k];
-        }
-
-        if (iteration === 1) {
-          state.statistic.plugs.pilotFeedBack[1] = Number(result) / 100;
-        } else if (iteration === 2) {
-          state.statistic.plugs.pilotFeedBack[2] = Number(result) / 100;
-        } else if (iteration === 3) {
-          state.statistic.plugs.currentMeasureA[1] = Number(result) / 100;
-        } else if (iteration === 4) {
-          state.statistic.plugs.currentMeasureA[2] = Number(result) / 100;
-        } else if (iteration === 5) {
-          state.statistic.plugs.currentMeasureB[2] = Number(result) / 100;
-        } else if (iteration === 6) {
-          state.statistic.plugs.currentMeasureC[2] = Number(result) / 100;
-        } else if (iteration === 7) {
-          state.statistic.common.highVoltageMeasure = Number(result) / 100;
-        } else if (iteration === 8) {
-          state.statistic.plugs.plugState[1] = Number(result);
-        } else if (iteration === 9) {
-          state.statistic.plugs.plugState[2] = Number(result);
-        } else if (iteration === 10) {
-          state.statistic.common.highVoltError = Number(result);
-        } else if (iteration === 11) {
-          state.statistic.common.lowVoltError = Number(result);
-        } else if (iteration === 12) {
-          state.statistic.plugs.powerKwh[1] = Number(result) / 100;
-        } else if (iteration === 13) {
-          state.statistic.plugs.powerKwh[2] = Number(result) / 100;
-        } else if (iteration === 14) {
-          state.statistic.plugs.overCurrentError[1] = Number(result);
-        } else if (iteration === 15) {
-          state.statistic.plugs.overCurrentError[2] = Number(result);
-        } else if (iteration === 16) {
-          //state.statistic.plugs.pilotFeedBack[1] =  result
-        } else if (iteration === 17) {
-          //state.statistic.plugs.pilotFeedBack[2] = result
-        } else if (iteration === 18) {
-          state.statistic.common.temperature = Number(result) / 100;
-        } else if (iteration === 19) {
-          state.statistic.common.counter = Number(result);
-        } else if (iteration === 20) {
-          //state.statistic.plugs.pilotFeedBack[2] = result
-        }
-
-        break;
-      }
-
-      iteration++;
-    }
+  const matchResult = segmentKey.match(/^([A-Z]+)([0-9]*)$/);
+  if (!matchResult) {
+    return null;
   }
+
+  const name = matchResult[1];
+  const index = matchResult[2];
+
+  return {
+    index: index,
+    name: name,
+    value: segmentValue,
+  };
+}
+
+function parseInputData(text) {
+  const startChar = '*';
+  const endChar = '@';
+
+  const startCharIndex = text.indexOf(startChar);
+  const endCharIndex = text.indexOf(endChar);
+
+  const packet = text.substring(startCharIndex + startChar.length, endCharIndex);
+
+  const state = {
+    common: {
+      temperature: 0,
+      highVoltError: 0,
+      lowVoltError: 0,
+      highVoltageMeasure: 0,
+    },
+    plugs: {
+      plugState: {},
+      powerKwh: {},
+      overCurrentError: {},
+      pilotFeedBack: {},
+      currentMeasureA: {},
+      currentMeasureB: {},
+      currentMeasureC: {},
+    },
+  };
+
+  packet
+    .split(':')
+    .filter(function (part) {
+      return !!part;
+    })
+    .forEach(function (part) {
+      const { index, name, value } = getSegmentValue(part);
+
+      switch (name) {
+        // plugs
+        case 'PI':
+          state.statistic.plugs.pilotFeedBack[index] = Number(value) / 100;
+          break;
+        case 'PL':
+          state.statistic.plugs.plugState[index] = Number(value);
+          break;
+        case 'PW':
+          state.statistic.plugs.powerKwh[index] = Number(value) / 100;
+          break;
+        case 'CA':
+          state.statistic.plugs.currentMeasureA[index] = Number(value) / 100;
+          break;
+        case 'CB':
+          state.statistic.plugs.currentMeasureB[index] = Number(value) / 100;
+          break;
+        case 'CC':
+          state.statistic.plugs.currentMeasureC[index] = Number(value) / 100;
+          break;
+        case 'OCE':
+          state.statistic.plugs.overCurrentError[index] = Number(value);
+          break;
+
+        // common
+        case 'HV':
+          state.statistic.common.highVoltageMeasure = Number(value) / 100;
+          break;
+        case 'HVE':
+          state.statistic.common.highVoltError = Number(value);
+          break;
+        case 'LV':
+          state.statistic.common.lowVoltError = Number(value);
+          break;
+        case 'T':
+          state.statistic.common.temperature = Number(value) / 100;
+          break;
+      }
+    });
 }
 
 function emitMessage(message, callback) {
