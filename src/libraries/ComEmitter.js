@@ -13,7 +13,8 @@ function emitExtLedOn() {
 }
 
 function emitExtLedOff() {
-  return ComPort.emit('EXTLEDOFF:');
+  // return ComPort.emit('EXTLEDOFF:');
+  return ComPort.emit('EXTLEDOF:');
 }
 
 function emitProxire(connectorId) {
