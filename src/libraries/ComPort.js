@@ -13,11 +13,17 @@ let onReadyCallbacks = {};
 
 let intervalRunning = false;
 
+serialPort.on('error', function (error) {
+  Logger.error('SerialPort error handled:', error);
+});
+
 serialPort.on('open', function () {
+  Logger.info('SerialPort connected successfully.');
   intervalRunning = true;
 });
 
 serialPort.on('close', function () {
+  Logger.info('SerialPort connection closed.');
   intervalRunning = false;
 });
 
@@ -36,7 +42,7 @@ serialPort.on('data', function (data) {
   }
 
   inputData = inputData.substring(indexStart, indexEnd + 1);
-  // Logger.info('Input data received:', inputData);
+  Logger.info('SerialPort data received:', inputData);
 
   InputDataParser(inputData);
   inputData = '';
@@ -47,10 +53,6 @@ serialPort.on('data', function (data) {
       callback();
     }
   });
-});
-
-serialPort.on('error', function (error) {
-  Logger.error('SerialPort error handled:', error);
 });
 
 function InputDataParser(text) {

@@ -14,7 +14,6 @@ const execute = require('./execute');
 
 let comportHandlerId = -1;
 
-ComEmitter.startRun();
 ComPort.onSerialPort('open', function () {
   ComEmitter.masterRead();
 
@@ -215,5 +214,6 @@ ComPort.onSerialPort('open', function () {
 });
 
 setTimeout(function () {
+  ComEmitter.startRun();
   ComPort.open();
 }, 1000);
