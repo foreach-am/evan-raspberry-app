@@ -11,28 +11,26 @@ function timeToNumber(time) {
 
 function getCurrentTime() {
   const date = new Date();
-  const time = [
+
+  return [
     date.getHours().toString().padStart(2, '0'),
     date.getMinutes().toString().padStart(2, '0'),
     date.getSeconds().toString().padStart(2, '0'),
   ].join(':');
-
-  return timeToNumber(time);
 }
 
 let startTime = null;
 let endTime = null;
 
 function setStartTime(time) {
-  startTime = timeToNumber(time);
+  startTime = time;
 }
 
 function setEndTime(time) {
-  endTime = timeToNumber(time);
+  endTime = time;
 }
 
 function checkInSameDay() {
-  const currentTime = getCurrentTime();
   if (currentTime >= startTime && currentTime <= endTime) {
     ComEmitter.extLedOn();
   } else {
@@ -51,14 +49,41 @@ function checkDifferentDays() {
 
 function startChecking() {
   if (startTime === null || endTime === null) {
-    Logger.warning('SKIPPING: Light controller start time and/or end time is not set.');
+    Logger.warning('LIGHT CONTROLLER: [SKIPPING] start time and/or end time is not set.');
     return;
   }
 
-  if (startTime > endTime) {
-    checkDifferentDays();
+  const currentTime = getCurrentTime();
+
+  const startTimeNum = timeToNumber(startTime);
+  const endTimeNum = timeToNumber(endTime);
+  const currentTimeNum = timeToNumber(currentTime);
+
+  const isEnabled = false;
+
+  if (startTimeNum > endTimeNum) {
+    Logger.info(`LIGHT CONTROLLER: start and end times are in different days.`);
+
+    if (currentTime >= startTime || currentTime <= endTime) {
+      isEnabled = true;
+    }
   } else {
-    checkInSameDay();
+    Logger.info(`LIGHT CONTROLLER: start and end times are in same day.`);
+
+    if (currentTime >= startTime && currentTime <= endTime) {
+      isEnabled = true;
+    }
+  }
+
+  const state = isEnabled ? 'enabled' : 'disabled';
+  Logger.info(
+    `LIGHT CONTROLLER: current=${currentTime}, start=${startTime}, end=${endTime}, state=${state}.`
+  );
+
+  if (isEnabled) {
+    ComEmitter.extLedOn();
+  } else {
+    ComEmitter.extLedOff();
   }
 }
 
