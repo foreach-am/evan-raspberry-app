@@ -19,9 +19,9 @@ ComPort.onSerialPort('open', function () {
 
   WebSocket.onConnect(async function (connection) {
     async function onDataReady() {
-      // if (process.env.NODE_ENV !== 'production') {
-      //   logParsedServerData();
-      // }
+      if (process.env.NODE_ENV !== 'production') {
+        logParsedServerData();
+      }
 
       //connection.emit(data);
       for (let connectorId = 1; connectorId <= state.maxPlugsCount; ++connectorId) {
