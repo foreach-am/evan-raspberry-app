@@ -64,20 +64,24 @@ function startChecking() {
   if (startTimeNum > endTimeNum) {
     Logger.info(`LIGHT CONTROLLER: start and end times are in different days.`);
 
-    if (currentTimeNum >= startTime || currentTimeNum <= endTime) {
+    if (currentTimeNum >= startTimeNum || currentTimeNum <= endTimeNum) {
       isEnabled = true;
     }
   } else {
     Logger.info(`LIGHT CONTROLLER: start and end times are in same day.`);
 
-    if (currentTimeNum >= startTime && currentTimeNum <= endTime) {
+    if (currentTimeNum >= startTimeNum && currentTimeNum <= endTimeNum) {
       isEnabled = true;
     }
   }
 
   const state = isEnabled ? 'enabled' : 'disabled';
   Logger.info(
-    `LIGHT CONTROLLER: current=${currentTimeNum}, start=${startTime}, end=${endTime}, state=${state}.`
+    `LIGHT CONTROLLER: ` +
+      `current=${currentTime}=${currentTimeNum}, ` +
+      `start=${startTime}=${startTimeNum}, ` +
+      `end=${endTime}=${endTimeNum}, ` +
+      `state=${state}.`
   );
 
   if (isEnabled) {
