@@ -12,7 +12,7 @@ function sendStopTransaction({ messageId, connectorId, idTag, transactionId }) {
       transactionId: transactionId,
       idTag: idTag,
       timestamp: new Date().toISOString(),
-      meterStop: 20, // connector power KW/h
+      meterStop: (state.statistic.plugs.powerKwh[connectorId] || 0) * 1000,
     },
   });
 }

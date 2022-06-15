@@ -13,7 +13,7 @@ function sendStartTransaction({ messageId, connectorId, idTag }) {
       connectorId: connectorId,
       idTag: idTag,
       timestamp: new Date().toISOString(),
-      meterStart: 0, // connector power KW/h
+      meterStart: (state.statistic.plugs.powerKwh[connectorId] || 0) * 1000,
       reservationId: state.state.plugs.reservationId[connectorId],
     },
   });
