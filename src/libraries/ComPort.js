@@ -82,24 +82,6 @@ function parseInputData(text) {
 
   const packet = text.substring(startCharIndex + startChar.length, endCharIndex);
 
-  const state = {
-    common: {
-      temperature: 0,
-      highVoltError: 0,
-      lowVoltError: 0,
-      highVoltageMeasure: 0,
-    },
-    plugs: {
-      plugState: {},
-      powerKwh: {},
-      overCurrentError: {},
-      pilotFeedBack: {},
-      currentMeasureA: {},
-      currentMeasureB: {},
-      currentMeasureC: {},
-    },
-  };
-
   packet
     .split(':')
     .filter(function (part) {
