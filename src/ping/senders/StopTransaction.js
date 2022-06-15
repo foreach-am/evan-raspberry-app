@@ -1,5 +1,6 @@
 const { EventQueue, EventCommandEnum } = require('../../libraries/EventQueue');
 const { WebSocketSender, SendTypeEnum } = require('../../libraries/WebSocket');
+const state = require('../../state');
 
 const event = EventCommandEnum.EVENT_STOP_TRANSACTION;
 
