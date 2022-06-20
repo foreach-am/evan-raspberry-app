@@ -6,7 +6,7 @@ const ping = require('../../ping');
 
 module.exports = async function (parsedServerData) {
   let canReset = true;
-  Raspberry.mapOnPlugs(function (connectorId) {
+  await Raspberry.mapOnPlugs(async function (connectorId) {
     if (state.statistic.plugs.plugState[connectorId] !== PlugStateEnum.UNPLUGGED) {
       canReset = false;
     }

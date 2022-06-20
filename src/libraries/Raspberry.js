@@ -45,7 +45,7 @@ CoreEvent.register(CoreEventEnum.EVENT_USIGNINT, function () {
 
 async function mapOnPlugs(callback) {
   for (let connectorId = 1; connectorId <= state.maxPlugsCount; ++connectorId) {
-    await callback(connectorId);
+    callback(connectorId);
   }
 }
 

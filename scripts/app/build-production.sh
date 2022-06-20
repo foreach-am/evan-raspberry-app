@@ -62,41 +62,44 @@ fi
 # -----------------------------------------------------
 # build production
 execute_action "$BUILD_LOG_FILE" \
-  "pm2 delete ecosystem.config.js && pm2 save" \
+  "pm2 delete ecosystem.config.js" \
   "Deleting PM2 engine app." \
   "Failed to delete PM2 engine app."
 
 execute_action "$BUILD_LOG_FILE" \
-  "pm2 start ecosystem.config.js && pm2 save" \
+  "pm2 start ecosystem.config.js" \
   "Starting PM2 engine app." \
   "Failed to start PM2 engine app."
 
+execute_action "$BUILD_LOG_FILE" \
+  "pm2 save" \
+  "Saving PM2 engine app state." \
+  "Failed to save PM2 engine app state."
+
+execute_action "$BUILD_LOG_FILE" \
+  "pm2 update" \
+  "Updating PM2 in-memory cache." \
+  "Failed to update PM2 in-memory cache."
+
 # -----------------------------------------------------
-# update and create system service
-if [[ "$(command -v pm2)" != "" ]]; then
-  execute_action "$BUILD_LOG_FILE" \
-    "pm2 update" \
-    "Updating PM2 in-memory cache." \
-    "Failed to update PM2 in-memory cache."
+# create system service
+if [[ "$(command -v systemctl)" != "" ]]; then
+  SYSTEM_EXISTS="$(systemctl --all --type service | grep "pm2-$USER.service" | wc -l)"
+  if [[ "$SYSTEM_EXISTS" == "0" ]]; then
+    NODE_INSTALL_DIR="$(npm config get prefix)"
+    NODE_PATH_BON="$NODE_INSTALL_DIR/bin"
+    NODE_PATH_LIB="$NODE_INSTALL_DIR/lib/node_modules"
 
-  if [[ "$(command -v systemctl)" != "" ]]; then
-    SYSTEM_EXISTS="$(systemctl --all --type service | grep "pm2-$USER.service" | wc -l)"
-    if [[ "$SYSTEM_EXISTS" == "0" ]]; then
-      NODE_INSTALL_DIR="$(npm config get prefix)"
-      NODE_PATH_BON="$NODE_INSTALL_DIR/bin"
-      NODE_PATH_LIB="$NODE_INSTALL_DIR/lib/node_modules"
-
-      execute_action "$BUILD_LOG_FILE" \
-        "\
-          sudo env PATH=\$PATH:$NODE_BON_PATH $NODE_PATH_LIB/pm2/bin/pm2 startup systemd -u $USER --hp $HOME && \
-          sudo systemctl enable pm2-$USER.service && \
-          sudo systemctl start pm2-$USER.service &&
-          pm2 save && \
-          sudo reboot \
-        " \
-        "Creating PM2 system service." \
-        "Failed to create PM2 system service."
-    fi
+    execute_action "$BUILD_LOG_FILE" \
+      "\
+        sudo env PATH=\$PATH:$NODE_BON_PATH $NODE_PATH_LIB/pm2/bin/pm2 startup systemd -u $USER --hp $HOME && \
+        sudo systemctl enable pm2-$USER.service && \
+        sudo systemctl start pm2-$USER.service &&
+        pm2 save && \
+        sudo reboot \
+      " \
+      "Creating PM2 system service." \
+      "Failed to create PM2 system service."
   fi
 fi
 

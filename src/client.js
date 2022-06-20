@@ -36,6 +36,11 @@ ComPort.onSerialPort('open', function () {
 
       //connection.emit(data);
       Raspberry.mapOnPlugs(async function (connectorId) {
+        Logger.info(`Previous Plug State [${connectorId}]`, {
+          statistic: state.statistic.plugs.plugState[connectorId],
+          state: state.state.plugs.previousPlugState[connectorId],
+        });
+
         if (
           state.statistic.plugs.plugState[connectorId] === PlugStateEnum.UNPLUGGED &&
           state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
@@ -50,7 +55,7 @@ ComPort.onSerialPort('open', function () {
 
           if (state.switch.plugs.sendStatusNotification[connectorId]) {
             state.switch.plugs.sendStatusNotification[connectorId] = false;
-            ping.StatusNotification.execute(
+            await ping.StatusNotification.execute(
               uuid(),
               connectorId,
               ping.StatusNotification.StatusEnum.AVAILABLE,
@@ -108,13 +113,8 @@ ComPort.onSerialPort('open', function () {
           state.state.plugs.startTransactionStatus[connectorId] = '';
           state.switch.plugs.chargeStart[connectorId] = false;
 
-          ComEmitter.proxire(connectorId);
+          await ComEmitter.proxire(connectorId);
         }
-
-        Logger.info(`Previous Plug State [${connectorId}]`, {
-          statistic: state.statistic.plugs.plugState[connectorId],
-          state: state.state.plugs.previousPlugState[connectorId],
-        });
 
         if (
           state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CHARGING &&
@@ -145,7 +145,7 @@ ComPort.onSerialPort('open', function () {
 
           Logger.info('Charge completed.');
 
-          ping.StatusNotification.execute(
+          await ping.StatusNotification.execute(
             uuid(),
             connectorId,
             ping.StatusNotification.StatusEnum.AVAILABLE,
