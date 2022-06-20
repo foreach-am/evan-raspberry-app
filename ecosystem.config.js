@@ -1,17 +1,23 @@
 const path = require('path');
 
+function buildApp(configs) {
+  return {
+    exec_mode: 'cluster',
+    cwd: __dirname,
+    log_date_format: 'YYYY.MM.DD HH:mm Z',
+    error_file: path.join(__dirname, '.logs', `${configs.name}-error.log`),
+    out_file: path.join(__dirname, '.logs', `${configs.name}-out.log`),
+    ...configs,
+  };
+}
+
 module.exports = {
   apps: [
-    {
+    buildApp({
       name: 'raspberry-client-app',
-      exec_mode: 'cluster',
       min_uptime: '15s',
       instances: 1,
-      cwd: __dirname,
       script: './index.js',
-      log_date_format: 'YYYY.MM.DD HH:mm Z',
-      error_file: path.join(__dirname, '.logs', 'error-XXX.log'),
-      out_file: path.join(__dirname, '.logs', 'out-XXX.log'),
-    },
+    }),
   ],
 };
