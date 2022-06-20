@@ -130,6 +130,13 @@ ComPort.onSerialPort('open', function () {
         ) {
           state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
           await execute.UpdateFlagStopTransaction({}, connectorId);
+
+          await ping.StatusNotification.execute(
+            uuid(),
+            connectorId,
+            ping.StatusNotification.StatusEnum.FINISHING,
+            ping.StatusNotification.ErrorCodeEnum.NO_ERROR
+          );
         }
 
         if (state.state.plugs.stopTransactionStatus[connectorId] === 'Accepted') {
