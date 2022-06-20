@@ -100,7 +100,11 @@ ComPort.onSerialPort('open', function () {
           ComEmitter.proxire(connectorId);
         }
 
-        Logger.info(`Previous Plug State [${connectorId}]`, state.state.plugs.previousPlugState[connectorId]);
+        Logger.info(`Previous Plug State [${connectorId}]`, {
+          statistic: state.statistic.plugs.plugState[connectorId],
+          state: state.state.plugs.previousPlugState[connectorId],
+        });
+
         if (
           state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CHARGING &&
           state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
