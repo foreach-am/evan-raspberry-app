@@ -42,16 +42,16 @@ module.exports = async function (parsedServerData, connectorId) {
       ping.MeterValues.MeasurandEnum.POWER_ACTIVE_IMPORT,
       ping.MeterValues.LocationEnum.OUTLET,
       ping.MeterValues.UnitEnum.KW,
-      state.statistic.plugs.powerKwh[connectorId]
+      state.statistic.common.highVoltageMeasure *
+        state.statistic.plugs.currentMeasureA[connectorId] *
+        getCosFi()
     ),
     createMeterValue(
       ping.MeterValues.ContextEnum.SAMPLE_PERIODIC,
       ping.MeterValues.MeasurandEnum.ENERGY_ACTIVE_EXPORT_REGISTER,
       ping.MeterValues.LocationEnum.OUTLET,
       ping.MeterValues.UnitEnum.WH,
-      state.statistic.common.highVoltageMeasure *
-        state.statistic.plugs.currentMeasureA[connectorId] *
-        getCosFi()
+      state.statistic.plugs.powerKwh[connectorId]
     ),
     createMeterValue(
       ping.MeterValues.ContextEnum.SAMPLE_PERIODIC,
