@@ -2,6 +2,8 @@ const { Gpio } = require('onoff');
 const { CoreEvent, CoreEventEnum } = require('./CoreEvent');
 const { ComEmitter } = require('./ComEmitter');
 
+const state = require('../state');
+
 const buttonReset = new Gpio(5, 'out', 'rising', {
   debounceTimeout: 500,
 });
@@ -41,9 +43,16 @@ CoreEvent.register(CoreEventEnum.EVENT_USIGNINT, function () {
   button.unexport();
 });
 
+async function mapOnPlugs(callback) {
+  for (let connectorId = 1; connectorId <= state.maxPlugsCount; ++connectorId) {
+    await callback(connectorId);
+  }
+}
+
 module.exports = {
   Raspberry: {
     restartSoftware: restartSoftware,
     restartHardware: restartHardware,
+    mapOnPlugs: mapOnPlugs,
   },
 };

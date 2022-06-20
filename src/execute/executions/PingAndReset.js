@@ -1,17 +1,17 @@
 const { Raspberry } = require('../../libraries/Raspberry');
 const { PlugStateEnum } = require('../../libraries/PlugState');
+const { Raspberry } = require('../../libraries/Raspberry');
 
 const state = require('../../state');
 const ping = require('../../ping');
 
 module.exports = async function (parsedServerData) {
   let canReset = true;
-  for (let connectorId = 1; connectorId <= state.maxPlugsCount; ++connectorId) {
+  Raspberry.mapOnPlugs(function (connectorId) {
     if (state.statistic.plugs.plugState[connectorId] !== PlugStateEnum.UNPLUGGED) {
       canReset = false;
-      break;
     }
-  }
+  });
 
   let restartTriggered = false;
   if (canReset) {

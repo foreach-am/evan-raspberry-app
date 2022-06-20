@@ -12,6 +12,7 @@ const EventCommandEnum = {
   EVENT_REMOTE_START_TRANSACTION: 9,
   EVENT_REMOTE_STOP_TRANSACTION: 10,
   EVENT_RESET: 11,
+  EVENT_METER_VALUES: 12,
 };
 
 const EventCommandNameEnum = {
@@ -26,6 +27,7 @@ const EventCommandNameEnum = {
   [EventCommandEnum.EVENT_REMOTE_START_TRANSACTION]: 'RemoteStartTransaction',
   [EventCommandEnum.EVENT_REMOTE_STOP_TRANSACTION]: 'RemoteStopTransaction',
   [EventCommandEnum.EVENT_RESET]: 'Reset',
+  [EventCommandEnum.EVENT_METER_VALUES]: 'MeterValues',
 };
 
 const QueueStatusEnum = {

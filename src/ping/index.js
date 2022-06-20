@@ -10,4 +10,5 @@ module.exports = {
   RemoteStartTransaction: require('./senders/RemoteStartTransaction'),
   RemoteStopTransaction: require('./senders/RemoteStopTransaction'),
   Reset: require('./senders/Reset'),
+  MeterValues: require('./senders/MeterValues'),
 };

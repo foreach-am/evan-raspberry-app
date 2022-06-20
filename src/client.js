@@ -5,6 +5,7 @@ const { ComPort } = require('./libraries/ComPort');
 const { ComEmitter } = require('./libraries/ComEmitter');
 const { EventQueue, EventCommandEnum, EventCommandNameEnum } = require('./libraries/EventQueue');
 const { PlugStateEnum } = require('./libraries/PlugState');
+const { Raspberry } = require('./libraries/Raspberry');
 
 const uuid = require('./utils/uuid');
 const logParsedServerData = require('./helpers/logParsedServerData');
@@ -13,6 +14,16 @@ const ping = require('./ping');
 const execute = require('./execute');
 
 let comportHandlerId = -1;
+
+setInterval(() => {
+  Raspberry.mapOnPlugs(function (connectorId) {
+    if (state.statistic.plugs.plugState[connectorId] !== PlugStateEnum.CHARGING) {
+      return;
+    }
+
+    await execute.NotifyMeretValues({}, connectorId);
+  });
+}, 10 * 1000);
 
 ComPort.onSerialPort('open', function () {
   ComEmitter.masterRead();
@@ -24,7 +35,7 @@ ComPort.onSerialPort('open', function () {
       }
 
       //connection.emit(data);
-      for (let connectorId = 1; connectorId <= state.maxPlugsCount; ++connectorId) {
+      Raspberry.mapOnPlugs(function (connectorId) {
         if (
           state.statistic.plugs.plugState[connectorId] === PlugStateEnum.UNPLUGGED &&
           state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
@@ -134,7 +145,7 @@ ComPort.onSerialPort('open', function () {
             ping.StatusNotification.ErrorCodeEnum.NO_ERROR
           );
         }
-      }
+      });
 
       setTimeout(function () {
         ComEmitter.masterRead();

@@ -10,4 +10,5 @@ module.exports = {
   UpdateFlagAuthorize: require('./executions/UpdateFlagAuthorize'),
   UpdateFlagStartTransaction: require('./executions/UpdateFlagStartTransaction'),
   UpdateFlagStopTransaction: require('./executions/UpdateFlagStopTransaction'),
+  NotifyMeretValues: require('./executions/NotifyMeretValues'),
 };
