@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   apps: [
     {
@@ -7,6 +9,9 @@ module.exports = {
       instances: 1,
       cwd: __dirname,
       script: './index.js',
+      log_date_format: 'YYYY.MM.DD HH:mm Z',
+      error_file: path.join(__dirname, '.logs', 'error-XXX.log'),
+      out_file: path.join(__dirname, '.logs', 'out-XXX.log'),
     },
   ],
 };
