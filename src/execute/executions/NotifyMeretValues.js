@@ -49,7 +49,7 @@ module.exports = async function (parsedServerData, connectorId) {
     ),
     createMeterValue(
       ping.MeterValues.ContextEnum.SAMPLE_PERIODIC,
-      ping.MeterValues.MeasurandEnum.ENERGY_ACTIVE_EXPORT_REGISTER,
+      ping.MeterValues.MeasurandEnum.ENERGY_ACTIVE_IMPORT_REGISTER,
       ping.MeterValues.LocationEnum.OUTLET,
       ping.MeterValues.UnitEnum.WH,
       state.statistic.plugs.powerKwh[connectorId] * 1000

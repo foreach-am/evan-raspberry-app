@@ -49,13 +49,13 @@ const ContextEnum = {
 
 const MeasurandEnum = {
   ENERGY_ACTIVE_EXPORT_REGISTER: 'Energy.Active.Export.Register',
-  ENERGY_ACTIVE_IMPORT_REGISTER: 'Energy.Active_IMPORT_REGISTER',
+  ENERGY_ACTIVE_IMPORT_REGISTER: 'Energy.Active.Import.Register',
   ENERGY_REACTIVE_EXPORT_REGISTER: 'Energy.Reactive.Export.Register',
-  ENERGY_REACTIVE_IMPORT_REGISTER: 'Energy.Reactive_IMPORT_REGISTER',
+  ENERGY_REACTIVE_IMPORT_REGISTER: 'Energy.Reactive.Import.Register',
   ENERGY_ACTIVE_EXPORT_INTERVAL: 'Energy.Active.Export.Interval',
-  ENERGY_ACTIVE_IMPORT_INTERVAL: 'Energy.Active_IMPORT_Interval',
+  ENERGY_ACTIVE_IMPORT_INTERVAL: 'Energy.Active.Import.Interval',
   ENERGY_REACTIVE_EXPORT_INTERVAL: 'Energy.Reactive.Export.Interval',
-  ENERGY_REACTIVE_IMPORT_INTERVAL: 'Energy.Reactive_IMPORT_Interval',
+  ENERGY_REACTIVE_IMPORT_INTERVAL: 'Energy.Reactive.Import.Interval',
   POWER_ACTIVE_EXPORT: 'Power.Active.Export',
   POWER_ACTIVE_IMPORT: 'Power.Active.Import',
   POWER_OFFERED: 'Power.Offered',
