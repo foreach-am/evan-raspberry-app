@@ -16,7 +16,7 @@ const execute = require('./execute');
 let comportHandlerId = -1;
 
 setInterval(() => {
-  Raspberry.mapOnPlugs(function (connectorId) {
+  Raspberry.mapOnPlugs(async function (connectorId) {
     if (state.statistic.plugs.plugState[connectorId] !== PlugStateEnum.CHARGING) {
       return;
     }
