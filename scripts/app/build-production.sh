@@ -67,14 +67,19 @@ execute_action "$BUILD_LOG_FILE" \
   "Failed to delete PM2 engine app."
 
 execute_action "$BUILD_LOG_FILE" \
+  "pm2 save --force" \
+  "Saving deleted PM2 engine app state." \
+  "Failed to save deleted PM2 engine app state."
+
+execute_action "$BUILD_LOG_FILE" \
   "pm2 start ecosystem.config.js" \
   "Starting PM2 engine app." \
   "Failed to start PM2 engine app."
 
 execute_action "$BUILD_LOG_FILE" \
-  "pm2 save" \
-  "Saving PM2 engine app state." \
-  "Failed to save PM2 engine app state."
+  "pm2 save --force" \
+  "Saving re-created PM2 engine app state." \
+  "Failed to save re-created PM2 engine app state."
 
 execute_action "$BUILD_LOG_FILE" \
   "pm2 update" \
@@ -95,7 +100,7 @@ if [[ "$(command -v systemctl)" != "" ]]; then
         sudo env PATH=\$PATH:$NODE_BON_PATH $NODE_PATH_LIB/pm2/bin/pm2 startup systemd -u $USER --hp $HOME && \
         sudo systemctl enable pm2-$USER.service && \
         sudo systemctl start pm2-$USER.service &&
-        pm2 save && \
+        pm2 save --force && \
         sudo reboot \
       " \
       "Creating PM2 system service." \
