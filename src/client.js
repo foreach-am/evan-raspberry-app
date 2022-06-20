@@ -35,7 +35,7 @@ ComPort.onSerialPort('open', function () {
       }
 
       //connection.emit(data);
-      Raspberry.mapOnPlugs(function (connectorId) {
+      Raspberry.mapOnPlugs(async function (connectorId) {
         if (
           state.statistic.plugs.plugState[connectorId] === PlugStateEnum.UNPLUGGED &&
           state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
