@@ -57,7 +57,7 @@ module.exports = async function (parsedServerData, connectorId) {
       ping.MeterValues.ContextEnum.SAMPLE_PERIODIC,
       ping.MeterValues.MeasurandEnum.SOC,
       ping.MeterValues.LocationEnum.EV,
-      ping.MeterValues.UnitEnum.PER,
+      ping.MeterValues.UnitEnum.PERCENT,
       0 // @TODO: replace with charged percent
     ),
     createMeterValue(
