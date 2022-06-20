@@ -62,12 +62,12 @@ fi
 # -----------------------------------------------------
 # build production
 execute_action "$BUILD_LOG_FILE" \
-  "pm2 delete ecosystem.config.js" \
+  "pm2 delete ecosystem.config.js && pm2 save" \
   "Deleting PM2 engine app." \
   "Failed to delete PM2 engine app."
 
 execute_action "$BUILD_LOG_FILE" \
-  "pm2 start ecosystem.config.js" \
+  "pm2 start ecosystem.config.js && pm2 save" \
   "Starting PM2 engine app." \
   "Failed to start PM2 engine app."
 
