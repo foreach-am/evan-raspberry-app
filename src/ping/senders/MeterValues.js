@@ -6,7 +6,7 @@ const state = require('../../state');
 
 const event = EventCommandEnum.EVENT_METER_VALUES;
 
-function sendHeartBeat({ messageId, connectorId, transactionId, meterValues }) {
+function sendHeartBeat({ messageId, connectorId, transactionId, meterValue }) {
   WebSocketSender.send({
     sendType: SendTypeEnum.Request,
     commandId: event,
@@ -14,17 +14,17 @@ function sendHeartBeat({ messageId, connectorId, transactionId, meterValues }) {
     commandArgs: {
       connectorId: connectorId,
       transactionId: transactionId,
-      meterValues: meterValues,
+      meterValue: meterValue,
     },
   });
 }
 
-function sendHeartBeatHandler(messageId, connectorId, transactionId, meterValues) {
+function sendHeartBeatHandler(messageId, connectorId, transactionId, meterValue) {
   const data = {
     connectorId: connectorId,
     messageId: messageId,
     transactionId: transactionId,
-    meterValues: meterValues,
+    meterValue: meterValue,
   };
 
   return EventQueue.register({

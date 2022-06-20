@@ -22,7 +22,7 @@ function createMeterValue(context, measurand, location, unit, value) {
 }
 
 module.exports = async function (parsedServerData, connectorId) {
-  const meterValues = [
+  const meterValue = [
     createMeterValue(
       ping.MeterValues.ContextEnum.SAMPLE_PERIODIC,
       ping.MeterValues.MeasurandEnum.CURRENT_IMPORT,
@@ -42,16 +42,17 @@ module.exports = async function (parsedServerData, connectorId) {
       ping.MeterValues.MeasurandEnum.POWER_ACTIVE_IMPORT,
       ping.MeterValues.LocationEnum.OUTLET,
       ping.MeterValues.UnitEnum.KW,
-      state.statistic.common.highVoltageMeasure *
+      (state.statistic.common.highVoltageMeasure *
         state.statistic.plugs.currentMeasureA[connectorId] *
-        getCosFi()
+        getCosFi()) /
+        1000
     ),
     createMeterValue(
       ping.MeterValues.ContextEnum.SAMPLE_PERIODIC,
       ping.MeterValues.MeasurandEnum.ENERGY_ACTIVE_EXPORT_REGISTER,
       ping.MeterValues.LocationEnum.OUTLET,
       ping.MeterValues.UnitEnum.WH,
-      state.statistic.plugs.powerKwh[connectorId]
+      state.statistic.plugs.powerKwh[connectorId] * 1000
     ),
     createMeterValue(
       ping.MeterValues.ContextEnum.SAMPLE_PERIODIC,
@@ -73,6 +74,6 @@ module.exports = async function (parsedServerData, connectorId) {
     uuid(),
     connectorId,
     state.state.plugs.transactionId[connectorId],
-    meterValues
+    meterValue
   );
 };
