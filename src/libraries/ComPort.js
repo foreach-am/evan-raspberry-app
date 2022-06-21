@@ -14,15 +14,11 @@ let onReadyCallbacks = {};
 let intervalRunning = false;
 
 serialPort.on('pause', function () {
-  Logger.error('SerialPort event handled:', 'pause');
-});
-
-serialPort.on('readable', function () {
-  Logger.error('SerialPort event handled:', 'readable');
+  Logger.info('SerialPort event handled:', 'pause');
 });
 
 serialPort.on('resume', function () {
-  Logger.error('SerialPort event handled:', 'resume');
+  Logger.info('SerialPort event handled:', 'resume');
 });
 
 serialPort.on('error', function (error) {
