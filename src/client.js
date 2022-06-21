@@ -101,6 +101,8 @@ ComPort.onSerialPort('open', function () {
           //   ping.StatusNotification.StatusEnum.CHARGING,
           //   ping.StatusNotification.ErrorCodeEnum.NO_ERROR
           // );
+
+          ComPort.proxire(connectorId);
         }
 
         if (
