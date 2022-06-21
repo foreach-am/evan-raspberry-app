@@ -3,11 +3,23 @@ module.exports = {
   compact: false,
   presets: [
     '@babel/preset-env',
-    {
-      targets: {
-        node: 'current',
-      },
-    },
+    // [
+    //   "minify",
+    //   {
+    //     "keepFnName": true,
+    //     "builtIns": false,
+    //     "evaluate": false,
+    //     "mangle": false
+    //   }
+    // ]
+  ],
+  plugins: [
+    ['@babel/plugin-proposal-decorators', { legacy: true }],
+    '@babel/plugin-proposal-class-properties',
+    '@babel/plugin-transform-modules-umd',
+    '@babel/plugin-proposal-export-default-from',
+    '@babel/plugin-syntax-dynamic-import',
+    '@babel/plugin-transform-runtime',
   ],
   comments: false,
   targets: {

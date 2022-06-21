@@ -2,6 +2,7 @@ const CoreEventEnum = {
   EVENT_UNCAUGHT_EXCEPTION: 'uncaughtException',
   EVENT_UNHANDLED_REJECTION: 'unhandledRejection',
   EVENT_USIGNINT: 'SIGINT',
+  EVENT_EXIT: 'exit',
 };
 
 const events = {};

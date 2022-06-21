@@ -10,6 +10,6 @@ module.exports = {
   UpdateFlagAuthorize: require('./executions/UpdateFlagAuthorize'),
   UpdateFlagStartTransaction: require('./executions/UpdateFlagStartTransaction'),
   UpdateFlagStopTransaction: require('./executions/UpdateFlagStopTransaction'),
-  NotifyMeretValues: require('./executions/NotifyMeretValues'),
+  NotifyMeterValues: require('./executions/NotifyMeretValues'),
   PingCarDetected: require('./executions/PingCarDetected'),
 };

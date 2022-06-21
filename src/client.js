@@ -6,6 +6,7 @@ const { ComEmitter } = require('./libraries/ComEmitter');
 const { EventQueue, EventCommandEnum, EventCommandNameEnum } = require('./libraries/EventQueue');
 const { PlugStateEnum } = require('./libraries/PlugState');
 const { Raspberry } = require('./libraries/Raspberry');
+const { CoreEvent, CoreEventEnum } = require('./libraries/CoreEvent');
 
 const uuid = require('./utils/uuid');
 const logParsedServerData = require('./helpers/logParsedServerData');
@@ -21,9 +22,16 @@ setInterval(() => {
       return;
     }
 
-    await execute.NotifyMeretValues({}, connectorId);
+    await execute.NotifyMeterValues({}, connectorId);
   });
 }, 10 * 1000);
+
+ComPort.onLogIdle(async function () {
+  Logger.info('ComPort stuck, calling software reset ...');
+
+  await Raspberry.restartSoftware();
+  await ComPort.close();
+});
 
 ComPort.onSerialPort('open', function () {
   ComEmitter.masterRead();
@@ -31,10 +39,9 @@ ComPort.onSerialPort('open', function () {
   WebSocket.onConnect(async function (connection) {
     async function onDataReady() {
       if (process.env.NODE_ENV !== 'production') {
-        // logParsedServerData();
+        logParsedServerData();
       }
 
-      //connection.emit(data);
       Raspberry.mapOnPlugs(async function (connectorId) {
         Logger.info(`Previous Plug State [${connectorId}]`, {
           statistic: state.statistic.plugs.plugState[connectorId],
@@ -83,7 +90,7 @@ ComPort.onSerialPort('open', function () {
           state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
         ) {
           state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
-          await execute.PingCarDetected({}, connectorId);
+          // await execute.PingCarDetected({}, connectorId);
         }
 
         if (
@@ -242,3 +249,7 @@ setTimeout(function () {
     ComEmitter.startRun();
   }, 1000);
 }, 100);
+
+CoreEvent.register(CoreEventEnum.EVENT_EXIT, function () {
+  ComPort.close();
+});

@@ -13,6 +13,18 @@ let onReadyCallbacks = {};
 
 let intervalRunning = false;
 
+serialPort.on('pause', function () {
+  Logger.error('SerialPort event handled:', 'pause');
+});
+
+serialPort.on('readable', function () {
+  Logger.error('SerialPort event handled:', 'readable');
+});
+
+serialPort.on('resume', function () {
+  Logger.error('SerialPort event handled:', 'resume');
+});
+
 serialPort.on('error', function (error) {
   Logger.error('SerialPort error handled:', error);
 });
@@ -27,8 +39,12 @@ serialPort.on('close', function () {
   intervalRunning = false;
 });
 
+let lastDataTime = null;
 let inputData = '';
+
 serialPort.on('data', function (data) {
+  lastDataTime = Date.now();
+
   if (!intervalRunning) {
     return;
   }
@@ -157,19 +173,48 @@ function unregisterCallback(index) {
 }
 
 function onSerialPort(event, callback) {
+  Logger.info('SerialPort event registered:', event);
   serialPort.on(event, callback);
 }
 
 function openSerialPort() {
+  Logger.info('SerialPort opening called.');
   serialPort.open();
 }
 
+function closeSerialPort() {
+  Logger.info('SerialPort closing called.');
+  serialPort.close();
+}
+
+const onIdleCallbacks = [];
+function onLogIdle(callback) {
+  onIdleCallbacks.push(callback);
+}
+
+const intervalComPortIdle = setInterval(async function () {
+  if (!lastDataTime) {
+    lastDataTime = Date.now();
+  }
+
+  const currentDateTime = Date.now();
+  if (currentDateTime - lastDataTime > 7000) {
+    clearInterval(intervalComPortIdle);
+
+    for (const callback of onIdleCallbacks) {
+      await callback();
+    }
+  }
+}, 2000);
+
 module.exports = {
   ComPort: {
+    onLogIdle: onLogIdle,
     emit: emitMessage,
     register: registerCallback,
     unregister: unregisterCallback,
     onSerialPort: onSerialPort,
     open: openSerialPort,
+    close: closeSerialPort,
   },
 };

@@ -7,6 +7,9 @@ function buildApp(configs) {
     log_date_format: 'YYYY.MM.DD HH:mm Z',
     error_file: path.join(__dirname, '.logs', `${configs.name}-error.log`),
     out_file: path.join(__dirname, '.logs', `${configs.name}-out.log`),
+    env: {
+      NODE_ENV: 'production',
+    },
     ...configs,
   };
 }
