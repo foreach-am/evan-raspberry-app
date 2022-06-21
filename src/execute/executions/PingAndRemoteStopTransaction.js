@@ -25,7 +25,7 @@ module.exports = async function (parsedServerData) {
 
   await ping.StatusNotification.execute(
     uuid(),
-    parsedServerData.body.connectorId,
+    stopConnectorId,
     ping.StatusNotification.StatusEnum.FINISHING,
     ping.StatusNotification.ErrorCodeEnum.NO_ERROR
   );
