@@ -49,7 +49,6 @@ ComPort.onSerialPort('open', function () {
 
           state.switch.plugs.startTransaction[connectorId] = true;
           state.switch.plugs.stopTransaction[connectorId] = true;
-          state.switch.plugs.sendAuth[connectorId] = true;
           state.switch.plugs.chargeStart[connectorId] = true;
           state.state.plugs.transactionId[connectorId] = '';
 
@@ -84,9 +83,7 @@ ComPort.onSerialPort('open', function () {
           state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
         ) {
           state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
-
-          state.switch.plugs.sendAuth[connectorId] = false;
-          // await ping.Authorize.execute(uuid(), connectorId, state.state.plugs.idTags[connectorId]);
+          await execute.PingCarDetected({}, connectorId);
         }
 
         if (

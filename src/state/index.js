@@ -7,7 +7,6 @@ const state = {
     common: {},
     plugs: {
       sendStatusNotification: {},
-      sendAuth: {},
       startTransaction: {},
       stopTransaction: {},
       chargeStart: {},
