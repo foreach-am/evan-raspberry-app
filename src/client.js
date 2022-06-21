@@ -102,7 +102,7 @@ ComPort.onSerialPort('open', function () {
           //   ping.StatusNotification.ErrorCodeEnum.NO_ERROR
           // );
 
-          ComPort.proxire(connectorId);
+          await ComEmitter.proxire(connectorId);
         }
 
         if (
