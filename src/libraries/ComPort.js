@@ -192,24 +192,27 @@ function onLogIdle(callback) {
   onIdleCallbacks.push(callback);
 }
 
-const intervalComPortIdle = setInterval(async function () {
-  if (!lastDataTime) {
-    lastDataTime = Date.now();
-  }
-
-  const currentDateTime = Date.now();
-  if (currentDateTime - lastDataTime > 7000) {
-    clearInterval(intervalComPortIdle);
-
-    for (const callback of onIdleCallbacks) {
-      await callback();
+function startIdleChecker() {
+  const intervalComPortIdle = setInterval(async function () {
+    if (!lastDataTime) {
+      lastDataTime = Date.now();
     }
-  }
-}, 2000);
+
+    const currentDateTime = Date.now();
+    if (currentDateTime - lastDataTime > 7000) {
+      clearInterval(intervalComPortIdle);
+
+      for (const callback of onIdleCallbacks) {
+        await callback();
+      }
+    }
+  }, 2000);
+}
 
 module.exports = {
   ComPort: {
     onLogIdle: onLogIdle,
+    startIdleChecker: startIdleChecker,
     emit: emitMessage,
     register: registerCallback,
     unregister: unregisterCallback,

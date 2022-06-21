@@ -5,6 +5,7 @@ function emitMasterRead() {
 }
 
 function emitStartRun() {
+  ComPort.startIdleChecker();
   return ComPort.emit('STARTRUN:');
 }
 
