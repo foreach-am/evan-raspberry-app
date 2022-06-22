@@ -11,5 +11,5 @@ module.exports = async function (parsedServerData, connectorId) {
   );
 
   // await ping.Authorize.execute(uuid(), connectorId, state.state.plugs.idTags[connectorId]);
-  await ping.Authorize.execute(uuid(), connectorId, 'UNKNOWN');
+  // await ping.Authorize.execute(uuid(), connectorId, 'UNKNOWN');
 };
