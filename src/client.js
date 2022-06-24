@@ -44,9 +44,9 @@ ComPort.onSerialPort('open', function () {
       // }
 
       Raspberry.mapOnPlugs(async function (connectorId) {
-        Logger.info(`Previous Plug State [${connectorId}]`, {
-          statistic: state.statistic.plugs.plugState[connectorId],
-          state: state.state.plugs.previousPlugState[connectorId],
+        Logger.info(`Plug State [${connectorId}]`, {
+          current: state.statistic.plugs.plugState[connectorId],
+          previous: state.state.plugs.previousPlugState[connectorId],
         });
 
         if (
