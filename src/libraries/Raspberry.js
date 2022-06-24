@@ -27,14 +27,12 @@ async function restartSoftware() {
     };
 
     if (process.env.NODE_ENV === 'production') {
-      childProcess.exec('npm run build', options, callback);
+      childProcess.exec('npm run restart', options, callback);
     } else {
       console.log('');
       console.log(' Software restart are impossible during development mode.');
       console.log(' Please run `npm start` again to start app.');
       console.log('');
-
-      await restartHardware();
 
       process.exit(1000001);
     }
