@@ -9,7 +9,7 @@ const buttonReset = new Gpio(5, 'out', 'rising', {
   debounceTimeout: 500,
 });
 
-function restartSoftware() {
+async function restartSoftware() {
   return new Promise(function (resolve, reject) {
     const callback = function (error, stdout, stderr) {
       if (error) {
@@ -41,7 +41,7 @@ function restartSoftware() {
   });
 }
 
-function restartHardware() {
+async function restartHardware() {
   return new Promise(function (resolve, reject) {
     // ComEmitter.extLedOff();
 
