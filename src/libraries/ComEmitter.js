@@ -10,7 +10,7 @@ function emitStartRun() {
 }
 
 function emitExtLedOn() {
-  // return ComPort.emit('EXTLEDON:');
+  return ComPort.emit('EXTLEDON:');
 }
 
 function emitExtLedOff() {
