@@ -5,9 +5,9 @@ const { ComEmitter } = require('./ComEmitter');
 
 const state = require('../state');
 
-// const buttonReset = new Gpio(5, 'out', 'rising', {
-//   debounceTimeout: 500,
-// });
+const buttonReset = new Gpio(5, 'out', 'rising', {
+  debounceTimeout: 500,
+});
 
 function restartSoftware() {
   return new Promise(function (resolve, reject) {

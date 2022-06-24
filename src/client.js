@@ -90,7 +90,7 @@ ComPort.onSerialPort('open', function () {
           state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
         ) {
           state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
-          // await execute.PingCarDetected({}, connectorId);
+          await execute.PingCarDetected({}, connectorId);
         }
 
         if (
