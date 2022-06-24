@@ -2,47 +2,61 @@ const path = require('path');
 const fs = require('fs');
 
 const filePath = path.join(__dirname, '..', '..', 'data', 'offline-command.json');
+if (!fs.existsSync(filePath)) {
+  saveFile([]);
+}
 
-function withDataPromise(callback) {
+function saveFile(data) {
+  const updatedContent = JSON.stringify(data);
+  fs.writeFileSync(filePath, updatedContent, 'utf-8');
+}
+
+function withOfflineCommands(callback) {
   return new Promise(function (resolve, reject) {
     fs.readFile(filePath, 'utf-8', function (error, content) {
       if (error) {
         return reject(error);
       }
 
-      const data = JSON.parse(content);
-      callback(data, resolve);
+      const parsedData = JSON.parse(content);
+      const { data: updatedData, resolveData } = callback(parsedData);
+
+      try {
+        saveFile(updatedData, resolveData);
+
+        if (resolveData) {
+          resolve(resolveData);
+        } else {
+          resolve();
+        }
+      } catch (error) {
+        return reject(error);
+      }
     });
   });
 }
 
 function pushCommand(commandValue) {
-  return withDataPromise(function (data, resolve) {
+  return withOfflineCommands(function (data) {
     data.push(commandValue);
-    const updatedContent = JSON.stringify(data);
 
-    fs.writeFile(filePath, updatedContent, 'utf-8', function (error) {
-      if (error) {
-        return reject(error);
-      }
-
-      resolve();
-    });
+    return {
+      resolveData: null,
+      data,
+    };
   });
 }
 
 function shiftCommand() {
-  return withDataPromise(function (data, resolve) {
+  return withOfflineCommands(function (data) {
     const first = data.shift();
-    const updatedContent = JSON.stringify(data);
 
-    fs.writeFile(filePath, updatedContent, 'utf-8', function (error) {
-      if (error) {
-        return reject(error);
-      }
-
-      resolve(first);
-    });
+    return {
+      resolveData: {
+        first,
+      },
+      data,
+    };
   });
 }
 
