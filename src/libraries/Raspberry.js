@@ -31,7 +31,7 @@ async function restartSoftware() {
     } else {
       console.log('');
       console.log(' Software restart are impossible during development mode.');
-      console.log(' Please kill current process Ctrl+C, then run startcommand .');
+      console.log(' Please kill current process Ctrl+C, then run start command');
       console.log(' again `npm start` to start app.');
       console.log('');
 

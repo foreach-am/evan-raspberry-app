@@ -189,14 +189,15 @@ function onLongIdle(callback) {
 }
 
 function startIdleChecker() {
-  const intervalComPortIdle = setInterval(async function () {
+  const onIdleInterval = setInterval(async function () {
     if (!lastDataTime) {
       lastDataTime = Date.now();
+      return;
     }
 
     const currentDateTime = Date.now();
-    if (currentDateTime - lastDataTime > 7000) {
-      clearInterval(intervalComPortIdle);
+    if (currentDateTime - lastDataTime > 12_000) {
+      clearInterval(onIdleInterval);
 
       for (const callback of onIdleCallbacks) {
         await callback();
