@@ -44,6 +44,12 @@ const serverCommandList = [
   EventCommandNameEnum[EventCommandEnum.EVENT_RESET],
 ];
 
+const offlineCacheableCommandList = [
+  EventCommandNameEnum[EventCommandEnum.EVENT_METER_VALUES],
+  EventCommandNameEnum[EventCommandEnum.EVENT_STATUS_NOTIFICATION],
+  EventCommandNameEnum[EventCommandEnum.EVENT_STOP_TRANSACTION],
+];
+
 let queue = [];
 
 function register({ commandId, connectorId, messageId, packetData, callback }) {
@@ -165,6 +171,14 @@ function isServerCommand(command) {
   return serverCommandList.includes(command);
 }
 
+function isOfflineCacheableCommand(command) {
+  if (typeof command !== 'string') {
+    return false;
+  }
+
+  return offlineCacheableCommandList.includes(command);
+}
+
 module.exports = {
   EventCommandEnum: EventCommandEnum,
   EventCommandNameEnum: EventCommandNameEnum,
@@ -174,6 +188,7 @@ module.exports = {
     makeFinished: makeFinished,
     process: process,
     print: print,
+    isOfflineCacheableCommand: isOfflineCacheableCommand,
     isServerCommand: isServerCommand,
   },
 };

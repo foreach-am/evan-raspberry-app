@@ -3,6 +3,7 @@ const { client: WebSocketClient } = require('websocket');
 const { EventCommandNameEnum } = require('./EventQueue');
 const { Logger } = require('./Logger');
 const { OfflineCommand } = require('./OfflineCommand');
+const { EventQueue } = require('./EventQueue');
 
 const sleep = require('../utils/sleep');
 
@@ -101,14 +102,17 @@ function send({ sendType, commandId, messageId, commandArgs }) {
   const commandName = EventCommandNameEnum[commandId];
 
   if (!connection || !connection.connected) {
-    OfflineCommand.push({
-      sendType,
-      commandId,
-      messageId,
-      commandArgs,
-    });
-
-    return Logger.info(`Skipping ${commandName}: command inserted to offline queue.`);
+    if (EventQueue.isOfflineCacheableCommand(commandName)) {
+      OfflineCommand.push({
+        sendType,
+        commandId,
+        messageId,
+        commandArgs,
+      });
+      return Logger.info(`Skipping ${commandName} - not connected, command inserted to offline queue.`);
+    } else {
+      return Logger.info(`Skipping ${commandName} - not connected.`);
+    }
   }
 
   sendDataToServer({
