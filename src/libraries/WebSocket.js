@@ -58,6 +58,8 @@ function reconnect() {
 
 client.on('connectFailed', function (error) {
   Logger.error('Could not connect to server:', error);
+  connection = null;
+
   reconnect();
 });
 
@@ -109,6 +111,7 @@ function send({ sendType, commandId, messageId, commandArgs }) {
         messageId,
         commandArgs,
       });
+
       return Logger.info(`Skipping ${commandName} - not connected, command inserted to offline queue.`);
     } else {
       return Logger.info(`Skipping ${commandName} - not connected.`);
@@ -150,6 +153,10 @@ async function executeOfflineQueue() {
   }
 }
 
+function isConnected() {
+  return !!connection;
+}
+
 const SendTypeEnum = {
   Request: 2,
   Response: 3,
@@ -164,6 +171,7 @@ module.exports = {
     onConnectionFailure: onConnectionFailure,
     register: register,
     startServer: startServer,
+    isConnected: isConnected,
   },
   WebSocketSender: {
     send: send,

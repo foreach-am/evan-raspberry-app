@@ -37,121 +37,48 @@ ComPort.onLongIdle(async function () {
 ComPort.onSerialPort('open', function () {
   ComEmitter.masterRead();
 
-  WebSocket.onConnect(async function (connection) {
-    async function onDataReady() {
-      // if (process.env.NODE_ENV !== 'production') {
-      //   logParsedServerData();
-      // }
+  async function onDataReady() {
+    // if (process.env.NODE_ENV !== 'production') {
+    //   logParsedServerData();
+    // }
 
-      Raspberry.mapOnPlugs(async function (connectorId) {
-        Logger.info(`Plug State [${connectorId}]`, {
-          current: state.statistic.plugs.plugState[connectorId],
-          previous: state.state.plugs.previousPlugState[connectorId],
-        });
-
+    Raspberry.mapOnPlugs(async function (connectorId) {
+      if (!WebSocket.isConnected()) {
         if (
           state.statistic.plugs.plugState[connectorId] === PlugStateEnum.UNPLUGGED &&
-          state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
+          !state.state.plugs.softLockDueConnectionLose[connectorId]
         ) {
-          state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
-
-          state.switch.plugs.startTransaction[connectorId] = true;
-          state.switch.plugs.stopTransaction[connectorId] = true;
-          state.switch.plugs.chargeStart[connectorId] = true;
-          state.state.plugs.transactionId[connectorId] = '';
-
-          if (state.switch.plugs.sendStatusNotification[connectorId]) {
-            state.switch.plugs.sendStatusNotification[connectorId] = false;
-            await ping.StatusNotification.execute(
-              uuid(),
-              connectorId,
-              ping.StatusNotification.StatusEnum.AVAILABLE,
-              ping.StatusNotification.ErrorCodeEnum.NO_ERROR
-            );
-          }
-        } else {
-          state.switch.plugs.sendStatusNotification[connectorId] = true;
+          state.state.plugs.softLockDueConnectionLose[connectorId] = true;
+          await ComEmitter.plugOff(connectorId);
         }
-
+      } else {
         if (
           state.statistic.plugs.plugState[connectorId] === PlugStateEnum.PLUG_SOFT_LOCK &&
-          state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
+          state.state.plugs.softLockDueConnectionLose[connectorId]
         ) {
-          state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
-
-          await ping.ChangeAvailability.execute(
-            uuid(),
-            connectorId,
-            ping.ChangeAvailability.StatusEnum.ACCEPTED
-          );
+          state.state.plugs.softLockDueConnectionLose[connectorId] = false;
+          await ComEmitter.plugOn(connectorId);
         }
+      }
 
-        if (
-          state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CAR_DETECTED &&
-          state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
-        ) {
-          state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
-          await execute.PingCarDetected({}, connectorId);
-        }
+      Logger.info(`Plug State [${connectorId}]`, {
+        current: state.statistic.plugs.plugState[connectorId],
+        previous: state.state.plugs.previousPlugState[connectorId],
+      });
 
-        if (
-          state.state.plugs.idTagInfoStatus[connectorId] === 'Accepted' &&
-          state.switch.plugs.startTransaction[connectorId]
-        ) {
-          state.state.plugs.idTagInfoStatus[connectorId] = '';
-          state.switch.plugs.startTransaction[connectorId] = false;
+      if (
+        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.UNPLUGGED &&
+        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
+      ) {
+        state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
 
-          // await ping.StartTransaction.execute(uuid(), connectorId);
+        state.switch.plugs.startTransaction[connectorId] = true;
+        state.switch.plugs.stopTransaction[connectorId] = true;
+        state.switch.plugs.chargeStart[connectorId] = true;
+        state.state.plugs.transactionId[connectorId] = '';
 
-          // ping.StatusNotification.execute(
-          //   uuid(),
-          //   connectorId,
-          //   ping.StatusNotification.StatusEnum.CHARGING,
-          //   ping.StatusNotification.ErrorCodeEnum.NO_ERROR
-          // );
-
-          await ComEmitter.proxire(connectorId);
-        }
-
-        if (
-          state.state.plugs.startTransactionStatus[connectorId] === 'Accepted' &&
-          state.switch.plugs.chargeStart[connectorId]
-        ) {
-          state.state.plugs.startTransactionStatus[connectorId] = '';
-          state.switch.plugs.chargeStart[connectorId] = false;
-
-          await ComEmitter.proxire(connectorId);
-        }
-
-        if (
-          state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CHARGING &&
-          state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
-        ) {
-          state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
-          await execute.PingAndStartTransaction(connectorId);
-        }
-
-        if (
-          state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CHARGE_COMPLETED &&
-          state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
-        ) {
-          state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
-          await execute.UpdateFlagStopTransaction({}, connectorId);
-
-          await ping.StatusNotification.execute(
-            uuid(),
-            connectorId,
-            ping.StatusNotification.StatusEnum.FINISHING,
-            ping.StatusNotification.ErrorCodeEnum.NO_ERROR
-          );
-        }
-
-        if (state.state.plugs.stopTransactionStatus[connectorId] === 'Accepted') {
-          state.state.plugs.stopTransactionStatus[connectorId] = '';
-          state.state.plugs.idTagInfoStatus[connectorId] = '';
-
-          Logger.info('Charge completed.');
-
+        if (state.switch.plugs.sendStatusNotification[connectorId]) {
+          state.switch.plugs.sendStatusNotification[connectorId] = false;
           await ping.StatusNotification.execute(
             uuid(),
             connectorId,
@@ -159,13 +86,104 @@ ComPort.onSerialPort('open', function () {
             ping.StatusNotification.ErrorCodeEnum.NO_ERROR
           );
         }
-      });
+      } else {
+        state.switch.plugs.sendStatusNotification[connectorId] = true;
+      }
 
-      setTimeout(function () {
-        ComEmitter.masterRead();
-      }, 2000);
-    }
+      if (
+        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.PLUG_SOFT_LOCK &&
+        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
+      ) {
+        state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
 
+        await ping.ChangeAvailability.execute(
+          uuid(),
+          connectorId,
+          ping.ChangeAvailability.StatusEnum.ACCEPTED
+        );
+      }
+
+      if (
+        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CAR_DETECTED &&
+        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
+      ) {
+        state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
+        await execute.PingCarDetected({}, connectorId);
+      }
+
+      if (
+        state.state.plugs.idTagInfoStatus[connectorId] === 'Accepted' &&
+        state.switch.plugs.startTransaction[connectorId]
+      ) {
+        state.state.plugs.idTagInfoStatus[connectorId] = '';
+        state.switch.plugs.startTransaction[connectorId] = false;
+
+        // await ping.StartTransaction.execute(uuid(), connectorId);
+
+        // ping.StatusNotification.execute(
+        //   uuid(),
+        //   connectorId,
+        //   ping.StatusNotification.StatusEnum.CHARGING,
+        //   ping.StatusNotification.ErrorCodeEnum.NO_ERROR
+        // );
+
+        await ComEmitter.proxire(connectorId);
+      }
+
+      if (
+        state.state.plugs.startTransactionStatus[connectorId] === 'Accepted' &&
+        state.switch.plugs.chargeStart[connectorId]
+      ) {
+        state.state.plugs.startTransactionStatus[connectorId] = '';
+        state.switch.plugs.chargeStart[connectorId] = false;
+
+        await ComEmitter.proxire(connectorId);
+      }
+
+      if (
+        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CHARGING &&
+        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
+      ) {
+        state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
+        await execute.PingAndStartTransaction(connectorId);
+      }
+
+      if (
+        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CHARGE_COMPLETED &&
+        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
+      ) {
+        state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
+        await execute.UpdateFlagStopTransaction({}, connectorId);
+
+        await ping.StatusNotification.execute(
+          uuid(),
+          connectorId,
+          ping.StatusNotification.StatusEnum.FINISHING,
+          ping.StatusNotification.ErrorCodeEnum.NO_ERROR
+        );
+      }
+
+      if (state.state.plugs.stopTransactionStatus[connectorId] === 'Accepted') {
+        state.state.plugs.stopTransactionStatus[connectorId] = '';
+        state.state.plugs.idTagInfoStatus[connectorId] = '';
+
+        Logger.info('Charge completed.');
+
+        await ping.StatusNotification.execute(
+          uuid(),
+          connectorId,
+          ping.StatusNotification.StatusEnum.AVAILABLE,
+          ping.StatusNotification.ErrorCodeEnum.NO_ERROR
+        );
+      }
+    });
+
+    setTimeout(function () {
+      ComEmitter.masterRead();
+    }, 2000);
+  }
+
+  WebSocket.onConnect(async function (connection) {
     WebSocket.register('message', async function (message) {
       if (message.type !== 'utf8') {
         Logger.warning('Non UTF-8 data was received:', message);

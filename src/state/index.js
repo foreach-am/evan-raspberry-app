@@ -33,6 +33,7 @@ const state = {
       expiryDate: {},
 
       previousPlugState: {},
+      softLockDueConnectionLose: {},
     },
   },
 
