@@ -31,7 +31,8 @@ async function restartSoftware() {
     } else {
       console.log('');
       console.log(' Software restart are impossible during development mode.');
-      console.log(' Please run `npm start` again to start app.');
+      console.log(' Please kill current process Ctrl+C, then run startcommand .');
+      console.log(' again `npm start` to start app.');
       console.log('');
 
       process.exit(1000001);
@@ -41,7 +42,7 @@ async function restartSoftware() {
 
 async function restartHardware() {
   return new Promise(function (resolve, reject) {
-    // ComEmitter.extLedOff();
+    ComEmitter.extLedOff();
 
     buttonReset.write(1, function (error, value) {
       if (error) {

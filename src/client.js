@@ -26,7 +26,7 @@ setInterval(() => {
   });
 }, 10 * 1000);
 
-ComPort.onLogIdle(async function () {
+ComPort.onLongIdle(async function () {
   Logger.info('ComPort stuck, calling hardware and software reset ...');
 
   await Raspberry.restartHardware();

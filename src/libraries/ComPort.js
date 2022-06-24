@@ -184,7 +184,7 @@ function closeSerialPort() {
 }
 
 const onIdleCallbacks = [];
-function onLogIdle(callback) {
+function onLongIdle(callback) {
   onIdleCallbacks.push(callback);
 }
 
@@ -207,7 +207,7 @@ function startIdleChecker() {
 
 module.exports = {
   ComPort: {
-    onLogIdle: onLogIdle,
+    onLongIdle: onLongIdle,
     startIdleChecker: startIdleChecker,
     emit: emitMessage,
     register: registerCallback,
