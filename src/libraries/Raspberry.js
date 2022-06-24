@@ -10,7 +10,7 @@ const buttonReset = new Gpio(5, 'out', 'rising', {
 });
 
 async function restartSoftware() {
-  return new Promise(function (resolve, reject) {
+  return new Promise(async function (resolve, reject) {
     const callback = function (error, stdout, stderr) {
       if (error) {
         return reject(error);
@@ -36,7 +36,7 @@ async function restartSoftware() {
 
       await restartHardware();
 
-      process.exit(0);
+      process.exit(1000001);
     }
   });
 }
