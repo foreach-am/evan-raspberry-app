@@ -52,9 +52,7 @@ function shiftCommand() {
     const first = data.shift();
 
     return {
-      resolveData: {
-        first,
-      },
+      resolveData: first,
       data,
     };
   });
