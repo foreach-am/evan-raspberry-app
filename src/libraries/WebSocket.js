@@ -4,6 +4,8 @@ const { EventCommandNameEnum } = require('./EventQueue');
 const { Logger } = require('./Logger');
 const { OfflineCommand } = require('./OfflineCommand');
 
+const sleep = require('../utils/sleep');
+
 const client = new WebSocketClient();
 
 /**
@@ -135,9 +137,11 @@ async function executeOfflineQueue() {
   while (true) {
     const offlineCommand = OfflineCommand.shift();
     if (!offlineCommand) {
+      await sleep(20);
       return;
     }
 
+    Logger.json('Executing offline command:', offlineCommand);
     await sendDataToServer(offlineCommand);
   }
 }
