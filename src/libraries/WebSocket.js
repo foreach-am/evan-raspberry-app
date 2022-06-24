@@ -2,6 +2,7 @@ const url = require('url');
 const { client: WebSocketClient } = require('websocket');
 const { EventCommandNameEnum } = require('./EventQueue');
 const { Logger } = require('./Logger');
+const { OfflineCommand } = require('./OfflineCommand');
 
 const client = new WebSocketClient();
 
@@ -58,7 +59,7 @@ client.on('connectFailed', function (error) {
 });
 
 function onConnect(callback) {
-  client.on('connect', function (currentConnection) {
+  client.on('connect', async function (currentConnection) {
     connection = currentConnection;
 
     connection.on('error', function (error) {
@@ -72,6 +73,7 @@ function onConnect(callback) {
     });
 
     Logger.info('WebSocket connected successfully.');
+    await executeOfflineQueue();
   });
 
   client.on('connect', callback);
@@ -97,11 +99,26 @@ function send({ sendType, commandId, messageId, commandArgs }) {
   const commandName = EventCommandNameEnum[commandId];
 
   if (!connection || !connection.connected) {
-    return Logger.info(
-      `Skipping ${commandName}`
-      // transactionId
-    );
+    OfflineCommand.push({
+      sendType,
+      commandId,
+      messageId,
+      commandArgs,
+    });
+
+    return Logger.info(`Skipping ${commandName}: command inserted to offline queue.`);
   }
+
+  sendDataToServer({
+    sendType,
+    commandId,
+    messageId,
+    commandArgs,
+  });
+}
+
+function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
+  const commandName = EventCommandNameEnum[commandId];
 
   const dataToSend =
     sendType === SendTypeEnum.Request
@@ -110,9 +127,19 @@ function send({ sendType, commandId, messageId, commandArgs }) {
 
   const dataToSenJson = JSON.stringify(dataToSend);
   Logger.json(` Calling ${commandName} with arguments:`, commandArgs);
-  Logger.json(` Sending ${commandName} with json data:`, dataToSenJson);
 
   connection.sendUTF(dataToSenJson);
+}
+
+async function executeOfflineQueue() {
+  while (true) {
+    const offlineCommand = OfflineCommand.shift();
+    if (!offlineCommand) {
+      return;
+    }
+
+    await sendDataToServer(offlineCommand);
+  }
 }
 
 const SendTypeEnum = {

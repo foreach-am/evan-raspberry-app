@@ -38,9 +38,9 @@ ComPort.onSerialPort('open', function () {
 
   WebSocket.onConnect(async function (connection) {
     async function onDataReady() {
-      if (process.env.NODE_ENV !== 'production') {
-        logParsedServerData();
-      }
+      // if (process.env.NODE_ENV !== 'production') {
+      //   logParsedServerData();
+      // }
 
       Raspberry.mapOnPlugs(async function (connectorId) {
         Logger.info(`Previous Plug State [${connectorId}]`, {
