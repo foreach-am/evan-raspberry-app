@@ -135,7 +135,7 @@ function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
 
 async function executeOfflineQueue() {
   while (true) {
-    const offlineCommand = OfflineCommand.shift();
+    const offlineCommand = await OfflineCommand.shift();
     if (!offlineCommand) {
       await sleep(20);
       return;
