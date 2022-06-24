@@ -34,6 +34,8 @@ function restartSoftware() {
       console.log(' Please run `npm start` again to start app.');
       console.log('');
 
+      await restartHardware();
+
       process.exit(0);
     }
   });
