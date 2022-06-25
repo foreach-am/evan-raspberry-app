@@ -26,23 +26,24 @@ function closeConnection() {
 }
 
 // keep alive checker - every 10 seconds
-const pocketsPingPong = {};
+const pocketsPingPong = [];
 setInterval(function () {
   if (connection) {
-    Logger.info('WebSocket pinging sent.');
-
     const checkerId = uuid();
-    pocketsPingPong[checkerId] = false;
+    pocketsPingPong.push(checkerId);
 
+    Logger.info('WebSocket pinging to server:', checkerId);
     connection.ping(checkerId);
-    setTimeout(function () {
-      if (pocketsPingPong[checkerId]) {
-        delete pocketsPingPong[checkerId];
-        return;
-      }
 
-      // PONG response not received during 2 seconds
-      closeConnection();
+    setTimeout(function () {
+      const index = pocketsPingPong.findIndex(function (oldId) {
+        return oldId === checkerId;
+      });
+
+      if (index !== -1) {
+        // PONG response not received during 2 seconds
+        closeConnection();
+      }
     }, 2_000);
   }
 }, 10_000);
@@ -107,9 +108,15 @@ client.on('connect', async function (currentConnection) {
 
   connection.on('pong', function (binaryPayload) {
     const checkerId = Buffer.from(binaryPayload).toString('utf-8');
-    pocketsPingPong[checkerId].received = Date.now();
-
     Logger.info('WebSocket pong received:', checkerId);
+
+    const index = pocketsPingPong.findIndex(function (oldId) {
+      return oldId === checkerId;
+    });
+
+    if (index !== -1) {
+      pocketsPingPong.splice(index, 1);
+    }
   });
 
   Logger.info('WebSocket connected successfully.');
@@ -171,7 +178,7 @@ function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
       : [sendType, messageId, commandArgs];
 
   const dataToSenJson = JSON.stringify(dataToSend);
-  Logger.json(` Calling ${commandName} with arguments:`, commandArgs);
+  Logger.json(`Calling ${commandName} with arguments:`, commandArgs);
 
   connection.sendUTF(dataToSenJson);
 }
