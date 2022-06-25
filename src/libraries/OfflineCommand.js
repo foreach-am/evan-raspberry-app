@@ -58,9 +58,21 @@ function shiftCommand() {
   });
 }
 
+function firstCommand() {
+  return withOfflineCommands(function (data) {
+    const first = data[0];
+
+    return {
+      resolveData: first,
+      data,
+    };
+  });
+}
+
 module.exports = {
   OfflineCommand: {
     push: pushCommand,
     shift: shiftCommand,
+    first: firstCommand,
   },
 };

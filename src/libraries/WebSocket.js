@@ -201,14 +201,20 @@ function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
 
 async function executeOfflineQueue() {
   while (true) {
-    const offlineCommand = await OfflineCommand.shift();
+    const offlineCommand = await OfflineCommand.first();
     if (!offlineCommand) {
-      await sleep(20);
       return;
     }
 
-    Logger.json('Executing offline command:', offlineCommand);
-    await sendDataToServer(offlineCommand);
+    try {
+      Logger.json('Executing offline command:', offlineCommand);
+      await sendDataToServer(offlineCommand);
+      await OfflineCommand.first();
+    } catch (e) {
+      Logger.error('Failed to execute offline command, trying in next step.');
+    }
+
+    await sleep(50);
   }
 }
 
