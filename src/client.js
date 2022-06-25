@@ -72,7 +72,10 @@ ComPort.onSerialPort('open', function () {
         state.statistic.plugs.plugState[connectorId] === PlugStateEnum.UNPLUGGED &&
         state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
       ) {
-        state.state.plugs.softLockDueConnectionLose[connectorId] = false;
+        if (WebSocket.isConnected()) {
+          state.state.plugs.softLockDueConnectionLose[connectorId] = false;
+        }
+
         state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
 
         state.switch.plugs.startTransaction[connectorId] = true;
