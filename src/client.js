@@ -14,8 +14,6 @@ const state = require('./state');
 const ping = require('./ping');
 const execute = require('./execute');
 
-let comportHandlerId = -1;
-
 setInterval(() => {
   Raspberry.mapOnPlugs(async function (connectorId) {
     if (state.statistic.plugs.plugState[connectorId] !== PlugStateEnum.CHARGING) {
@@ -189,6 +187,8 @@ ComPort.onSerialPort('open', function () {
     }, 2000);
   }
 
+  ComPort.register(onDataReady);
+
   WebSocket.onConnect(async function (connection) {
     WebSocket.register('message', async function (message) {
       if (message.type !== 'utf8') {
@@ -255,11 +255,11 @@ ComPort.onSerialPort('open', function () {
       }
     });
 
-    comportHandlerId = ComPort.register(onDataReady);
+    // const comportHandlerId = ComPort.register(onDataReady);
 
-    WebSocket.register('close', function () {
-      // ComPort.unregister(comportHandlerId);
-    });
+    // WebSocket.register('close', function () {
+    //   ComPort.unregister(comportHandlerId);
+    // });
 
     ping.BootNotification.execute(uuid());
   });
