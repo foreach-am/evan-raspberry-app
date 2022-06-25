@@ -43,22 +43,28 @@ ComPort.onSerialPort('open', function () {
     // }
 
     Raspberry.mapOnPlugs(async function (connectorId) {
-      if (!WebSocket.isConnected()) {
-        if (
-          state.statistic.plugs.plugState[connectorId] === PlugStateEnum.UNPLUGGED &&
-          !state.state.plugs.softLockDueConnectionLose[connectorId]
-        ) {
-          state.state.plugs.softLockDueConnectionLose[connectorId] = true;
-          await ComEmitter.plugOff(connectorId);
-        }
-      } else {
-        if (
-          state.statistic.plugs.plugState[connectorId] === PlugStateEnum.PLUG_SOFT_LOCK &&
-          state.state.plugs.softLockDueConnectionLose[connectorId]
-        ) {
-          state.state.plugs.softLockDueConnectionLose[connectorId] = false;
-          await ComEmitter.plugOn(connectorId);
-        }
+      Logger.inf(`PLUG OFFLINE MODE ${connectorId}:`, {
+        connected: WebSocket.isConnected(),
+        state: state.statistic.plugs.plugState[connectorId],
+        locked: state.state.plugs.softLockDueConnectionLose[connectorId],
+      });
+
+      if (
+        !WebSocket.isConnected() &&
+        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.UNPLUGGED &&
+        !state.state.plugs.softLockDueConnectionLose[connectorId]
+      ) {
+        await ComEmitter.plugOff(connectorId);
+        state.state.plugs.softLockDueConnectionLose[connectorId] = true;
+      }
+
+      if (
+        WebSocket.isConnected() &&
+        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.PLUG_SOFT_LOCK &&
+        state.state.plugs.softLockDueConnectionLose[connectorId]
+      ) {
+        await ComEmitter.plugOn(connectorId);
+        state.state.plugs.softLockDueConnectionLose[connectorId] = false;
       }
 
       Logger.info(`Plug State [${connectorId}]`, {
