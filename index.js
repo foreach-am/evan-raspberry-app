@@ -9,7 +9,9 @@ function startClientApplication() {
 let intervalSteps = 30;
 
 const interval = setInterval(function () {
-  console.log(`  CLIENT APP WILL START IN ${intervalSteps} SECONDS.`);
+  console.clear();
+  console.log();
+  console.log(`  Client app will start after ${intervalSteps} seconds, please wait ...`);
 
   if (--intervalSteps === 0) {
     console.log();
