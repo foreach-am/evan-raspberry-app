@@ -186,6 +186,10 @@ function send({ sendType, commandId, messageId, commandArgs }) {
 }
 
 function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
+  if (!currentConnection) {
+    return false;
+  }
+
   const commandName = EventCommandNameEnum[commandId];
 
   const dataToSend =
@@ -197,6 +201,7 @@ function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
   // Logger.json(`Calling ${commandName} with arguments:`, commandArgs);
 
   currentConnection.sendUTF(dataToSenJson);
+  return true;
 }
 
 async function executeOfflineQueue() {
@@ -206,12 +211,12 @@ async function executeOfflineQueue() {
       return;
     }
 
-    try {
-      Logger.json('Executing offline command:', offlineCommand);
-      await sendDataToServer(offlineCommand);
+    Logger.json('Executing offline command:', offlineCommand);
+    const dataSent = sendDataToServer(offlineCommand);
 
+    if (dataSent) {
       await OfflineCommand.shift();
-    } catch (e) {
+    } else {
       Logger.error('Failed to execute offline command, trying in next step.');
     }
 
