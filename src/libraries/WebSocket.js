@@ -14,6 +14,8 @@ const client = new WebSocketClient();
  * @type {import('websocket').connection}
  */
 let currentConnection = null;
+let connected = false;
+
 function getConnection() {
   return currentConnection;
 }
@@ -29,7 +31,7 @@ function connectionCloseCallback() {
 // keep alive checker - every 10 seconds
 const pocketsPingPong = [];
 setInterval(function () {
-  if (!currentConnection || !currentConnection.connected) {
+  if (!currentConnection) {
     return;
   }
 
@@ -47,6 +49,8 @@ setInterval(function () {
     if (index !== -1) {
       // PONG response not received during 2 seconds
       connectionCloseCallback();
+    } else {
+      connected = true;
     }
   }, 2_000);
 }, 10_000);
@@ -96,6 +100,7 @@ client.on('connectFailed', function (error) {
 
 client.on('connect', async function (socketClientConnection) {
   currentConnection = socketClientConnection;
+  connected = true;
 
   currentConnection.on('error', function (error) {
     Logger.error('WebSocket connection error:', error);
@@ -118,6 +123,16 @@ client.on('connect', async function (socketClientConnection) {
     if (index !== -1) {
       pocketsPingPong.splice(index, 1);
     }
+  });
+
+  currentConnection.on('drain', function () {
+    Logger.info('WebSocket connection event triggered drain');
+  });
+  currentConnection.on('pause', function () {
+    Logger.info('WebSocket connection event triggered drapausein');
+  });
+  currentConnection.on('resume', function () {
+    Logger.info('WebSocket connection event triggered resume');
   });
 
   Logger.info('WebSocket connected successfully.');
@@ -197,7 +212,7 @@ async function executeOfflineQueue() {
 }
 
 function isConnected() {
-  return !!currentConnection && currentConnection.connected;
+  return !!currentConnection && connected;
   // return connected;
 }
 
