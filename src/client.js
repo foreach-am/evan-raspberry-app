@@ -269,13 +269,11 @@ ComPort.onSerialPort('open', function () {
   WebSocket.startServer();
 });
 
-setTimeout(function () {
-  ComPort.open();
+ComPort.open();
 
-  setTimeout(function () {
-    ComEmitter.startRun();
-  }, 1000);
-}, 100);
+setTimeout(function () {
+  ComEmitter.startRun();
+}, 1000);
 
 CoreEvent.register(CoreEventEnum.EVENT_EXIT, function () {
   ComPort.close();

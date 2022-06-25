@@ -1,5 +1,11 @@
 global.ROOT_DIR = __dirname;
 
-require('./src/configure');
-require('./src/client');
-require('./src/lighting');
+function startApp() {
+  require('./src/configure');
+  require('./src/client');
+  require('./src/lighting');
+}
+
+setTimeout(function () {
+  startApp();
+}, 30_000);
