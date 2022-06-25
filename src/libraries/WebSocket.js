@@ -194,7 +194,7 @@ function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
       : [sendType, messageId, commandArgs];
 
   const dataToSenJson = JSON.stringify(dataToSend);
-  Logger.json(`Calling ${commandName} with arguments:`, commandArgs);
+  // Logger.json(`Calling ${commandName} with arguments:`, commandArgs);
 
   currentConnection.sendUTF(dataToSenJson);
 }
@@ -209,7 +209,8 @@ async function executeOfflineQueue() {
     try {
       Logger.json('Executing offline command:', offlineCommand);
       await sendDataToServer(offlineCommand);
-      await OfflineCommand.first();
+
+      await OfflineCommand.shift();
     } catch (e) {
       Logger.error('Failed to execute offline command, trying in next step.');
     }
