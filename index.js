@@ -14,8 +14,7 @@ const interval = setInterval(function () {
   console.log(`  Client app will start after ${intervalSteps} seconds, please wait ...`);
 
   if (--intervalSteps === 0) {
-    console.log();
-    console.log();
+    console.clear();
     console.log();
 
     clearInterval(interval);
