@@ -41,11 +41,11 @@ ComPort.onSerialPort('open', function () {
     // }
 
     Raspberry.mapOnPlugs(async function (connectorId) {
-      Logger.info(`PLUG OFFLINE MODE ${connectorId}:`, {
-        connected: WebSocket.isConnected(),
-        state: state.statistic.plugs.plugState[connectorId],
-        locked: state.state.plugs.softLockDueConnectionLose[connectorId],
-      });
+      // Logger.info(`Plug offline mode ${connectorId}:`, {
+      //   connected: WebSocket.isConnected(),
+      //   state: state.statistic.plugs.plugState[connectorId],
+      //   locked: state.state.plugs.softLockDueConnectionLose[connectorId],
+      // });
 
       if (
         !WebSocket.isConnected() &&
@@ -65,10 +65,10 @@ ComPort.onSerialPort('open', function () {
         state.state.plugs.softLockDueConnectionLose[connectorId] = false;
       }
 
-      // Logger.info(`Plug State [${connectorId}]`, {
-      //   current: state.statistic.plugs.plugState[connectorId],
-      //   previous: state.state.plugs.previousPlugState[connectorId],
-      // });
+      Logger.info(`Plug State [${connectorId}]`, {
+        current: state.statistic.plugs.plugState[connectorId],
+        previous: state.state.plugs.previousPlugState[connectorId],
+      });
 
       if (
         state.statistic.plugs.plugState[connectorId] === PlugStateEnum.UNPLUGGED &&
