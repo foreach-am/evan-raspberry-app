@@ -41,7 +41,7 @@ ComPort.onSerialPort('open', function () {
     // }
 
     Raspberry.mapOnPlugs(async function (connectorId) {
-      Logger.inf(`PLUG OFFLINE MODE ${connectorId}:`, {
+      Logger.info(`PLUG OFFLINE MODE ${connectorId}:`, {
         connected: WebSocket.isConnected(),
         state: state.statistic.plugs.plugState[connectorId],
         locked: state.state.plugs.softLockDueConnectionLose[connectorId],
