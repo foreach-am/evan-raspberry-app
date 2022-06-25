@@ -63,10 +63,10 @@ ComPort.onSerialPort('open', function () {
         await ComEmitter.plugOn(connectorId);
       }
 
-      // Logger.info(`Plug State [${connectorId}]`, {
-      //   current: state.statistic.plugs.plugState[connectorId],
-      //   previous: state.state.plugs.previousPlugState[connectorId],
-      // });
+      Logger.info(`Plug State [${connectorId}]`, {
+        current: state.statistic.plugs.plugState[connectorId],
+        previous: state.state.plugs.previousPlugState[connectorId],
+      });
 
       if (
         state.statistic.plugs.plugState[connectorId] === PlugStateEnum.UNPLUGGED &&

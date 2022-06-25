@@ -198,7 +198,7 @@ function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
       : [sendType, messageId, commandArgs];
 
   const dataToSenJson = JSON.stringify(dataToSend);
-  // Logger.json(`Calling ${commandName} with arguments:`, commandArgs);
+  Logger.json(`Calling ${commandName} with arguments:`, commandArgs);
 
   currentConnection.sendUTF(dataToSenJson);
   return true;
