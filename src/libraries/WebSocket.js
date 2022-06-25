@@ -151,7 +151,7 @@ function startServer() {
 function send({ sendType, commandId, messageId, commandArgs }) {
   const commandName = EventCommandNameEnum[commandId];
 
-  if (!currentConnection || !currentConnection.connected) {
+  if (!currentConnection || !connected) {
     Logger.info(`Skipping ${commandName} - not connected.`);
     if (EventQueue.isOfflineCacheableCommand(commandName)) {
       OfflineCommand.push({
