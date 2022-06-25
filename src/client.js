@@ -41,11 +41,11 @@ ComPort.onSerialPort('open', function () {
     // }
 
     Raspberry.mapOnPlugs(async function (connectorId) {
-      // Logger.info(`Plug offline mode ${connectorId}:`, {
-      //   connected: WebSocket.isConnected(),
-      //   state: state.statistic.plugs.plugState[connectorId],
-      //   locked: state.state.plugs.softLockDueConnectionLose[connectorId],
-      // });
+      Logger.info(`Plug offline mode ${connectorId}:`, {
+        connected: WebSocket.isConnected(),
+        state: state.statistic.plugs.plugState[connectorId],
+        locked: !!state.state.plugs.softLockDueConnectionLose[connectorId],
+      });
 
       if (
         !WebSocket.isConnected() &&

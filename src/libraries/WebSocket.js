@@ -22,6 +22,7 @@ function getConnection() {
 
 function connectionCloseCallback() {
   Logger.warning('WebSocket - closing connection.');
+  connected = false;
 
   // if (currentConnection) {
   //   currentConnection.close();
@@ -129,7 +130,7 @@ client.on('connect', async function (socketClientConnection) {
     Logger.info('WebSocket connection event triggered drain');
   });
   currentConnection.on('pause', function () {
-    Logger.info('WebSocket connection event triggered drapausein');
+    Logger.info('WebSocket connection event triggered pause');
   });
   currentConnection.on('resume', function () {
     Logger.info('WebSocket connection event triggered resume');
