@@ -49,8 +49,7 @@ ComPort.onSerialPort('open', function () {
 
       if (
         !WebSocket.isConnected() &&
-        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.UNPLUGGED &&
-        !state.state.plugs.softLockDueConnectionLose[connectorId]
+        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.UNPLUGGED
       ) {
         await ComEmitter.plugOff(connectorId);
         state.state.plugs.softLockDueConnectionLose[connectorId] = true;
@@ -62,7 +61,6 @@ ComPort.onSerialPort('open', function () {
         state.state.plugs.softLockDueConnectionLose[connectorId]
       ) {
         await ComEmitter.plugOn(connectorId);
-        state.state.plugs.softLockDueConnectionLose[connectorId] = false;
       }
 
       // Logger.info(`Plug State [${connectorId}]`, {
@@ -74,6 +72,7 @@ ComPort.onSerialPort('open', function () {
         state.statistic.plugs.plugState[connectorId] === PlugStateEnum.UNPLUGGED &&
         state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
       ) {
+        state.state.plugs.softLockDueConnectionLose[connectorId] = false;
         state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
 
         state.switch.plugs.startTransaction[connectorId] = true;
