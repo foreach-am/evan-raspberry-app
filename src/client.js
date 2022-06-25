@@ -258,7 +258,7 @@ ComPort.onSerialPort('open', function () {
     comportHandlerId = ComPort.register(onDataReady);
 
     WebSocket.register('close', function () {
-      ComPort.unregister(comportHandlerId);
+      // ComPort.unregister(comportHandlerId);
     });
 
     ping.BootNotification.execute(uuid());
