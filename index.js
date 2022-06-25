@@ -11,8 +11,8 @@ let intervalSteps = 15;
 const interval = setInterval(function () {
   console.clear();
   console.log();
-  console.log(`  Client app will start after ${intervalSteps} seconds, please wait ...`);
-  console.log('  We need to wait a bit till COM-port can respond us.');
+  console.log('  We need to wait a bit till COM-port can respond us, please wait ...');
+  console.log(`  Client app will start after ${intervalSteps} seconds.`);
   console.log();
 
   if (--intervalSteps === 0) {
