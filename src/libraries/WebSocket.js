@@ -53,7 +53,7 @@ setInterval(function () {
       connected = true;
     }
   }, 2_000);
-}, 10_000);
+}, 5_000);
 
 const reconnectionMaxAttempts = 10;
 const reconnectionDelays = {
