@@ -6,6 +6,7 @@ const { OfflineCommand } = require('./OfflineCommand');
 const { EventQueue } = require('./EventQueue');
 
 const sleep = require('../utils/sleep');
+const uuid = require('../utils/uuid');
 
 const client = new WebSocketClient();
 
@@ -17,12 +18,34 @@ function getConnection() {
   return connection;
 }
 
+function closeConnection() {
+  Logger.warning('WebSocket - closing connection.');
+
+  connection.close();
+  connection = null;
+}
+
+// keep alive checker - every 10 seconds
+const pocketsPingPong = {};
 setInterval(function () {
   if (connection) {
     Logger.info('WebSocket pinging sent.');
-    connection.ping(2);
+
+    const checkerId = uuid();
+    pocketsPingPong[checkerId] = false;
+
+    connection.ping(checkerId);
+    setTimeout(function () {
+      if (pocketsPingPong[checkerId]) {
+        delete pocketsPingPong[checkerId];
+        return;
+      }
+
+      // PONG response not received during 2 seconds
+      closeConnection();
+    }, 2_000);
   }
-}, 2_000);
+}, 10_000);
 
 const reconnectionMaxAttempts = 10;
 const reconnectionDelays = {
@@ -41,8 +64,7 @@ function connectWithUri() {
 
 function reconnect() {
   if (connection) {
-    connection.close();
-    connection = null;
+    closeConnection();
   }
 
   client.abort();
@@ -65,7 +87,7 @@ function reconnect() {
 
 client.on('connectFailed', function (error) {
   Logger.error('Could not connect to server:', error);
-  connection = null;
+  closeConnection();
 
   reconnect();
 });
@@ -84,8 +106,10 @@ client.on('connect', async function (currentConnection) {
   });
 
   connection.on('pong', function (binaryPayload) {
-    const message = Buffer.from(binaryPayload).toString('utf-8');
-    Logger.info('WebSocket pong received:', message);
+    const checkerId = Buffer.from(binaryPayload).toString('utf-8');
+    pocketsPingPong[checkerId].received = Date.now();
+
+    Logger.info('WebSocket pong received:', checkerId);
   });
 
   Logger.info('WebSocket connected successfully.');
