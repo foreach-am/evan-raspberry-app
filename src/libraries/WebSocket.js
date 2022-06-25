@@ -14,44 +14,41 @@ const client = new WebSocketClient();
  * @type {import('websocket').connection}
  */
 let currentConnection = null;
-let connected = false;
-
 function getConnection() {
   return currentConnection;
 }
 
-function closeConnection() {
+function connectionCloseCallback() {
   Logger.warning('WebSocket - closing connection.');
 
   // if (currentConnection) {
   //   currentConnection.close();
-  //   currentConnection = null;
   // }
-
-  connected = false;
 }
 
 // keep alive checker - every 10 seconds
 const pocketsPingPong = [];
 setInterval(function () {
-  if (currentConnection) {
-    const checkerId = uuid();
-    pocketsPingPong.push(checkerId);
-
-    Logger.info('WebSocket pinging to server:', checkerId);
-    currentConnection.ping(checkerId);
-
-    setTimeout(function () {
-      const index = pocketsPingPong.findIndex(function (oldId) {
-        return oldId === checkerId;
-      });
-
-      if (index !== -1) {
-        // PONG response not received during 2 seconds
-        closeConnection();
-      }
-    }, 2_000);
+  if (!currentConnection || !currentConnection.connected) {
+    return;
   }
+
+  const checkerId = uuid();
+  pocketsPingPong.push(checkerId);
+
+  Logger.info('WebSocket pinging to server:', checkerId);
+  currentConnection.ping(checkerId);
+
+  setTimeout(function () {
+    const index = pocketsPingPong.findIndex(function (oldId) {
+      return oldId === checkerId;
+    });
+
+    if (index !== -1) {
+      // PONG response not received during 2 seconds
+      connectionCloseCallback();
+    }
+  }, 2_000);
 }, 10_000);
 
 const reconnectionMaxAttempts = 10;
@@ -70,9 +67,9 @@ function connectWithUri() {
 }
 
 function reconnect() {
-  closeConnection();
+  connectionCloseCallback();
 
-  client.abort();
+  // client.abort();
 
   setTimeout(function () {
     if (++reconnectionAttempts < reconnectionMaxAttempts) {
@@ -92,14 +89,13 @@ function reconnect() {
 
 client.on('connectFailed', function (error) {
   Logger.error('Could not connect to server:', error);
-  closeConnection();
+  connectionCloseCallback();
 
   reconnect();
 });
 
 client.on('connect', async function (socketClientConnection) {
   currentConnection = socketClientConnection;
-  connected = true;
 
   currentConnection.on('error', function (error) {
     Logger.error('WebSocket connection error:', error);
@@ -151,7 +147,7 @@ function startServer() {
 function send({ sendType, commandId, messageId, commandArgs }) {
   const commandName = EventCommandNameEnum[commandId];
 
-  if (!currentConnection || !connected) {
+  if (!currentConnection || !isConnected()) {
     Logger.info(`Skipping ${commandName} - not connected.`);
     if (EventQueue.isOfflineCacheableCommand(commandName)) {
       OfflineCommand.push({
@@ -201,7 +197,8 @@ async function executeOfflineQueue() {
 }
 
 function isConnected() {
-  return connected;
+  return !!currentConnection && currentConnection.connected;
+  // return connected;
 }
 
 const SendTypeEnum = {
