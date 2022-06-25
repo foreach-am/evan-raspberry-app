@@ -85,7 +85,7 @@ client.on('connect', async function (currentConnection) {
 
   connection.on('pong', function (binaryPayload) {
     const message = Buffer.from(binaryPayload).toString('utf-8');
-    Logger.error('WebSocket pong received:', message);
+    Logger.info('WebSocket pong received:', message);
   });
 
   Logger.info('WebSocket connected successfully.');
