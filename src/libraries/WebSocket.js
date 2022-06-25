@@ -19,7 +19,7 @@ function getConnection() {
 
 setInterval(function () {
   if (connection) {
-    Logger.info('WebSocket pinging ... ');
+    Logger.info('WebSocket pinging sent.');
     connection.ping(2);
   }
 }, 2_000);
@@ -84,7 +84,7 @@ client.on('connect', async function (currentConnection) {
   });
 
   connection.on('pong', function (binaryPayload) {
-    Logger.error('WebSocket pong:', binaryPayload);
+    Logger.error('WebSocket pong received:', binaryPayload);
     reconnect();
   });
 
