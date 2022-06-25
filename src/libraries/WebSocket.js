@@ -39,7 +39,7 @@ setInterval(function () {
   const checkerId = uuid();
   pocketsPingPong.push(checkerId);
 
-  Logger.info('WebSocket pinging to server:', checkerId);
+  Logger.info('WebSocket ping to server:', checkerId);
   currentConnection.ping(checkerId);
 
   setTimeout(function () {
