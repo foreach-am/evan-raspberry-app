@@ -83,6 +83,11 @@ client.on('connect', async function (currentConnection) {
     reconnect();
   });
 
+  connection.on('pong', function (binaryPayload) {
+    Logger.error('WebSocket pong:', binaryPayload);
+    reconnect();
+  });
+
   Logger.info('WebSocket connected successfully.');
   await executeOfflineQueue();
 });
