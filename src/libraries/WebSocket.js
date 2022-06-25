@@ -17,6 +17,13 @@ function getConnection() {
   return connection;
 }
 
+setInterval(function () {
+  if (connection) {
+    Logger.info('WebSocket pinging ... ');
+    connection.ping(2);
+  }
+}, 2_000);
+
 const reconnectionMaxAttempts = 10;
 const reconnectionDelays = {
   frequently: 1,
@@ -63,24 +70,24 @@ client.on('connectFailed', function (error) {
   reconnect();
 });
 
-function onConnect(callback) {
-  client.on('connect', async function (currentConnection) {
-    connection = currentConnection;
+client.on('connect', async function (currentConnection) {
+  connection = currentConnection;
 
-    connection.on('error', function (error) {
-      Logger.error('WebSocket connection error:', error);
-      reconnect();
-    });
-
-    connection.on('close', function (code, description) {
-      Logger.error(`WebSocket connection closed [${code}]: ${description}`);
-      reconnect();
-    });
-
-    Logger.info('WebSocket connected successfully.');
-    await executeOfflineQueue();
+  connection.on('error', function (error) {
+    Logger.error('WebSocket connection error:', error);
+    reconnect();
   });
 
+  connection.on('close', function (code, description) {
+    Logger.error(`WebSocket connection closed [${code}]: ${description}`);
+    reconnect();
+  });
+
+  Logger.info('WebSocket connected successfully.');
+  await executeOfflineQueue();
+});
+
+function onConnect(callback) {
   client.on('connect', callback);
 }
 
