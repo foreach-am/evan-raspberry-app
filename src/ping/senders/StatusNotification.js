@@ -12,6 +12,7 @@ function sendStatusNotification({ messageId, connectorId, status, error }) {
       connectorId: connectorId,
       errorCode: error,
       status: status,
+      timestamp: new Date().toISOString(),
     },
   });
 }
