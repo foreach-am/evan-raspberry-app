@@ -6,6 +6,7 @@ module.exports = {
   StopTransaction: require('./senders/StopTransaction'),
   ReserveNow: require('./senders/ReserveNow'),
   ChangeAvailability: require('./senders/ChangeAvailability'),
+  ChangeConfiguration: require('./senders/ChangeConfiguration'),
   StatusNotification: require('./senders/StatusNotification'),
   RemoteStartTransaction: require('./senders/RemoteStartTransaction'),
   RemoteStopTransaction: require('./senders/RemoteStopTransaction'),

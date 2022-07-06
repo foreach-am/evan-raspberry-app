@@ -2,12 +2,12 @@
 
 ### Required installations
 
-- Python 2/3
+- W5500 SPI Driver
+- RFID RC522 Driver
 - Node.JS 14+
 
 ---
 
 ### Tested on
 
-- macOS 11+
-- Linux 5.6+
+- Linux 5.6+ (Raspberry Debian)

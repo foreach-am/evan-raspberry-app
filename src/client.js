@@ -211,6 +211,10 @@ ComPort.onSerialPort('open', function () {
             await execute.ChangeConnectorAvailability(parsedServerData);
             break;
 
+          case EventCommandNameEnum[EventCommandEnum.EVENT_CHANGE_CONFIGURATION]:
+            await execute.ChangeStationConfiguration(parsedServerData);
+            break;
+
           case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_START_TRANSACTION]:
             await execute.PingAndRemoteStartTransaction(parsedServerData);
             break;

@@ -6,7 +6,7 @@ const state = require('../../state');
 
 const event = EventCommandEnum.EVENT_METER_VALUES;
 
-function sendHeartBeat({ messageId, connectorId, transactionId, meterValue }) {
+function sendMeterValue({ messageId, connectorId, transactionId, meterValue }) {
   WebSocketSender.send({
     sendType: SendTypeEnum.Request,
     commandId: event,
@@ -19,7 +19,7 @@ function sendHeartBeat({ messageId, connectorId, transactionId, meterValue }) {
   });
 }
 
-function sendHeartBeatHandler(messageId, connectorId, transactionId, meterValue) {
+function sendMeterValueHandler(messageId, connectorId, transactionId, meterValue) {
   const data = {
     connectorId: connectorId,
     messageId: messageId,
@@ -32,7 +32,7 @@ function sendHeartBeatHandler(messageId, connectorId, transactionId, meterValue)
     connectorId: null,
     messageId: messageId,
     packetData: data,
-    callback: sendHeartBeat,
+    callback: sendMeterValue,
   });
 }
 
@@ -101,7 +101,7 @@ const UnitEnum = {
 };
 
 module.exports = {
-  execute: sendHeartBeatHandler,
+  execute: sendMeterValueHandler,
   ContextEnum: ContextEnum,
   MeasurandEnum: MeasurandEnum,
   LocationEnum: LocationEnum,

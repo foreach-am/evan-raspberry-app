@@ -1,6 +1,7 @@
 module.exports = {
   PingReserveNow: require('./executions/PingReserveNow'),
   ChangeConnectorAvailability: require('./executions/ChangeConnectorAvailability'),
+  ChangeStationConfiguration: require('./executions/ChangeStationConfiguration'),
   PingAndRemoteStartTransaction: require('./executions/PingAndRemoteStartTransaction'),
   PingAndRemoteStopTransaction: require('./executions/PingAndRemoteStopTransaction'),
   PingAndStartTransaction: require('./executions/PingAndStartTransaction'),

@@ -7,7 +7,7 @@ const uuid = require('../../utils/uuid');
 
 module.exports = async function (parsedServerData) {
   const stopConnectorId = Object.keys(state.state.plugs.transactionId).find(function (itemConnectorId) {
-    return state.state.plugs.transactionId[itemConnectorId] === parsedServerData.body.transactionId;
+    return state.state.plugs.transactionId[itemConnectorId] == parsedServerData.body.transactionId;
   });
 
   if (!stopConnectorId) {
