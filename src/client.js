@@ -16,7 +16,7 @@ const execute = require('./execute');
 
 function registerMeterValueInterval(seconds) {
   // const interval = seconds * 1000;
-  const interval = 10 * 1000;
+  const interval = 30 * 1000;
 
   setInterval(() => {
     Raspberry.mapOnPlugs(async function (connectorId) {
