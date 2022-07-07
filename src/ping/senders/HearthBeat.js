@@ -7,11 +7,13 @@ const state = require('../../state');
 const event = EventCommandEnum.EVENT_HEARTH_BEAT;
 
 function sendHeartBeat({ messageId }) {
+  const commandArgs = {};
+
   WebSocketSender.send({
     sendType: SendTypeEnum.Request,
     commandId: event,
     messageId: messageId,
-    commandArgs: {},
+    commandArgs: commandArgs,
   });
 
   setTimeout(function () {

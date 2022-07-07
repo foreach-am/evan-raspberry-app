@@ -5,14 +5,16 @@ const state = require('../../state');
 const event = EventCommandEnum.EVENT_REMOTE_START_TRANSACTION;
 
 function sendRemoteStartTransaction({ messageId, connectorId, status }) {
+  const commandArgs = {
+    // connectorId: connectorId,
+    status: status,
+  };
+
   WebSocketSender.send({
     sendType: SendTypeEnum.Response,
     commandId: event,
     messageId: messageId,
-    commandArgs: {
-      // connectorId: connectorId,
-      status: status,
-    },
+    commandArgs: commandArgs,
   });
 }
 

@@ -7,15 +7,17 @@ const state = require('../../state');
 const event = EventCommandEnum.EVENT_METER_VALUES;
 
 function sendMeterValue({ messageId, connectorId, transactionId, meterValue }) {
+  const commandArgs = {
+    connectorId: connectorId,
+    transactionId: transactionId,
+    meterValue: meterValue,
+  };
+
   WebSocketSender.send({
     sendType: SendTypeEnum.Request,
     commandId: event,
     messageId: messageId,
-    commandArgs: {
-      connectorId: connectorId,
-      transactionId: transactionId,
-      meterValue: meterValue,
-    },
+    commandArgs: commandArgs,
   });
 }
 

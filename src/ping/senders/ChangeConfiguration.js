@@ -4,13 +4,15 @@ const { WebSocketSender, SendTypeEnum } = require('../../libraries/WebSocket');
 const event = EventCommandEnum.EVENT_CHANGE_CONFIGURATION;
 
 function sendChangeConfiguration({ messageId, status }) {
+  const commandArgs = {
+    status: status,
+  };
+
   WebSocketSender.send({
     sendType: SendTypeEnum.Response,
     commandId: event,
     messageId: messageId,
-    commandArgs: {
-      status: status,
-    },
+    commandArgs: commandArgs,
   });
 }
 

@@ -4,13 +4,15 @@ const { WebSocketSender, SendTypeEnum } = require('../../libraries/WebSocket');
 const event = EventCommandEnum.EVENT_RESET;
 
 function sendReset({ status, messageId }) {
+  const commandArgs = {
+    status: status,
+  };
+
   WebSocketSender.send({
     sendType: SendTypeEnum.Response,
     commandId: event,
     messageId: messageId,
-    commandArgs: {
-      status: status,
-    },
+    commandArgs: commandArgs,
   });
 }
 

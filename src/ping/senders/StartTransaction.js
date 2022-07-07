@@ -5,17 +5,22 @@ const state = require('../../state');
 const event = EventCommandEnum.EVENT_START_TRANSACTION;
 
 function sendStartTransaction({ messageId, connectorId, idTag }) {
+  const commandArgs = {
+    connectorId: connectorId,
+    idTag: idTag,
+    timestamp: new Date().toISOString(),
+    meterStart: (state.statistic.plugs.powerKwh[connectorId] || 0) * 1000,
+  };
+
+  if (state.state.plugs.reservationId[connectorId]) {
+    commandArgs.reservationId = state.state.plugs.reservationId[connectorId];
+  }
+
   WebSocketSender.send({
     sendType: SendTypeEnum.Request,
     commandId: event,
     messageId: messageId,
-    commandArgs: {
-      connectorId: connectorId,
-      idTag: idTag,
-      timestamp: new Date().toISOString(),
-      meterStart: (state.statistic.plugs.powerKwh[connectorId] || 0) * 1000,
-      reservationId: state.state.plugs.reservationId[connectorId],
-    },
+    commandArgs: commandArgs,
   });
 }
 
