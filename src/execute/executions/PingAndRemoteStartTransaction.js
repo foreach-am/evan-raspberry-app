@@ -20,6 +20,10 @@ module.exports = async function (parsedServerData) {
       parsedServerData.body.chargingProfile.transactionId;
   }
 
+  if (parsedServerData.body.transactionId) {
+    state.state.plugs.transactionId[parsedServerData.body.connectorId] = parsedServerData.body.transactionId;
+  }
+
   await ping.RemoteStartTransaction.execute(
     parsedServerData.messageId,
     parsedServerData.body.connectorId,
