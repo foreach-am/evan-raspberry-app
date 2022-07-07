@@ -15,6 +15,9 @@ const ping = require('./ping');
 const execute = require('./execute');
 
 function registerMeterValueInterval(seconds) {
+  // const interval = seconds * 1000;
+  const interval = 10 * 1000;
+
   setInterval(() => {
     Raspberry.mapOnPlugs(async function (connectorId) {
       if (state.statistic.plugs.plugState[connectorId] !== PlugStateEnum.CHARGING) {
@@ -23,7 +26,7 @@ function registerMeterValueInterval(seconds) {
 
       await execute.NotifyMeterValues({}, connectorId);
     });
-  }, seconds * 1000);
+  }, interval);
 }
 
 ComPort.onLongIdle(async function () {
