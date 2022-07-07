@@ -14,15 +14,17 @@ const state = require('./state');
 const ping = require('./ping');
 const execute = require('./execute');
 
-setInterval(() => {
-  Raspberry.mapOnPlugs(async function (connectorId) {
-    if (state.statistic.plugs.plugState[connectorId] !== PlugStateEnum.CHARGING) {
-      return;
-    }
+function registerMeterValueInterval(seconds) {
+  setInterval(() => {
+    Raspberry.mapOnPlugs(async function (connectorId) {
+      if (state.statistic.plugs.plugState[connectorId] !== PlugStateEnum.CHARGING) {
+        return;
+      }
 
-    await execute.NotifyMeterValues({}, connectorId);
-  });
-}, 10 * 1000);
+      await execute.NotifyMeterValues({}, connectorId);
+    });
+  }, seconds * 1000);
+}
 
 ComPort.onLongIdle(async function () {
   Logger.info('ComPort stuck, calling hardware and software reset ...');
@@ -234,7 +236,9 @@ ComPort.onSerialPort('open', function () {
 
         switch (commandId) {
           case EventCommandEnum.EVENT_BOOT_NOTIFICATION:
-            await execute.BootNotification(parsedServerData);
+            await execute.BootNotification(parsedServerData, function () {
+              registerMeterValueInterval(state.state.common.bootNotRequireTime);
+            });
             break;
 
           case EventCommandEnum.EVENT_HEARTH_BEAT:

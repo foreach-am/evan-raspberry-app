@@ -3,6 +3,7 @@ const ping = require('../../ping');
 const uuid = require('../../utils/uuid');
 
 function getCosFi() {
+  // @TODO: calculate real value
   return 1;
 }
 
@@ -58,13 +59,13 @@ module.exports = async function (parsedServerData, connectorId) {
       ping.MeterValues.UnitEnum.WH,
       state.statistic.plugs.powerKwh[connectorId] * 1000
     ),
-    createMeterValue(
-      ping.MeterValues.ContextEnum.SAMPLE_PERIODIC,
-      ping.MeterValues.MeasurandEnum.SOC,
-      ping.MeterValues.LocationEnum.EV,
-      ping.MeterValues.UnitEnum.PERCENT,
-      0 // @TODO: replace with charged percent
-    ),
+    // createMeterValue(
+    //   ping.MeterValues.ContextEnum.SAMPLE_PERIODIC,
+    //   ping.MeterValues.MeasurandEnum.SOC,
+    //   ping.MeterValues.LocationEnum.EV,
+    //   ping.MeterValues.UnitEnum.PERCENT,
+    //   0 // @TODO: replace with charged percent
+    // ),
     createMeterValue(
       ping.MeterValues.ContextEnum.SAMPLE_PERIODIC,
       ping.MeterValues.MeasurandEnum.VOLTAGE,
