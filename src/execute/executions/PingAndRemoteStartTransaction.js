@@ -4,7 +4,27 @@ const state = require('../../state');
 const ping = require('../../ping');
 
 module.exports = async function (parsedServerData) {
-  if (!parsedServerData.body || !parsedServerData.body.idTag) {
+  // when idTag is invalid
+  if (
+    !parsedServerData.body ||
+    typeof parsedServerData.body.idTag !== 'string' ||
+    !parsedServerData.body.idTag ||
+    parsedServerData.body.idTag.toLowerCase() === 'unknown'
+  ) {
+    await ping.RemoteStartTransaction.execute(
+      parsedServerData.messageId,
+      parsedServerData.body.connectorId,
+      ping.RemoteStartTransaction.StatusEnum.REJECTED
+    );
+    return;
+  }
+
+  // when transactionId is invalid
+  if (
+    !parsedServerData.body.transactionId &&
+    !parsedServerData.body.chargingProfile &&
+    !parsedServerData.body.chargingProfile.transactionId
+  ) {
     await ping.RemoteStartTransaction.execute(
       parsedServerData.messageId,
       parsedServerData.body.connectorId,
