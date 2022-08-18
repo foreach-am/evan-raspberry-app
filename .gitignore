@@ -17,4 +17,4 @@ build-log.log*
 # locks
 package-lock.json
 yarn.lock
-package-summary.hash
+package.vhash
