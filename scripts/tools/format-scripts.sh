@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# -----------------------------------------------------
-# init script
+## ----------------------------------------------------------------------------------
+## init script
 cd "$(dirname "$0")/../../" || exit 1
 
 if [[ "$(command -v realpath)" != "" ]]; then
@@ -12,8 +12,8 @@ fi
 
 source "$(dirname "$0")/../includes.sh"
 
-# -----------------------------------------------------
-# format code - scripts
+## ----------------------------------------------------------------------------------
+## format code - scripts
 prettier \
   --config .prettierrc \
   --loglevel error \

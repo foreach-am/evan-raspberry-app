@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# -----------------------------------------------------
-# init script
+## ----------------------------------------------------------------------------------
+## init script
 cd "$(dirname "$0")/../../../" || exit 1
 
 if [[ "$(command -v realpath)" != "" ]]; then
@@ -12,26 +12,26 @@ fi
 
 source "$(dirname "$0")/../../includes.sh"
 
-# -----------------------------------------------------
-# format code
+## ----------------------------------------------------------------------------------
+## format code
 bash ./run-cmd.sh tool:format:code
 check_exit $? ${ERROR_APP_FORMAT_CODE[@]}
 
-# -----------------------------------------------------
-# clear old lint cache
+## ----------------------------------------------------------------------------------
+## clear old lint cache
 bash ./run-cmd.sh tool:lint:uncache
 check_exit $? ${ERROR_APP_LINT_UNCACHE[@]}
 
-# -----------------------------------------------------
-# execute lint
+## ----------------------------------------------------------------------------------
+## execute lint
 bash ./run-cmd.sh tool:lint:execute:prod
 check_exit $? ${ERROR_APP_LINT_EXECUTE[@]}
 
-# -----------------------------------------------------
-# format scripts
+## ----------------------------------------------------------------------------------
+## format scripts
 bash ./run-cmd.sh tool:format:scripts
 check_exit $? ${ERROR_APP_FORMAT_SCRIPTS[@]}
 
-# -----------------------------------------------------
-# add re-formatted files to git
+## ----------------------------------------------------------------------------------
+## add re-formatted files to git
 git add .

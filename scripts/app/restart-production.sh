@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# -----------------------------------------------------
-# init script
+## ----------------------------------------------------------------------------------
+## init script
 cd "$(dirname "$0")/../../" || exit 1
 
 if [[ "$(command -v realpath)" != "" ]]; then
@@ -19,19 +19,19 @@ fi
 
 trap on_process_kill SIGINT
 
-# -----------------------------------------------------
-# start
+## ----------------------------------------------------------------------------------
+## start
 clear
 
-# -----------------------------------------------------
-# check .env configuration
+## ----------------------------------------------------------------------------------
+## check .env configuration
 execute_action "$BUILD_LOG_FILE" \
   "bash ./run-cmd.sh tool:app:env-check" \
   "Checking .env configration" \
   ".env file was not configured properly or it missing."
 
-# -----------------------------------------------------
-# check & install pm2
+## ----------------------------------------------------------------------------------
+## check & install pm2
 if [[ "$(command -v pm2)" == "" ]]; then
   execute_action "$BUILD_LOG_FILE" \
     "npm install --global pm2 --silent" \
@@ -39,15 +39,15 @@ if [[ "$(command -v pm2)" == "" ]]; then
     "Failed to install PM2 engine globally."
 fi
 
-# -----------------------------------------------------
-# restart production
+## ----------------------------------------------------------------------------------
+## restart production
 execute_action "$BUILD_LOG_FILE" \
   "pm2 restart ecosystem.config.js" \
   "Starting PM2 engine app." \
   "Failed to start PM2 engine app."
 
-# -----------------------------------------------------
-# empty message
+## ----------------------------------------------------------------------------------
+## empty message
 echo ""
 echo " Successfully restarted."
 echo ""

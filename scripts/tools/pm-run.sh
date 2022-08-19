@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# -----------------------------------------------------
-# init script
+## ----------------------------------------------------------------------------------
+## init script
 cd "$(dirname "$0")/../../" || exit 1
 
 if [[ "$(command -v realpath)" != "" ]]; then
@@ -12,8 +12,8 @@ fi
 
 source "$(dirname "$0")/../includes.sh"
 
-# -----------------------------------------------------
-# get package manager
+## ----------------------------------------------------------------------------------
+## get package manager
 NODE_PACKAGE_MANAGER=""
 if [[ "$(command -v yarn)" != "" ]]; then
   NODE_PACKAGE_MANAGER="yarn"
@@ -21,8 +21,8 @@ elif [[ "$(command -v npm)" != "" ]]; then
   NODE_PACKAGE_MANAGER="npm"
 fi
 
-# -----------------------------------------------------
-# execute command
+## ----------------------------------------------------------------------------------
+## execute command
 if [[ $NODE_PACKAGE_MANAGER == "yarn" ]]; then
   "$NODE_PACKAGE_MANAGER" "$@"
   exit $?
@@ -38,7 +38,7 @@ if [[ $NODE_PACKAGE_MANAGER == "npm" ]]; then
   exit $?
 fi
 
-# -----------------------------------------------------
-# if not valid package manager was fond
+## ----------------------------------------------------------------------------------
+## if not valid package manager was fond
 echo "No one of npm or yarn package manager was found."
 exit 2

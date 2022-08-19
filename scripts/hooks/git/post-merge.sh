@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# -----------------------------------------------------
-# init script
+## ----------------------------------------------------------------------------------
+## init script
 cd "$(dirname "$0")/../../../" || exit 1
 
 if [[ "$(command -v realpath)" != "" ]]; then
@@ -12,6 +12,6 @@ fi
 
 source "$(dirname "$0")/../../includes.sh"
 
-# -----------------------------------------------------
-# install new node modules if package.json updated
+## ----------------------------------------------------------------------------------
+## install new node modules if package.json updated
 bash ./run-cmd.sh tool:sum-hash:check
