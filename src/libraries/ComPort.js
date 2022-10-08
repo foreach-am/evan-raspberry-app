@@ -203,7 +203,7 @@ function startIdleChecker() {
         await callback();
       }
     }
-  }, 2000);
+  }, 2_000);
 }
 
 module.exports = {

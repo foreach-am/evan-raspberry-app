@@ -4,7 +4,7 @@ const uuid = require('../../utils/uuid');
 
 const state = require('../../state');
 
-const event = EventCommandEnum.EVENT_HEARTH_BEAT;
+const event = EventCommandEnum.EVENT_HEARTBEAT;
 
 function sendHeartBeat({ messageId }) {
   const commandArgs = {};
@@ -18,7 +18,7 @@ function sendHeartBeat({ messageId }) {
 
   setTimeout(function () {
     sendHeartBeatHandler(uuid());
-  }, state.state.common.bootNotRequireTime * 1000);
+  }, state.state.common.bootNotRequireTime * 1_000);
 }
 
 function sendHeartBeatHandler(messageId) {

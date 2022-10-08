@@ -2,7 +2,7 @@ const { Logger } = require('./Logger');
 
 const EventCommandEnum = {
   EVENT_BOOT_NOTIFICATION: 1,
-  EVENT_HEARTH_BEAT: 2,
+  EVENT_HEARTBEAT: 2,
   EVENT_AUTHORIZE: 3,
   EVENT_START_TRANSACTION: 4,
   EVENT_STOP_TRANSACTION: 5,
@@ -18,7 +18,7 @@ const EventCommandEnum = {
 
 const EventCommandNameEnum = {
   [EventCommandEnum.EVENT_BOOT_NOTIFICATION]: 'BootNotification',
-  [EventCommandEnum.EVENT_HEARTH_BEAT]: 'Heartbeat',
+  [EventCommandEnum.EVENT_HEARTBEAT]: 'Heartbeat',
   [EventCommandEnum.EVENT_AUTHORIZE]: 'Authorize',
   [EventCommandEnum.EVENT_START_TRANSACTION]: 'StartTransaction',
   [EventCommandEnum.EVENT_STOP_TRANSACTION]: 'StopTransaction',

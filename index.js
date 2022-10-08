@@ -6,7 +6,7 @@ function startClientApplication() {
   require('./src/lighting');
 }
 
-let intervalSteps = 15;
+let intervalSteps = 5;
 
 const interval = setInterval(function () {
   console.clear();
@@ -22,4 +22,4 @@ const interval = setInterval(function () {
     clearInterval(interval);
     startClientApplication();
   }
-}, 1000);
+}, 1_000);

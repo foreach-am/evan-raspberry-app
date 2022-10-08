@@ -103,7 +103,7 @@ function start(intervalSeconds, startTimeString = null, endTimeString = null) {
 
   clearInterval(interval);
 
-  interval = setInterval(startChecking, intervalSeconds * 1000);
+  interval = setInterval(startChecking, intervalSeconds * 1_000);
   startChecking();
 }
 

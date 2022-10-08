@@ -1,7 +1,7 @@
 module.exports = {
   BootNotification: require('./senders/BootNotification'),
   Authorize: require('./senders/Authorize'),
-  HearthBeat: require('./senders/HearthBeat'),
+  Heartbeat: require('./senders/Heartbeat'),
   StartTransaction: require('./senders/StartTransaction'),
   StopTransaction: require('./senders/StopTransaction'),
   ReserveNow: require('./senders/ReserveNow'),

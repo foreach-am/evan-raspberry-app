@@ -7,7 +7,7 @@ module.exports = {
   PingAndStartTransaction: require('./executions/PingAndStartTransaction'),
   PingAndReset: require('./executions/PingAndReset'),
   BootNotification: require('./executions/BootNotification'),
-  HearthBeat: require('./executions/HearthBeat'),
+  Heartbeat: require('./executions/Heartbeat'),
   UpdateFlagAuthorize: require('./executions/UpdateFlagAuthorize'),
   UpdateFlagStartTransaction: require('./executions/UpdateFlagStartTransaction'),
   UpdateFlagStopTransaction: require('./executions/UpdateFlagStopTransaction'),

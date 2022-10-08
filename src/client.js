@@ -15,8 +15,7 @@ const ping = require('./ping');
 const execute = require('./execute');
 
 function registerMeterValueInterval(seconds) {
-  // const interval = seconds * 1000;
-  const interval = 30 * 1000;
+  const interval = seconds * 1_000;
 
   setInterval(() => {
     Raspberry.mapOnPlugs(async function (connectorId) {
@@ -244,8 +243,8 @@ ComPort.onSerialPort('open', function () {
             });
             break;
 
-          case EventCommandEnum.EVENT_HEARTH_BEAT:
-            await execute.HearthBeat(parsedServerData);
+          case EventCommandEnum.EVENT_HEARTBEAT:
+            await execute.Heartbeat(parsedServerData);
             break;
 
           case EventCommandEnum.EVENT_AUTHORIZE:
