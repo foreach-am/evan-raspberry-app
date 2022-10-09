@@ -3,9 +3,11 @@ const { WebSocketSender, SendTypeEnum } = require('../../libraries/WebSocket');
 
 const event = EventCommandEnum.EVENT_RESERVE_NOW;
 
+// eslint-disable-next-line no-unused-vars
 function sendReserveNow({ messageId, connectorId, status }) {
   const commandArgs = {
     status: status,
+    // connectorId: connectorId,
   };
 
   WebSocketSender.send({

@@ -25,7 +25,7 @@ function trigger(serialNumber) {
 }
 
 rc522
-  .startListening(1000)
+  .startListening(1_000)
   .then(function (serialNumber) {
     Logger.info('RC522 serial number received:', serialNumber);
     trigger(serialNumber);

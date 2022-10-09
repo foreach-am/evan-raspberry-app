@@ -9,7 +9,7 @@ function sendStopTransaction({ messageId, connectorId, idTag, transactionId }) {
     transactionId: transactionId,
     idTag: idTag,
     timestamp: new Date().toISOString(),
-    meterStop: (state.statistic.plugs.powerKwh[connectorId] || 0) * 1000,
+    meterStop: (state.statistic.plugs.powerKwh[connectorId] || 0) * 1_000,
   };
 
   WebSocketSender.send({
@@ -20,7 +20,12 @@ function sendStopTransaction({ messageId, connectorId, idTag, transactionId }) {
   });
 }
 
-function sendStopTransactionHandler(messageId, connectorId, idTag, transactionId) {
+function sendStopTransactionHandler(
+  messageId,
+  connectorId,
+  idTag,
+  transactionId
+) {
   const data = {
     connectorId: connectorId,
     messageId: messageId,

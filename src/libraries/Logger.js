@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 function logInfo(...args) {
   console.log('-->>  INFO:', ...args);
 }
@@ -21,12 +23,16 @@ function logJson(title, ...args) {
       dataString = spaces + dataString;
 
       console.log(dataString);
-    } catch (e) {}
+    } catch (e) {
+      // ...
+    }
   });
 }
 
 function logDivider() {
-  console.log('===================================================================================');
+  console.log(
+    '==================================================================================='
+  );
 }
 
 module.exports = {

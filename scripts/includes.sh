@@ -115,6 +115,23 @@ function end_cmd() {
   fi
 }
 
+function check_exit() {
+  local FUNC_PASSED_ARGS=("$@")
+  local CMD_EXIT_CODE="${FUNC_PASSED_ARGS[0]}"
+  local ERROR_EXIT_CODE="${FUNC_PASSED_ARGS[1]}"
+  local ERROR_EXIT_MSG="${FUNC_PASSED_ARGS[@]:2}"
+
+  if [[ $CMD_EXIT_CODE != 0 ]]; then
+    echo ""
+    echo -e "\033[0;31m Oh nooooooooooooooooooooooo, ☠️\033[0m"
+    echo -e "\033[0;31m ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\033[0m"
+    echo -e "\033[0;31m $ERROR_EXIT_MSG\033[0m"
+    echo ""
+
+    exit $ERROR_EXIT_CODE
+  fi
+}
+
 function on_process_kill() {
   echo -en "\b\b"
   print_kill

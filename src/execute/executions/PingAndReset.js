@@ -7,7 +7,9 @@ const ping = require('../../ping');
 module.exports = async function (parsedServerData) {
   let canReset = true;
   await Raspberry.mapOnPlugs(async function (connectorId) {
-    if (state.statistic.plugs.plugState[connectorId] !== PlugStateEnum.UNPLUGGED) {
+    if (
+      state.statistic.plugs.plugState[connectorId] !== PlugStateEnum.UNPLUGGED
+    ) {
       canReset = false;
     }
   });
@@ -23,7 +25,9 @@ module.exports = async function (parsedServerData) {
 
       restartTriggered = true;
       await Raspberry.restartHardware();
-    } else if (parsedServerData.body.type === ping.Reset.ResetTypeEnum.TYPE_SOFTWARE) {
+    } else if (
+      parsedServerData.body.type === ping.Reset.ResetTypeEnum.TYPE_SOFTWARE
+    ) {
       await ping.Reset.execute(
         parsedServerData.messageId,
         parsedServerData.body.connectorId,

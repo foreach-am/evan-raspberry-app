@@ -1,4 +1,4 @@
-const state = require('../../state');
+// const state = require('../../state');
 const ping = require('../../ping');
 const uuid = require('../../utils/uuid');
 

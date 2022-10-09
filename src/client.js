@@ -3,13 +3,17 @@ const { Logger } = require('./libraries/Logger');
 const { WebSocket } = require('./libraries/WebSocket');
 const { ComPort } = require('./libraries/ComPort');
 const { ComEmitter } = require('./libraries/ComEmitter');
-const { EventQueue, EventCommandEnum, EventCommandNameEnum } = require('./libraries/EventQueue');
+const {
+  EventQueue,
+  EventCommandEnum,
+  EventCommandNameEnum,
+} = require('./libraries/EventQueue');
 const { PlugStateEnum } = require('./libraries/PlugState');
 const { Raspberry } = require('./libraries/Raspberry');
 const { CoreEvent, CoreEventEnum } = require('./libraries/CoreEvent');
 
 const uuid = require('./utils/uuid');
-const logParsedServerData = require('./helpers/logParsedServerData');
+// const logParsedServerData = require('./helpers/logParsedServerData');
 const state = require('./state');
 const ping = require('./ping');
 const execute = require('./execute');
@@ -19,7 +23,9 @@ function registerMeterValueInterval(seconds) {
 
   setInterval(() => {
     Raspberry.mapOnPlugs(async function (connectorId) {
-      if (state.statistic.plugs.plugState[connectorId] !== PlugStateEnum.CHARGING) {
+      if (
+        state.statistic.plugs.plugState[connectorId] !== PlugStateEnum.CHARGING
+      ) {
         return;
       }
 
@@ -63,21 +69,25 @@ ComPort.onSerialPort('open', function () {
 
       if (
         WebSocket.isConnected() &&
-        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.PLUG_SOFT_LOCK &&
+        state.statistic.plugs.plugState[connectorId] ===
+          PlugStateEnum.PLUG_SOFT_LOCK &&
         state.state.plugs.softLockDueConnectionLose[connectorId]
       ) {
         await ComEmitter.plugOn(connectorId);
       }
 
       if (
-        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.UNPLUGGED &&
-        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
+        state.statistic.plugs.plugState[connectorId] ===
+          PlugStateEnum.UNPLUGGED &&
+        state.statistic.plugs.plugState[connectorId] !==
+          state.state.plugs.previousPlugState[connectorId]
       ) {
         if (WebSocket.isConnected()) {
           state.state.plugs.softLockDueConnectionLose[connectorId] = false;
         }
 
-        state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
+        state.state.plugs.previousPlugState[connectorId] =
+          state.statistic.plugs.plugState[connectorId];
 
         state.switch.plugs.startTransaction[connectorId] = true;
         state.switch.plugs.stopTransaction[connectorId] = true;
@@ -98,10 +108,13 @@ ComPort.onSerialPort('open', function () {
       }
 
       if (
-        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.PLUG_SOFT_LOCK &&
-        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
+        state.statistic.plugs.plugState[connectorId] ===
+          PlugStateEnum.PLUG_SOFT_LOCK &&
+        state.statistic.plugs.plugState[connectorId] !==
+          state.state.plugs.previousPlugState[connectorId]
       ) {
-        state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
+        state.state.plugs.previousPlugState[connectorId] =
+          state.statistic.plugs.plugState[connectorId];
 
         await ping.ChangeAvailability.execute(
           uuid(),
@@ -111,10 +124,13 @@ ComPort.onSerialPort('open', function () {
       }
 
       if (
-        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CAR_DETECTED &&
-        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
+        state.statistic.plugs.plugState[connectorId] ===
+          PlugStateEnum.CAR_DETECTED &&
+        state.statistic.plugs.plugState[connectorId] !==
+          state.state.plugs.previousPlugState[connectorId]
       ) {
-        state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
+        state.state.plugs.previousPlugState[connectorId] =
+          state.statistic.plugs.plugState[connectorId];
         await execute.PingCarDetected({}, connectorId);
       }
 
@@ -148,18 +164,24 @@ ComPort.onSerialPort('open', function () {
       }
 
       if (
-        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CHARGING &&
-        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
+        state.statistic.plugs.plugState[connectorId] ===
+          PlugStateEnum.CHARGING &&
+        state.statistic.plugs.plugState[connectorId] !==
+          state.state.plugs.previousPlugState[connectorId]
       ) {
-        state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
+        state.state.plugs.previousPlugState[connectorId] =
+          state.statistic.plugs.plugState[connectorId];
         await execute.PingAndStartTransaction(connectorId);
       }
 
       if (
-        state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CHARGE_COMPLETED &&
-        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
+        state.statistic.plugs.plugState[connectorId] ===
+          PlugStateEnum.CHARGE_COMPLETED &&
+        state.statistic.plugs.plugState[connectorId] !==
+          state.state.plugs.previousPlugState[connectorId]
       ) {
-        state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
+        state.state.plugs.previousPlugState[connectorId] =
+          state.statistic.plugs.plugState[connectorId];
         await execute.UpdateFlagStopTransaction({}, connectorId);
 
         await ping.StatusNotification.execute(
@@ -187,11 +209,12 @@ ComPort.onSerialPort('open', function () {
 
     setTimeout(function () {
       ComEmitter.masterRead();
-    }, 2000);
+    }, 2_000);
   }
 
   ComPort.register(onDataReady);
 
+  // eslint-disable-next-line no-unused-vars
   WebSocket.onConnect(async function (connection) {
     WebSocket.register('message', async function (message) {
       if (message.type !== 'utf8') {
@@ -201,7 +224,8 @@ ComPort.onSerialPort('open', function () {
 
       const parsedServerData = DataParser.parse(message.utf8Data);
 
-      const isServerCommand = parsedServerData.messageType === MessageTypeEnum.TYPE_REQUEST;
+      const isServerCommand =
+        parsedServerData.messageType === MessageTypeEnum.TYPE_REQUEST;
       if (isServerCommand) {
         switch (parsedServerData.command) {
           case EventCommandNameEnum[EventCommandEnum.EVENT_RESERVE_NOW]:
@@ -212,15 +236,21 @@ ComPort.onSerialPort('open', function () {
             await execute.ChangeConnectorAvailability(parsedServerData);
             break;
 
-          case EventCommandNameEnum[EventCommandEnum.EVENT_CHANGE_CONFIGURATION]:
+          case EventCommandNameEnum[
+            EventCommandEnum.EVENT_CHANGE_CONFIGURATION
+          ]:
             await execute.ChangeStationConfiguration(parsedServerData);
             break;
 
-          case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_START_TRANSACTION]:
+          case EventCommandNameEnum[
+            EventCommandEnum.EVENT_REMOTE_START_TRANSACTION
+          ]:
             await execute.PingAndRemoteStartTransaction(parsedServerData);
             break;
 
-          case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_STOP_TRANSACTION]:
+          case EventCommandNameEnum[
+            EventCommandEnum.EVENT_REMOTE_STOP_TRANSACTION
+          ]:
             await execute.PingAndRemoteStopTransaction(parsedServerData);
             break;
 
@@ -229,7 +259,9 @@ ComPort.onSerialPort('open', function () {
             break;
         }
       } else {
-        const foundMessage = EventQueue.getByMessageId(parsedServerData.messageId);
+        const foundMessage = EventQueue.getByMessageId(
+          parsedServerData.messageId
+        );
         if (!foundMessage) {
           return;
         }
@@ -252,7 +284,10 @@ ComPort.onSerialPort('open', function () {
             break;
 
           case EventCommandEnum.EVENT_START_TRANSACTION:
-            await execute.UpdateFlagStartTransaction(parsedServerData, connectorId);
+            await execute.UpdateFlagStartTransaction(
+              parsedServerData,
+              connectorId
+            );
             break;
 
           case EventCommandEnum.EVENT_STOP_TRANSACTION:
@@ -280,7 +315,7 @@ ComPort.open();
 
 setTimeout(function () {
   ComEmitter.startRun();
-}, 1000);
+}, 1_000);
 
 CoreEvent.register(CoreEventEnum.EVENT_EXIT, function () {
   ComPort.close();

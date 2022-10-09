@@ -7,7 +7,8 @@ module.exports = function () {
     logResult[key.padStart(22, char)] = value;
   };
 
-  const { temperature, highVoltError, lowVoltError, highVoltageMeasure } = state.statistic.common;
+  const { temperature, highVoltError, lowVoltError, highVoltageMeasure } =
+    state.statistic.common;
 
   const {
     pilotFeedBack,

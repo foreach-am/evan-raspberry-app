@@ -20,7 +20,7 @@ const state = {
     common: {
       bootNotStatus: '',
       bootNotCurrentTime: '',
-      bootNotRequireTime: 1000,
+      bootNotRequireTime: 1_000,
       receiveServerId: '',
     },
     plugs: {

@@ -9,7 +9,7 @@ function sendStartTransaction({ messageId, connectorId, idTag }) {
     connectorId: connectorId,
     idTag: idTag,
     timestamp: new Date().toISOString(),
-    meterStart: (state.statistic.plugs.powerKwh[connectorId] || 0) * 1000,
+    meterStart: (state.statistic.plugs.powerKwh[connectorId] || 0) * 1_000,
   };
 
   if (state.state.plugs.reservationId[connectorId]) {

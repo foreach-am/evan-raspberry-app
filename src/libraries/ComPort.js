@@ -3,7 +3,7 @@ const { Logger } = require('./Logger');
 const state = require('../state');
 
 const serialPort = new SerialPort({
-  baudRate: 9600,
+  baudRate: 9_600,
   path: process.env.SERIAL_PORT_PATH,
   autoOpen: false,
 });
@@ -49,7 +49,7 @@ serialPort.on('data', function (data) {
 
   const indexStart = inputData.indexOf('*');
   const indexEnd = inputData.indexOf('@');
-  if (-1 === indexStart || -1 === indexEnd) {
+  if (indexStart === -1 || indexEnd === -1) {
     return;
   }
 
@@ -92,7 +92,10 @@ function parseInputData(text) {
   const startCharIndex = text.indexOf(startChar);
   const endCharIndex = text.indexOf(endChar);
 
-  const packet = text.substring(startCharIndex + startChar.length, endCharIndex);
+  const packet = text.substring(
+    startCharIndex + startChar.length,
+    endCharIndex
+  );
 
   packet
     .split(':')
@@ -143,7 +146,7 @@ function parseInputData(text) {
     });
 }
 
-function emitMessage(message, callback) {
+function emitMessage(message) {
   return new Promise(function (resolve, reject) {
     Logger.info('Emitting SerialPort message:', message);
 

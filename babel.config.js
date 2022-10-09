@@ -2,16 +2,29 @@ module.exports = {
   sourceType: 'unambiguous',
   compact: false,
   presets: [
-    '@babel/preset-env',
+    [
+      '@babel/preset-env',
+      {
+        modules: false,
+        useBuiltIns: 'usage',
+        corejs: '3.8',
+        forceAllTransforms: false,
+        ignoreBrowserslistConfig: false,
+        debug: false,
+        targets: {
+          node: 'current',
+        },
+      },
+    ],
     // [
-    //   "minify",
+    //   'minify',
     //   {
-    //     "keepFnName": true,
-    //     "builtIns": false,
-    //     "evaluate": false,
-    //     "mangle": false
-    //   }
-    // ]
+    //     keepFnName: true,
+    //     builtIns: false,
+    //     evaluate: false,
+    //     mangle: false,
+    //   },
+    // ],
   ],
   plugins: [
     ['@babel/plugin-proposal-decorators', { legacy: true }],

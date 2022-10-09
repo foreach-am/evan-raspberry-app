@@ -80,16 +80,20 @@ function reconnect() {
     if (++reconnectionAttempts < reconnectionMaxAttempts) {
       connectWithUri();
     } else {
-      Logger.info(`${reconnectionAttempts} times tried to reconnect to WebSocket server.`);
-      Logger.info(`now delaying ${reconnectionDelays.longDelay} seconds before re-try.`);
+      Logger.info(
+        `${reconnectionAttempts} times tried to reconnect to WebSocket server.`
+      );
+      Logger.info(
+        `now delaying ${reconnectionDelays.longDelay} seconds before re-try.`
+      );
 
       reconnectionAttempts = 0;
 
       setTimeout(function () {
         reconnect();
-      }, reconnectionDelays.longDelay * 1000);
+      }, reconnectionDelays.longDelay * 1_000);
     }
-  }, reconnectionDelays.frequently * 1000);
+  }, reconnectionDelays.frequently * 1_000);
 }
 
 client.on('connectFailed', function (error) {
@@ -198,13 +202,17 @@ function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
       : [sendType, messageId, commandArgs];
 
   const dataToSenJson = JSON.stringify(dataToSend);
-  Logger.json(`Calling ${commandName} [${messageId}] with arguments:`, commandArgs);
+  Logger.json(
+    `Calling ${commandName} [${messageId}] with arguments:`,
+    commandArgs
+  );
 
   currentConnection.sendUTF(dataToSenJson);
   return true;
 }
 
 async function executeOfflineQueue() {
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     const offlineCommand = await OfflineCommand.first();
     if (!offlineCommand) {

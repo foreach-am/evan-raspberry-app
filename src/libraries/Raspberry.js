@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 const childProcess = require('child_process');
 const { Gpio } = require('onoff');
 const { CoreEvent, CoreEventEnum } = require('./CoreEvent');
@@ -31,11 +33,13 @@ async function restartSoftware() {
     } else {
       console.log('');
       console.log(' Software restart are impossible during development mode.');
-      console.log(' Please kill current process Ctrl+C, then run start command');
+      console.log(
+        ' Please kill current process Ctrl+C, then run start command'
+      );
       console.log(' again `npm start` to start app.');
       console.log('');
 
-      process.exit(1000001);
+      process.exit(1_000_001);
     }
   });
 }
@@ -44,11 +48,13 @@ async function restartHardware() {
   return new Promise(function (resolve, reject) {
     ComEmitter.extLedOff();
 
+    // eslint-disable-next-line  no-unused-vars
     buttonReset.write(1, function (error, value) {
       if (error) {
         return reject(error);
       }
 
+      // eslint-disable-next-line  no-unused-vars
       buttonReset.write(0, function (error, value) {
         if (error) {
           return reject(error);
@@ -64,8 +70,7 @@ async function restartHardware() {
 }
 
 CoreEvent.register(CoreEventEnum.EVENT_USIGNINT, function () {
-  led.unexport();
-  button.unexport();
+  buttonReset.unexport();
 });
 
 async function mapOnPlugs(callback) {

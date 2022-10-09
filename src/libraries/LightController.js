@@ -30,26 +30,11 @@ function setEndTime(time) {
   endTime = time;
 }
 
-function checkInSameDay() {
-  if (currentTime >= startTime && currentTime <= endTime) {
-    ComEmitter.extLedOn();
-  } else {
-    ComEmitter.extLedOff();
-  }
-}
-
-function checkDifferentDays() {
-  const currentTime = getCurrentTime();
-  if (currentTime >= startTime && currentTime <= endTime) {
-    ComEmitter.extLedOff();
-  } else {
-    ComEmitter.extLedOn();
-  }
-}
-
 function startChecking() {
   if (startTime === null || endTime === null) {
-    Logger.warning('LIGHT CONTROLLER: [SKIPPING] start time and/or end time is not set.');
+    Logger.warning(
+      'LIGHT CONTROLLER: [SKIPPING] start time and/or end time is not set.'
+    );
     return;
   }
 

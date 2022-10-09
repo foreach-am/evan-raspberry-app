@@ -1,8 +1,5 @@
 const { EventQueue, EventCommandEnum } = require('../../libraries/EventQueue');
 const { WebSocketSender, SendTypeEnum } = require('../../libraries/WebSocket');
-const uuid = require('../../utils/uuid');
-
-const state = require('../../state');
 
 const event = EventCommandEnum.EVENT_METER_VALUES;
 
@@ -21,7 +18,12 @@ function sendMeterValue({ messageId, connectorId, transactionId, meterValue }) {
   });
 }
 
-function sendMeterValueHandler(messageId, connectorId, transactionId, meterValue) {
+function sendMeterValueHandler(
+  messageId,
+  connectorId,
+  transactionId,
+  meterValue
+) {
   const data = {
     connectorId: connectorId,
     messageId: messageId,
