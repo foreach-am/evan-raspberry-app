@@ -216,6 +216,10 @@ ComPort.onSerialPort('open', function () {
 
   // eslint-disable-next-line no-unused-vars
   WebSocket.onConnect(async function (connection) {
+    WebSocket.register('close', function () {
+      ping.Heartbeat.cleanup();
+    });
+
     WebSocket.register('message', async function (message) {
       if (message.type !== 'utf8') {
         Logger.warning('Non UTF-8 data was received:', message);

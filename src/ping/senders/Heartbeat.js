@@ -6,6 +6,7 @@ const state = require('../../state');
 
 const event = EventCommandEnum.EVENT_HEARTBEAT;
 
+let timer = null;
 function sendHeartBeat({ messageId }) {
   const commandArgs = {};
 
@@ -16,7 +17,7 @@ function sendHeartBeat({ messageId }) {
     commandArgs: commandArgs,
   });
 
-  setTimeout(function () {
+  timer = setTimeout(function () {
     sendHeartBeatHandler(uuid());
   }, state.state.common.bootNotRequireTime * 1_000);
 }
@@ -35,6 +36,11 @@ function sendHeartBeatHandler(messageId) {
   });
 }
 
+function cleanup() {
+  clearTimeout(timer);
+}
+
 module.exports = {
   execute: sendHeartBeatHandler,
+  cleanup: cleanup,
 };
