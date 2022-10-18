@@ -20,6 +20,13 @@ if [[ ! -d "node_modules" ]]; then
 fi
 
 ## ----------------------------------------------------------------------------------
+## remove lint cache folder
+if [[ -d node_modules ]]; then
+  rm -rf "$APP_NPM_CACHE/eslint*"
+  check_exit $? 'remove lint cache folder'
+fi
+
+## ----------------------------------------------------------------------------------
 ## execute lint
 ESLINT_FILE=""
 if [[ "prod" == "$1" ]]; then

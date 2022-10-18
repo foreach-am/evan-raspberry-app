@@ -18,11 +18,6 @@ bash ./run-cmd.sh tool:format:code
 check_exit $? ${ERROR_APP_FORMAT_CODE[@]}
 
 ## ----------------------------------------------------------------------------------
-## clear old lint cache
-bash ./run-cmd.sh tool:lint:uncache
-check_exit $? ${ERROR_APP_LINT_UNCACHE[@]}
-
-## ----------------------------------------------------------------------------------
 ## execute lint
 bash ./run-cmd.sh tool:lint:execute:prod
 check_exit $? ${ERROR_APP_LINT_EXECUTE[@]}

@@ -5,7 +5,7 @@ module.exports = function () {
       const randomByte = (Math.random() * 16) | 0;
       const value = character === 'x' ? randomByte : (randomByte & 0x3) | 0x8;
 
-      return value.toString(16).toUpperCase();
+      return value.toString(16).toLowerCase();
     }
   );
 };
