@@ -3,7 +3,11 @@ const { Logger } = require('./libraries/Logger');
 const { WebSocket } = require('./libraries/WebSocket');
 const { ComPort } = require('./libraries/ComPort');
 const { ComEmitter } = require('./libraries/ComEmitter');
-const { EventQueue, EventCommandEnum, EventCommandNameEnum } = require('./libraries/EventQueue');
+const {
+  EventQueue,
+  EventCommandEnum,
+  EventCommandNameEnum,
+} = require('./libraries/EventQueue');
 const { PlugStateEnum } = require('./libraries/PlugState');
 const { Raspberry } = require('./libraries/Raspberry');
 const { CoreEvent, CoreEventEnum } = require('./libraries/CoreEvent');
@@ -72,13 +76,15 @@ ComPort.onSerialPort('open', function () {
 
       if (
         state.statistic.plugs.plugState[connectorId] === PlugStateEnum.UNPLUGGED &&
-        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
+        state.statistic.plugs.plugState[connectorId] !==
+          state.state.plugs.previousPlugState[connectorId]
       ) {
         if (WebSocket.isConnected()) {
           state.state.plugs.softLockDueConnectionLose[connectorId] = false;
         }
 
-        state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
+        state.state.plugs.previousPlugState[connectorId] =
+          state.statistic.plugs.plugState[connectorId];
 
         state.switch.plugs.startTransaction[connectorId] = true;
         state.switch.plugs.stopTransaction[connectorId] = true;
@@ -100,9 +106,11 @@ ComPort.onSerialPort('open', function () {
 
       if (
         state.statistic.plugs.plugState[connectorId] === PlugStateEnum.PLUG_SOFT_LOCK &&
-        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
+        state.statistic.plugs.plugState[connectorId] !==
+          state.state.plugs.previousPlugState[connectorId]
       ) {
-        state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
+        state.state.plugs.previousPlugState[connectorId] =
+          state.statistic.plugs.plugState[connectorId];
 
         await ping.ChangeAvailability.execute(
           uuid(),
@@ -113,9 +121,11 @@ ComPort.onSerialPort('open', function () {
 
       if (
         state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CAR_DETECTED &&
-        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
+        state.statistic.plugs.plugState[connectorId] !==
+          state.state.plugs.previousPlugState[connectorId]
       ) {
-        state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
+        state.state.plugs.previousPlugState[connectorId] =
+          state.statistic.plugs.plugState[connectorId];
         await execute.PingCarDetected({}, connectorId);
       }
 
@@ -150,17 +160,21 @@ ComPort.onSerialPort('open', function () {
 
       if (
         state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CHARGING &&
-        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
+        state.statistic.plugs.plugState[connectorId] !==
+          state.state.plugs.previousPlugState[connectorId]
       ) {
-        state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
+        state.state.plugs.previousPlugState[connectorId] =
+          state.statistic.plugs.plugState[connectorId];
         await execute.PingAndStartTransaction(connectorId);
       }
 
       if (
         state.statistic.plugs.plugState[connectorId] === PlugStateEnum.CHARGE_COMPLETED &&
-        state.statistic.plugs.plugState[connectorId] !== state.state.plugs.previousPlugState[connectorId]
+        state.statistic.plugs.plugState[connectorId] !==
+          state.state.plugs.previousPlugState[connectorId]
       ) {
-        state.state.plugs.previousPlugState[connectorId] = state.statistic.plugs.plugState[connectorId];
+        state.state.plugs.previousPlugState[connectorId] =
+          state.statistic.plugs.plugState[connectorId];
         await execute.UpdateFlagStopTransaction({}, connectorId);
 
         await ping.StatusNotification.execute(
@@ -202,7 +216,8 @@ ComPort.onSerialPort('open', function () {
 
       const parsedServerData = DataParser.parse(message.utf8Data);
 
-      const isServerCommand = parsedServerData.messageType === MessageTypeEnum.TYPE_REQUEST;
+      const isServerCommand =
+        parsedServerData.messageType === MessageTypeEnum.TYPE_REQUEST;
       if (isServerCommand) {
         switch (parsedServerData.command) {
           case EventCommandNameEnum[EventCommandEnum.EVENT_RESERVE_NOW]:

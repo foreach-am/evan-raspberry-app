@@ -3,8 +3,10 @@ const ping = require('../../ping');
 const uuid = require('../../utils/uuid');
 
 module.exports = async function (parsedServerData) {
-  state.state.plugs.reservationId[parsedServerData.body.connectorId] = parsedServerData.body.reservationId;
-  state.state.plugs.expiryDate[parsedServerData.body.connectorId] = parsedServerData.body.expiryDate;
+  state.state.plugs.reservationId[parsedServerData.body.connectorId] =
+    parsedServerData.body.reservationId;
+  state.state.plugs.expiryDate[parsedServerData.body.connectorId] =
+    parsedServerData.body.expiryDate;
 
   await ping.ReserveNow.execute(
     parsedServerData.messageId,

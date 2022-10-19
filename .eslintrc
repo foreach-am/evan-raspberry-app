@@ -1,62 +1,77 @@
 {
-  "root": true,
-  "parser": "@babel/eslint-parser",
-  "plugins": ["import", "unicorn"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "tsconfigRootDir": "./",
+    "project": "./tsconfig.json",
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  // "parser": "@babel/eslint-parser",
+  // "parserOptions": {
+  //   "ecmaVersion": 2018,
+  //   "sourceType": "module"
+  // },
+
+  "env": {
+    "node": true,
+    "es6": true
+  },
   "extends": [
     "eslint:recommended",
     "prettier",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "plugin:import/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking"
   ],
+  "plugins": ["@typescript-eslint"],
   "rules": {
-    "eslint-comments/no-unused-disable": "off"
-  },
-  "overrides": [
-    {
-      "files": ["*.js"],
-      "parserOptions": {
-        "project": ["./jsconfig.json"]
-      },
-      "rules": {
-        "yoda": "warn",
-        "prettier/prettier": "warn",
-        "import/no-anonymous-default-export": "error",
-        "default-case": "off",
-        "no-loop-func": "warn",
-        "no-extra-boolean-cast": "warn",
-        "no-console": "warn",
-        "no-useless-escape": "warn",
-        "eqeqeq": "error",
-        "no-fallthrough": "warn",
-        "semi": "error",
-        "curly": "error",
-        "no-empty-pattern": "off",
-        "no-eval": "off",
-        "no-self-assign": "error",
-        "no-self-compare": "error",
-        "no-debugger": "warn",
-        "no-constant-condition": "warn",
-        "unicorn/numeric-separators-style": "warn",
-        "ban-ts-comment": "off",
-        "no-unsafe-member-access": "off",
-        "no-empty-interface": "off",
-        "no-unsafe-call": "off",
-        "no-unused-vars": [
-          "error",
-          { "argsIgnorePattern": "^(props|e|event|_)$" }
-        ],
-        "no-unsafe-assignment": "off",
-        "no-floating-promises": "off",
-        "no-unsafe-return": "off",
-        "explicit-module-boundary-types": "off",
-        "no-inferrable-types": "off",
-        "no-misused-promises": "off",
-        "no-empty-function": "off",
-        "restrict-plus-operands": "off",
-        "require-await": "off",
-        "restrict-template-expressions": "off",
-        "ban-types": "off",
-        "unbound-method": "off"
+    "prettier/prettier": "warn",
+    "import/no-anonymous-default-export": "error",
+    "default-case": "off",
+    "no-loop-func": "warn",
+    "no-extra-boolean-cast": "warn",
+    "no-console": "off",
+    "no-useless-escape": "warn",
+    "no-unused-vars": ["off"],
+    "eqeqeq": "off",
+    "no-fallthrough": "warn",
+    "semi": "error",
+    "curly": "error",
+    "no-eval": "off",
+    "no-self-assign": "error",
+    "no-self-compare": "error",
+    "no-debugger": "warn",
+    "no-prototype-builtins": "off",
+    "no-constant-condition": "warn",
+    // "unicorn/numeric-separators-style": "warn",
+    "import/no-unresolved": "off",
+    "ban-ts-comment": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "@typescript-eslint/no-empty-interface": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "(orm|route|next|req|res)",
+        "varsIgnorePattern": "(orm|route|next|req|res)"
       }
-    }
-  ]
+    ],
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-floating-promises": "off",
+    "@typescript-eslint/no-unsafe-return": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-inferrable-types": "off",
+    "@typescript-eslint/no-misused-promises": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/restrict-plus-operands": "off",
+    "@typescript-eslint/require-await": "off",
+    "@typescript-eslint/restrict-template-expressions": "off",
+    "@typescript-eslint/ban-types": "off",
+    "@typescript-eslint/unbound-method": "off",
+    "@typescript-eslint/no-unsafe-argument": "off"
+  }
 }

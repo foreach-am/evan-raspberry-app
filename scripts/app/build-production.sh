@@ -20,6 +20,11 @@ fi
 trap on_process_kill SIGINT
 
 ## ----------------------------------------------------------------------------------
+## paths
+ROOT_SOURCE="$ROOT_DIR/src"
+ROOT_BUILD="$ROOT_DIR/dist"
+
+## ----------------------------------------------------------------------------------
 ## start
 clear
 
@@ -32,7 +37,7 @@ echo ""
 ## ----------------------------------------------------------------------------------
 ## check .env configuration
 execute_action "$BUILD_LOG_FILE" \
-  "bash ./run-cmd.sh tool:app:env-check" \
+  "npm run tool:app:env-check" \
   "Checking .env configration" \
   ".env file was not configured properly or it missing."
 
@@ -40,15 +45,22 @@ execute_action "$BUILD_LOG_FILE" \
 ## check node modules installed
 if [[ ! -d "node_modules" ]]; then
   execute_action "$BUILD_LOG_FILE" \
-    "bash ./run-cmd.sh install --silent" \
+    "npm run install --silent" \
     "Installing required dependencies" \
     "Failed to install app dependecies."
 else
   execute_action "$BUILD_LOG_FILE" \
-    "bash ./run-cmd.sh tool:sum-hash:check" \
+    "npm run tool:sum-hash:check" \
     "Installing required dependency updates" \
     "Failed to install app dependency updates."
 fi
+
+## ----------------------------------------------------------------------------------
+## build project
+execute_action "$BUILD_LOG_FILE" \
+  "'$APP_NPM_CLI_BIN/babel' '$ROOT_SOURCE' --out-dir '$ROOT_BUILD' --copy-files --extensions '.ts,.js' --source-maps false" \
+  "Building project in production mode." \
+  "Failed to build project in production mode."
 
 ## ----------------------------------------------------------------------------------
 ## check & install pm2

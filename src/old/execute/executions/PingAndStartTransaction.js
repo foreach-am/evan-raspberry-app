@@ -10,5 +10,9 @@ module.exports = async function (connectorId) {
     ping.StatusNotification.ErrorCodeEnum.NO_ERROR
   );
 
-  await ping.StartTransaction.execute(uuid(), connectorId, state.state.plugs.idTags[connectorId]);
+  await ping.StartTransaction.execute(
+    uuid(),
+    connectorId,
+    state.state.plugs.idTags[connectorId]
+  );
 };

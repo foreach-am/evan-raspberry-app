@@ -14,4 +14,4 @@ source "$(dirname "$0")/../../includes.sh"
 
 ## ----------------------------------------------------------------------------------
 ## install new node modules if package.json updated
-bash ./run-cmd.sh tool:sum-hash:check
+npm run tool:sum-hash:check

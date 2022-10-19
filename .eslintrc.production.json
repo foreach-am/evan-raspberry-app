@@ -3,7 +3,7 @@
   "rules": {},
   "overrides": [
     {
-      "files": ["*.js"],
+      "files": ["*.js", "*.ts"],
       "rules": {
         "prettier/prettier": "error",
         "no-unused-vars": "error",

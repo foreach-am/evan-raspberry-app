@@ -41,7 +41,9 @@ module.exports = async function (parsedServerData) {
       ping.StatusNotification.StatusEnum.UNAVAILABLE,
       ping.StatusNotification.ErrorCodeEnum.NO_ERROR
     );
-  } else if (parsedServerData.body.type === ping.ChangeAvailability.PointStateEnum.OPERATIVE) {
+  } else if (
+    parsedServerData.body.type === ping.ChangeAvailability.PointStateEnum.OPERATIVE
+  ) {
     ComEmitter.plugOn(parsedServerData.body.connectorId);
 
     await ping.StatusNotification.execute(

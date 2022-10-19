@@ -33,15 +33,20 @@ module.exports = async function (parsedServerData) {
   //   return;
   // }
 
-  state.state.plugs.idTags[parsedServerData.body.connectorId] = parsedServerData.body.idTag || 'UNKNOWN';
+  state.state.plugs.idTags[parsedServerData.body.connectorId] =
+    parsedServerData.body.idTag || 'UNKNOWN';
 
-  if (parsedServerData.body.chargingProfile && parsedServerData.body.chargingProfile.transactionId) {
+  if (
+    parsedServerData.body.chargingProfile &&
+    parsedServerData.body.chargingProfile.transactionId
+  ) {
     state.state.plugs.transactionId[parsedServerData.body.connectorId] =
       parsedServerData.body.chargingProfile.transactionId;
   }
 
   if (parsedServerData.body.transactionId) {
-    state.state.plugs.transactionId[parsedServerData.body.connectorId] = parsedServerData.body.transactionId;
+    state.state.plugs.transactionId[parsedServerData.body.connectorId] =
+      parsedServerData.body.transactionId;
   }
 
   await ping.RemoteStartTransaction.execute(

@@ -80,7 +80,9 @@ function reconnect() {
     if (++reconnectionAttempts < reconnectionMaxAttempts) {
       connectWithUri();
     } else {
-      Logger.info(`${reconnectionAttempts} times tried to reconnect to WebSocket server.`);
+      Logger.info(
+        `${reconnectionAttempts} times tried to reconnect to WebSocket server.`
+      );
       Logger.info(`now delaying ${reconnectionDelays.longDelay} seconds before re-try.`);
 
       reconnectionAttempts = 0;

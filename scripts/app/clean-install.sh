@@ -20,5 +20,5 @@ rm "$ROOT_DIR/package-lock.json" > /dev/null 2>&1
 
 ## ----------------------------------------------------------------------------------
 ## install dependencies
-bash ./run-cmd.sh install
+npm run install
 bash ./scripts/hooks/package/post-install.sh

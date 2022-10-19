@@ -8,5 +8,8 @@ module.exports = async function (parsedServerData) {
 
   Logger.json('ChangeConfiguration server request:', parsedServerData);
 
-  await ping.ChangeConfiguration.execute(uuid(), ping.ChangeConfiguration.StatusEnum.NOT_SUPPORTED);
+  await ping.ChangeConfiguration.execute(
+    uuid(),
+    ping.ChangeConfiguration.StatusEnum.NOT_SUPPORTED
+  );
 };

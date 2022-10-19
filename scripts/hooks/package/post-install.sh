@@ -16,9 +16,9 @@ source "$(dirname "$0")/../../includes.sh"
 ## execute post-install
 
 # run command: tool:husky:init
-bash ./run-cmd.sh tool:husky:init
+npm run tool:husky:init
 exit_on_fail $?
 
 # run command: tool:sum-hash:build
-bash ./run-cmd.sh tool:sum-hash:build
+npm run tool:sum-hash:build
 exit_on_fail $?

@@ -20,6 +20,6 @@ if [[ -f "$PKG_HASH_FILENAME" ]]; then
 fi
 
 if [[ "$PKG_CURRENT_HASH" != "$PKG_LATEST_HASH" ]]; then
-  bash ./run-cmd.sh install
+  npm run install
   check_exit $? ${ERROR_INSTALL_MODULES[@]}
 fi

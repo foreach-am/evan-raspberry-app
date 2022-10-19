@@ -26,7 +26,7 @@ clear
 ## ----------------------------------------------------------------------------------
 ## check .env configuration
 execute_action "$BUILD_LOG_FILE" \
-  "bash ./run-cmd.sh tool:app:env-check" \
+  "npm run tool:app:env-check" \
   "Checking .env configration" \
   ".env file was not configured properly or it missing."
 

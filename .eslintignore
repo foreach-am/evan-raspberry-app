@@ -1,5 +1,6 @@
-.idea/
-node_modules/
+dist/
 .husky/
+node_modules/
 
 package-lock.json
+yarn.lock
