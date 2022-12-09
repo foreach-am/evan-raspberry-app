@@ -182,7 +182,11 @@ ComPort.onSerialPort('open', function () {
       ) {
         state.state.plugs.previousPlugState[connectorId] =
           state.statistic.plugs.plugState[connectorId];
-        await execute.UpdateFlagStopTransaction({}, connectorId);
+        await execute.UpdateFlagStopTransaction(
+          {},
+          connectorId,
+          ping.StopTransaction.ReasonEnum.Local
+        );
 
         await ping.StatusNotification.execute(
           uuid(),
