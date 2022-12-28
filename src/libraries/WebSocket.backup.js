@@ -1,5 +1,5 @@
 const url = require('url');
-const WebSocketClient = require('ws');
+const { client: WebSocketClient } = require('websocket');
 const { EventCommandNameEnum } = require('./EventQueue');
 const { Logger } = require('./Logger');
 const { OfflineCommand } = require('./OfflineCommand');
@@ -8,11 +8,10 @@ const { EventQueue } = require('./EventQueue');
 const sleep = require('../utils/sleep');
 const uuid = require('../utils/uuid');
 
-const uri = url.parse(process.env.WEBSOCKET_URL);
-const client = new WebSocketClient(uri, ['ocpp1.6']);
+const client = new WebSocketClient();
 
 /**
- * @type {import('ws')}
+ * @type {import('websocket').connection}
  */
 let currentConnection = null;
 let connected = false;
@@ -26,7 +25,7 @@ function connectionCloseCallback() {
   connected = false;
 
   // if (currentConnection) {
-  // currentConnection.close();
+  //   currentConnection.close();
   // }
 }
 
@@ -66,14 +65,16 @@ const reconnectionDelays = {
 let reconnectionAttempts = 0;
 
 function connectWithUri() {
-  // client.close();
-  // ....
+  // client.abort();
+
+  const uri = url.parse(process.env.WEBSOCKET_URL);
+  client.connect(uri, ['ocpp1.6']);
 }
 
 function reconnect() {
   connectionCloseCallback();
 
-  // client.close();
+  // client.abort();
 
   setTimeout(function () {
     if (++reconnectionAttempts < reconnectionMaxAttempts) {
@@ -95,14 +96,14 @@ function reconnect() {
   }, reconnectionDelays.frequently * 1_000);
 }
 
-client.on('error', function (error) {
+client.on('connectFailed', function (error) {
   Logger.error('Could not connect to server:', error);
   connectionCloseCallback();
 
   reconnect();
 });
 
-client.on('open', async function (socketClientConnection) {
+client.on('connect', async function (socketClientConnection) {
   currentConnection = socketClientConnection;
   connected = true;
 
@@ -144,11 +145,11 @@ client.on('open', async function (socketClientConnection) {
 });
 
 function onConnect(callback) {
-  client.on('open', callback);
+  client.on('connect', callback);
 }
 
 function onConnectionFailure(callback) {
-  client.on('error', callback);
+  client.on('connectFailed', callback);
 }
 
 function register(event, callback) {
@@ -206,7 +207,7 @@ function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
     commandArgs
   );
 
-  currentConnection.send(dataToSenJson, { binary: false });
+  currentConnection.sendUTF(dataToSenJson);
   return true;
 }
 

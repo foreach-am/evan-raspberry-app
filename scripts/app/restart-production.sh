@@ -42,7 +42,7 @@ fi
 ## ----------------------------------------------------------------------------------
 ## restart production
 execute_action "$BUILD_LOG_FILE" \
-  "pm2 restart ecosystem.config.js" \
+  "pm2 restart ecosystem.config.js && pm2 save --force" \
   "Starting PM2 engine app." \
   "Failed to start PM2 engine app."
 
