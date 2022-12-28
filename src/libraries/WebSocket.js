@@ -154,7 +154,13 @@ function register(event, callback) {
     return Logger.warn('WebSocket is not connected to server right now.');
   }
 
-  currentConnection.on(event, callback);
+  if (event === 'message') {
+    currentConnection.on(event, function (buffer) {
+      callback(buffer.toString('utf8'));
+    });
+  } else {
+    currentConnection.on(event, callback);
+  }
 }
 
 function startServer() {
