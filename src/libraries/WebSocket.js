@@ -100,8 +100,8 @@ client.on('error', function (error) {
   reconnect();
 });
 
-client.on('open', async function (socketClientConnection) {
-  currentConnection = socketClientConnection;
+client.on('open', async function () {
+  currentConnection = client;
   connected = true;
 
   currentConnection.on('error', function (error) {
