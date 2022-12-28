@@ -1,4 +1,3 @@
-const url = require('url');
 const WebSocketClient = require('ws');
 const { EventCommandNameEnum } = require('./EventQueue');
 const { Logger } = require('./Logger');
@@ -8,8 +7,7 @@ const { EventQueue } = require('./EventQueue');
 const sleep = require('../utils/sleep');
 const uuid = require('../utils/uuid');
 
-const uri = url.parse(process.env.WEBSOCKET_URL);
-const client = new WebSocketClient(uri, ['ocpp1.6']);
+const client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
 
 /**
  * @type {import('ws')}
