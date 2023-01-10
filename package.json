@@ -27,7 +27,8 @@
     "onoff": "^6.0.3",
     "rc522-rfid-promise": "^16.0.1",
     "serialport": "^10.4.0",
-    "websocket": "^1.0.34"
+    "websocket": "^1.0.34",
+    "ws": "^8.11.0"
   },
   "devDependencies": {
     "@babel/core": "^7.18.0",

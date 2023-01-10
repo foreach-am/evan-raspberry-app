@@ -100,12 +100,26 @@ client.on('error', function (error) {
   reconnect();
 });
 
+client.on('unexpected-response', function (error) {
+  Logger.error('Could not connect to server:', error);
+  connectionCloseCallback();
+
+  reconnect();
+});
+
 client.on('open', async function () {
   currentConnection = client;
   connected = true;
 
   currentConnection.on('error', function (error) {
     Logger.error('WebSocket connection error:', error);
+    reconnect();
+  });
+
+  currentConnection.on('unexpected-response', function (error) {
+    Logger.error('Could not connect to server:', error);
+    connectionCloseCallback();
+
     reconnect();
   });
 
@@ -147,6 +161,7 @@ function onConnect(callback) {
 
 function onConnectionFailure(callback) {
   client.on('error', callback);
+  client.on('unexpected-response', callback);
 }
 
 function register(event, callback) {
