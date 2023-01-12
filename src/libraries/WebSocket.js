@@ -7,7 +7,11 @@ const { EventQueue } = require('./EventQueue');
 const sleep = require('../utils/sleep');
 const uuid = require('../utils/uuid');
 
-let client = null;
+function buildClient() {
+  return new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
+}
+
+let client = buildClient();
 
 function connectWithUri() {
   if (client) {
@@ -15,7 +19,7 @@ function connectWithUri() {
     // ....
   }
 
-  client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
+  client = buildClient();
 }
 
 connectWithUri();
