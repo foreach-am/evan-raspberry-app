@@ -14,7 +14,7 @@ const clientEvents = {
 let client = null;
 let connected = false;
 
-connectWithUri();
+connectWithUri(false);
 
 const reconnectionMaxAttempts = 10;
 const reconnectionDelays = {
@@ -31,7 +31,7 @@ function getConnection() {
   return currentConnection;
 }
 
-function connectWithUri() {
+function connectWithUri(triggerPreviousEvents) {
   if (client) {
     // client.close();
     // ....
@@ -93,27 +93,31 @@ function connectWithUri() {
       Logger.info('WebSocket connection event triggered resume');
     });
 
-    Object.keys(clientEvents.instance).forEach(function (eventName) {
-      clientEvents.instance[eventName].forEach(function (listener) {
-        if (eventName === 'message') {
-          currentConnection.on(eventName, function (buffer) {
-            messageParser(buffer, listener);
-          });
-        } else {
-          currentConnection.on(eventName, listener);
-        }
+    if (triggerPreviousEvents) {
+      Object.keys(clientEvents.instance).forEach(function (eventName) {
+        clientEvents.instance[eventName].forEach(function (listener) {
+          if (eventName === 'message') {
+            currentConnection.on(eventName, function (buffer) {
+              messageParser(buffer, listener);
+            });
+          } else {
+            currentConnection.on(eventName, listener);
+          }
+        });
       });
-    });
+    }
 
     Logger.info('WebSocket connected successfully.');
     await executeOfflineQueue();
   });
 
-  Object.keys(clientEvents.connection).forEach(function (eventName) {
-    clientEvents.connection[eventName].forEach(function (listener) {
-      client.on(eventName, listener);
+  if (triggerPreviousEvents) {
+    Object.keys(clientEvents.connection).forEach(function (eventName) {
+      clientEvents.connection[eventName].forEach(function (listener) {
+        client.on(eventName, listener);
+      });
     });
-  });
+  }
 }
 
 function connectionCloseCallback(tryReconnect = true) {
@@ -169,7 +173,7 @@ function reconnect() {
 
   setTimeout(function () {
     if (++reconnectionAttempts < reconnectionMaxAttempts) {
-      connectWithUri();
+      connectWithUri(true);
     } else {
       Logger.info(
         `${reconnectionAttempts} times tried to reconnect to WebSocket server.`
@@ -228,7 +232,7 @@ function register(eventName, callback) {
 }
 
 function startServer() {
-  connectWithUri();
+  // connectWithUri(false);
 }
 
 function send({ sendType, commandId, messageId, commandArgs }) {
