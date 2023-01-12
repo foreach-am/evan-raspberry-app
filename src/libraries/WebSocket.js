@@ -171,7 +171,26 @@ function register(event, callback) {
 
   if (event === 'message') {
     currentConnection.on(event, function (buffer) {
-      callback(buffer.toString('utf8'));
+      const message = buffer.toString('utf8');
+
+      if (typeof message === 'string') {
+        let parsedMessage = message;
+        try {
+          parsedMessage = JSON.parse(parsedMessage);
+        } catch (e) {}
+
+        message = {
+          type: 'utf8',
+          utf8Data: JSON.parse(message),
+        };
+      } else {
+        message = {
+          type: 'buffer',
+          buffer: buffer,
+        };
+      }
+
+      callback(message);
     });
   } else {
     currentConnection.on(event, callback);

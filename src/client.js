@@ -225,7 +225,7 @@ ComPort.onSerialPort('open', function () {
     });
 
     WebSocket.register('message', async function (message) {
-      if (message.type !== 'utf8') {
+      if (message.type !== 'utf8' && message.type !== 'utf-8') {
         Logger.warning('Non UTF-8 data was received:', message);
         return;
       }
