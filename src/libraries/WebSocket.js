@@ -7,8 +7,9 @@ const { EventQueue } = require('./EventQueue');
 const sleep = require('../utils/sleep');
 const uuid = require('../utils/uuid');
 
-let connected = false;
 let client = null;
+let connectionProcessing = false;
+let connected = false;
 
 connectWithUri();
 
@@ -35,6 +36,7 @@ function connectWithUri() {
     // ....
   }
 
+  connectionProcessing = true;
   Logger.info('Connecting to WebSocket server ...');
   client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
 
@@ -50,6 +52,8 @@ function connectWithUri() {
 
   client.on('open', async function () {
     reconnectionAttempts = 0;
+    connectionProcessing = false;
+
     currentConnection = client;
     connected = true;
 
@@ -141,6 +145,10 @@ setInterval(function () {
 }, 5_000);
 
 function reconnect() {
+  if (connectionProcessing) {
+    return;
+  }
+
   Logger.info('Reconnecting to server ...');
 
   setTimeout(function () {
