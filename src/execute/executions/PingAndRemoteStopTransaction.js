@@ -9,7 +9,7 @@ module.exports = async function (parsedServerData) {
   const stopConnectorId = Object.keys(state.state.plugs.transactionId).find(
     function (itemConnectorId) {
       return (
-        state.state.plugs.transactionId[itemConnectorId] ===
+        state.state.plugs.transactionId[itemConnectorId] ==
         parsedServerData.body.transactionId
       );
     }
