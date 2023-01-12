@@ -22,8 +22,6 @@ function connectWithUri() {
   client = buildClient();
 }
 
-connectWithUri();
-
 /**
  * @type {import('ws')}
  */
