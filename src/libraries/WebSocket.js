@@ -8,7 +8,9 @@ const sleep = require('../utils/sleep');
 const uuid = require('../utils/uuid');
 
 let connected = false;
-let client = connectWithUri();
+let client = null;
+
+connectWithUri();
 
 const reconnectionMaxAttempts = 10;
 const reconnectionDelays = {
@@ -38,15 +40,11 @@ function connectWithUri() {
   client.on('error', function (error) {
     Logger.error('Could not connect to server:', error);
     connectionCloseCallback();
-
-    reconnect();
   });
 
   client.on('unexpected-response', function (error) {
     Logger.error('Could not connect to server:', error);
     connectionCloseCallback();
-
-    reconnect();
   });
 
   client.on('open', async function () {
@@ -61,13 +59,11 @@ function connectWithUri() {
     currentConnection.on('unexpected-response', function (error) {
       Logger.error('Could not connect to server:', error);
       connectionCloseCallback();
-
-      reconnect();
     });
 
     currentConnection.on('close', function (code, description) {
       Logger.error(`WebSocket connection closed [${code}]: ${description}`);
-      reconnect();
+      connectionCloseCallback();
     });
 
     currentConnection.on('pong', function (binaryPayload) {
