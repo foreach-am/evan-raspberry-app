@@ -174,16 +174,13 @@ function register(event, callback) {
       const messageResult = buffer.toString('utf8');
       const message = {
         type: 'buffer',
+        utf8Data: null,
         buffer: buffer,
       };
 
       if (typeof messageResult === 'string') {
         message.type = 'utf8';
         message.utf8Data = messageResult;
-
-        try {
-          message.utf8Data = JSON.parse(messageResult);
-        } catch (e) {}
       }
 
       callback(message);
