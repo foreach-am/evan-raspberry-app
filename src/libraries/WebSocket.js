@@ -19,21 +19,21 @@ function getConnection() {
   return currentConnection;
 }
 
-function connectionCloseCallback() {
-  if (!connected) {
-    return;
+function connectionCloseCallback(tryReconnect = true) {
+  if (connected) {
+    Logger.warning('WebSocket - closing connection.');
+    connected = false;
+
+    // if (currentConnection) {
+    //   currentConnection.close();
+    // }
   }
 
-  Logger.warning('WebSocket - closing connection.');
-  connected = false;
-
-  // if (currentConnection) {
-  //   currentConnection.close();
-  // }
-
-  setTimeout(function () {
-    reconnect();
-  }, reconnectionDelays.longDelay * 1_000);
+  if (tryReconnect) {
+    setTimeout(function () {
+      reconnect();
+    }, reconnectionDelays.longDelay * 1_000);
+  }
 }
 
 // keep alive checker - every 10 seconds
@@ -77,7 +77,8 @@ function connectWithUri() {
 }
 
 function reconnect() {
-  connectionCloseCallback();
+  Logger.info('Reconnecting to server ...');
+  connectionCloseCallback(false);
 
   // client.close();
 
