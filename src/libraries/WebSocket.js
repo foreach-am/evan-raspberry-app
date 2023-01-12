@@ -49,6 +49,7 @@ function connectWithUri() {
   });
 
   client.on('open', async function () {
+    reconnectionAttempts = 0;
     currentConnection = client;
     connected = true;
 
@@ -141,7 +142,6 @@ setInterval(function () {
 
 function reconnect() {
   Logger.info('Reconnecting to server ...');
-  // connectionCloseCallback(false);
 
   setTimeout(function () {
     if (++reconnectionAttempts < reconnectionMaxAttempts) {
