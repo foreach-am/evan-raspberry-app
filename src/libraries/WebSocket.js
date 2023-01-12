@@ -97,10 +97,10 @@ function connectWithUri() {
       clientEvents.instance[eventName].forEach(function (listener) {
         if (eventName === 'message') {
           currentConnection.on(eventName, function (buffer) {
-            messageParser(buffer, callback);
+            messageParser(buffer, listener);
           });
         } else {
-          currentConnection.on(eventName, callback);
+          currentConnection.on(eventName, listener);
         }
       });
     });
