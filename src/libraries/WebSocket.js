@@ -35,6 +35,7 @@ function connectWithUri() {
     // ....
   }
 
+  Logger.info('Connecting to WebSocket server ...');
   client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
 
   client.on('error', function (error) {
@@ -53,7 +54,7 @@ function connectWithUri() {
 
     currentConnection.on('error', function (error) {
       Logger.error('WebSocket connection error:', error);
-      reconnect();
+      connectionCloseCallback();
     });
 
     currentConnection.on('unexpected-response', function (error) {
@@ -140,9 +141,7 @@ setInterval(function () {
 
 function reconnect() {
   Logger.info('Reconnecting to server ...');
-  connectionCloseCallback(false);
-
-  // client.close();
+  // connectionCloseCallback(false);
 
   setTimeout(function () {
     if (++reconnectionAttempts < reconnectionMaxAttempts) {
