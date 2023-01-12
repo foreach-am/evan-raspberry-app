@@ -94,7 +94,7 @@ function connectWithUri() {
     });
 
     Object.keys(clientEvents.instance).forEach(function (eventName) {
-      clientEvents.connection[eventName].forEach(function (listener) {
+      clientEvents.instance[eventName].forEach(function (listener) {
         if (eventName === 'message') {
           currentConnection.on(eventName, function (buffer) {
             messageParser(buffer, callback);
