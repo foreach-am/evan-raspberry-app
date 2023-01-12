@@ -171,23 +171,19 @@ function register(event, callback) {
 
   if (event === 'message') {
     currentConnection.on(event, function (buffer) {
-      const message = buffer.toString('utf8');
+      const messageResult = buffer.toString('utf8');
+      const message = {
+        type: 'buffer',
+        buffer: buffer,
+      };
 
-      if (typeof message === 'string') {
-        let parsedMessage = message;
+      if (typeof messageResult === 'string') {
+        message.type = 'utf8';
+        message.utf8Data = messageResult;
+
         try {
-          parsedMessage = JSON.parse(parsedMessage);
+          message.utf8Data = JSON.parse(messageResult);
         } catch (e) {}
-
-        message = {
-          type: 'utf8',
-          utf8Data: JSON.parse(message),
-        };
-      } else {
-        message = {
-          type: 'buffer',
-          buffer: buffer,
-        };
       }
 
       callback(message);
