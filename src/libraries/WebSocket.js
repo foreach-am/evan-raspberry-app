@@ -20,12 +20,20 @@ function getConnection() {
 }
 
 function connectionCloseCallback() {
+  if (!connected) {
+    return;
+  }
+
   Logger.warning('WebSocket - closing connection.');
   connected = false;
 
   // if (currentConnection) {
-  // currentConnection.close();
+  //   currentConnection.close();
   // }
+
+  setTimeout(function () {
+    reconnect();
+  }, reconnectionDelays.longDelay * 1_000);
 }
 
 // keep alive checker - every 10 seconds
