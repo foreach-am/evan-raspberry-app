@@ -7,7 +7,25 @@ const { EventQueue } = require('./EventQueue');
 const sleep = require('../utils/sleep');
 const uuid = require('../utils/uuid');
 
-let client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
+let connected = false;
+let client = connectWithUri();
+
+const reconnectionMaxAttempts = 10;
+const reconnectionDelays = {
+  frequently: 1,
+  longDelay: 20,
+};
+let reconnectionAttempts = 0;
+
+const clientEvents = {};
+
+/**
+ * @type {import('ws')}
+ */
+let currentConnection = null;
+function getConnection() {
+  return currentConnection;
+}
 
 function connectWithUri() {
   if (client) {
@@ -15,17 +33,69 @@ function connectWithUri() {
     // ....
   }
 
-  // reconnect
-}
+  client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
 
-/**
- * @type {import('ws')}
- */
-let currentConnection = null;
-let connected = false;
+  client.on('error', function (error) {
+    Logger.error('Could not connect to server:', error);
+    connectionCloseCallback();
 
-function getConnection() {
-  return currentConnection;
+    reconnect();
+  });
+
+  client.on('unexpected-response', function (error) {
+    Logger.error('Could not connect to server:', error);
+    connectionCloseCallback();
+
+    reconnect();
+  });
+
+  client.on('open', async function () {
+    currentConnection = client;
+    connected = true;
+
+    currentConnection.on('error', function (error) {
+      Logger.error('WebSocket connection error:', error);
+      reconnect();
+    });
+
+    currentConnection.on('unexpected-response', function (error) {
+      Logger.error('Could not connect to server:', error);
+      connectionCloseCallback();
+
+      reconnect();
+    });
+
+    currentConnection.on('close', function (code, description) {
+      Logger.error(`WebSocket connection closed [${code}]: ${description}`);
+      reconnect();
+    });
+
+    currentConnection.on('pong', function (binaryPayload) {
+      const checkerId = Buffer.from(binaryPayload).toString('utf-8');
+      Logger.info('WebSocket pong received:', checkerId);
+
+      const index = pocketsPingPong.findIndex(function (oldId) {
+        return oldId === checkerId;
+      });
+
+      if (index !== -1) {
+        pocketsPingPong.splice(index, 1);
+      }
+    });
+
+    currentConnection.on('drain', function () {
+      Logger.info('WebSocket connection event triggered drain');
+    });
+    currentConnection.on('pause', function () {
+      Logger.info('WebSocket connection event triggered pause');
+    });
+    currentConnection.on('resume', function () {
+      Logger.info('WebSocket connection event triggered resume');
+    });
+
+    Logger.info('WebSocket connected successfully.');
+    await executeOfflineQueue();
+  });
 }
 
 function connectionCloseCallback(tryReconnect = true) {
@@ -72,14 +142,6 @@ setInterval(function () {
   }, 2_000);
 }, 5_000);
 
-const reconnectionMaxAttempts = 10;
-const reconnectionDelays = {
-  frequently: 1,
-  longDelay: 20,
-};
-
-let reconnectionAttempts = 0;
-
 function reconnect() {
   Logger.info('Reconnecting to server ...');
   connectionCloseCallback(false);
@@ -106,69 +168,10 @@ function reconnect() {
   }, reconnectionDelays.frequently * 1_000);
 }
 
-client.on('error', function (error) {
-  Logger.error('Could not connect to server:', error);
-  connectionCloseCallback();
-
-  reconnect();
-});
-
-client.on('unexpected-response', function (error) {
-  Logger.error('Could not connect to server:', error);
-  connectionCloseCallback();
-
-  reconnect();
-});
-
-client.on('open', async function () {
-  currentConnection = client;
-  connected = true;
-
-  currentConnection.on('error', function (error) {
-    Logger.error('WebSocket connection error:', error);
-    reconnect();
-  });
-
-  currentConnection.on('unexpected-response', function (error) {
-    Logger.error('Could not connect to server:', error);
-    connectionCloseCallback();
-
-    reconnect();
-  });
-
-  currentConnection.on('close', function (code, description) {
-    Logger.error(`WebSocket connection closed [${code}]: ${description}`);
-    reconnect();
-  });
-
-  currentConnection.on('pong', function (binaryPayload) {
-    const checkerId = Buffer.from(binaryPayload).toString('utf-8');
-    Logger.info('WebSocket pong received:', checkerId);
-
-    const index = pocketsPingPong.findIndex(function (oldId) {
-      return oldId === checkerId;
-    });
-
-    if (index !== -1) {
-      pocketsPingPong.splice(index, 1);
-    }
-  });
-
-  currentConnection.on('drain', function () {
-    Logger.info('WebSocket connection event triggered drain');
-  });
-  currentConnection.on('pause', function () {
-    Logger.info('WebSocket connection event triggered pause');
-  });
-  currentConnection.on('resume', function () {
-    Logger.info('WebSocket connection event triggered resume');
-  });
-
-  Logger.info('WebSocket connected successfully.');
-  await executeOfflineQueue();
-});
-
 function onConnect(callback) {
+  clientEvents['open'] = clientEvents['open'] || [];
+  clientEvents['open'].push(callback);
+
   client.on('open', callback);
 }
 
@@ -178,6 +181,9 @@ function onConnectionFailure(callback) {
 }
 
 function register(event, callback) {
+  clientEvents[event] = clientEvents[event] || [];
+  clientEvents[event].push(callback);
+
   if (!currentConnection) {
     return Logger.warn('WebSocket is not connected to server right now.');
   }
@@ -224,7 +230,7 @@ function send({ sendType, commandId, messageId, commandArgs }) {
     }
   }
 
-  sendDataToServer({
+  return sendDataToServer({
     sendType,
     commandId,
     messageId,
