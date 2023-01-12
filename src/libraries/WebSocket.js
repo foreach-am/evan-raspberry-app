@@ -7,6 +7,10 @@ const { EventQueue } = require('./EventQueue');
 const sleep = require('../utils/sleep');
 const uuid = require('../utils/uuid');
 
+const clientEvents = {
+  connection: {},
+  instance: {},
+};
 let client = null;
 let connected = false;
 
@@ -18,11 +22,6 @@ const reconnectionDelays = {
   longDelay: 20,
 };
 let reconnectionAttempts = 0;
-
-const clientEvents = {
-  connection: {},
-  instance: {},
-};
 
 /**
  * @type {import('ws')}
