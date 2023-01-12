@@ -1,4 +1,4 @@
-const WebSocketClient = require('ws');
+const { WebSocket: WebSocketClient } = require('ws');
 const { EventCommandNameEnum } = require('./EventQueue');
 const { Logger } = require('./Logger');
 const { OfflineCommand } = require('./OfflineCommand');
@@ -7,11 +7,7 @@ const { EventQueue } = require('./EventQueue');
 const sleep = require('../utils/sleep');
 const uuid = require('../utils/uuid');
 
-function buildClient() {
-  return new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
-}
-
-let client = buildClient();
+let client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
 
 function connectWithUri() {
   if (client) {
@@ -19,7 +15,7 @@ function connectWithUri() {
     // ....
   }
 
-  client = buildClient();
+  // reconnect
 }
 
 /**
@@ -254,8 +250,12 @@ function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
     commandArgs
   );
 
-  currentConnection.send(dataToSenJson, { binary: false });
-  return true;
+  try {
+    currentConnection.send(dataToSenJson, { binary: false });
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 async function executeOfflineQueue() {
