@@ -7,7 +7,18 @@ const { EventQueue } = require('./EventQueue');
 const sleep = require('../utils/sleep');
 const uuid = require('../utils/uuid');
 
-const client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
+let client = null;
+
+function connectWithUri() {
+  if (client) {
+    // client.close();
+    // ....
+  }
+
+  client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
+}
+
+connectWithUri();
 
 /**
  * @type {import('ws')}
@@ -70,11 +81,6 @@ const reconnectionDelays = {
 };
 
 let reconnectionAttempts = 0;
-
-function connectWithUri() {
-  // client.close();
-  // ....
-}
 
 function reconnect() {
   Logger.info('Reconnecting to server ...');
