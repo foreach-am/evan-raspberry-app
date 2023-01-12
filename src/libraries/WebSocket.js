@@ -149,6 +149,7 @@ function reconnect() {
     return;
   }
 
+  connectionProcessing = true;
   Logger.info('Reconnecting to server ...');
 
   setTimeout(function () {
