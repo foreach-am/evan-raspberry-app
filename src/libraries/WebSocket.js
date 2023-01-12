@@ -96,7 +96,13 @@ function connectWithUri() {
 
     Object.keys(clientEvents.instance).forEach(function (eventName) {
       clientEvents.connection[eventName].forEach(function (listener) {
-        client.on(eventName, listener);
+        if (eventName === 'message') {
+          currentConnection.on(eventName, function (buffer) {
+            messageParser(buffer, callback);
+          });
+        } else {
+          currentConnection.on(eventName, callback);
+        }
       });
     });
 
@@ -189,37 +195,36 @@ function onConnect(callback) {
   client.on('open', callback);
 }
 
-function onConnectionFailure(callback) {
-  client.on('error', callback);
-  client.on('unexpected-response', callback);
+function messageParser(buffer, callback) {
+  const messageResult = buffer.toString('utf8');
+  const message = {
+    type: 'buffer',
+    utf8Data: null,
+    buffer: buffer,
+  };
+
+  if (typeof messageResult === 'string') {
+    message.type = 'utf8';
+    message.utf8Data = messageResult;
+  }
+
+  callback(message);
 }
 
-function register(event, callback) {
-  clientEvents.instance[event] = clientEvents.instance[event] || [];
-  clientEvents.instance[event].push(callback);
+function register(eventName, callback) {
+  clientEvents.instance[eventName] = clientEvents.instance[eventName] || [];
+  clientEvents.instance[eventName].push(callback);
 
   if (!currentConnection) {
     return Logger.warn('WebSocket is not connected to server right now.');
   }
 
-  if (event === 'message') {
-    currentConnection.on(event, function (buffer) {
-      const messageResult = buffer.toString('utf8');
-      const message = {
-        type: 'buffer',
-        utf8Data: null,
-        buffer: buffer,
-      };
-
-      if (typeof messageResult === 'string') {
-        message.type = 'utf8';
-        message.utf8Data = messageResult;
-      }
-
-      callback(message);
+  if (eventName === 'message') {
+    currentConnection.on(eventName, function (buffer) {
+      messageParser(buffer, callback);
     });
   } else {
-    currentConnection.on(event, callback);
+    currentConnection.on(eventName, callback);
   }
 }
 
@@ -315,7 +320,6 @@ module.exports = {
   WebSocket: {
     getConnection: getConnection,
     onConnect: onConnect,
-    onConnectionFailure: onConnectionFailure,
     register: register,
     startServer: startServer,
     isConnected: isConnected,

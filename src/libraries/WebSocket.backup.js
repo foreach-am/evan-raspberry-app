@@ -148,10 +148,6 @@ function onConnect(callback) {
   client.on('connect', callback);
 }
 
-function onConnectionFailure(callback) {
-  client.on('connectFailed', callback);
-}
-
 function register(event, callback) {
   if (!currentConnection) {
     return Logger.warn('WebSocket is not connected to server right now.');
@@ -248,7 +244,6 @@ module.exports = {
   WebSocket: {
     getConnection: getConnection,
     onConnect: onConnect,
-    onConnectionFailure: onConnectionFailure,
     register: register,
     startServer: startServer,
     isConnected: isConnected,
