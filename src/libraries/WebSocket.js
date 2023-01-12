@@ -19,7 +19,10 @@ const reconnectionDelays = {
 };
 let reconnectionAttempts = 0;
 
-const clientEvents = {};
+const clientEvents = {
+  connection: {},
+  instance: {},
+};
 
 /**
  * @type {import('ws')}
@@ -91,8 +94,20 @@ function connectWithUri() {
       Logger.info('WebSocket connection event triggered resume');
     });
 
+    Object.keys(clientEvents.instance).forEach(function (eventName) {
+      clientEvents.connection[eventName].forEach(function (listener) {
+        client.on(eventName, listener);
+      });
+    });
+
     Logger.info('WebSocket connected successfully.');
     await executeOfflineQueue();
+  });
+
+  Object.keys(clientEvents.connection).forEach(function (eventName) {
+    clientEvents.connection[eventName].forEach(function (listener) {
+      client.on(eventName, listener);
+    });
   });
 }
 
@@ -141,6 +156,10 @@ setInterval(function () {
 }, 5_000);
 
 function reconnect() {
+  if (connected) {
+    return;
+  }
+
   Logger.info('Reconnecting to server ...');
 
   setTimeout(function () {
@@ -164,8 +183,8 @@ function reconnect() {
 }
 
 function onConnect(callback) {
-  clientEvents['open'] = clientEvents['open'] || [];
-  clientEvents['open'].push(callback);
+  clientEvents.connection['open'] = clientEvents.connection['open'] || [];
+  clientEvents.connection['open'].push(callback);
 
   client.on('open', callback);
 }
@@ -176,8 +195,8 @@ function onConnectionFailure(callback) {
 }
 
 function register(event, callback) {
-  clientEvents[event] = clientEvents[event] || [];
-  clientEvents[event].push(callback);
+  clientEvents.instance[event] = clientEvents.instance[event] || [];
+  clientEvents.instance[event].push(callback);
 
   if (!currentConnection) {
     return Logger.warn('WebSocket is not connected to server right now.');
