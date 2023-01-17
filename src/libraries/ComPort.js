@@ -108,22 +108,22 @@ function parseInputData(text) {
       switch (name) {
         // plugs
         case 'PI':
-          state.statistic.plugs.pilotFeedBack[index] = Number(value) / 100;
+          state.statistic.plugs.pilotFeedBack[index] = Number(value);
           break;
         case 'PL':
           state.statistic.plugs.plugState[index] = Number(value);
           break;
         case 'PW':
-          state.statistic.plugs.powerKwh[index] = Number(value) / 100;
+          state.statistic.plugs.powerKwh[index] = Number(value);
           break;
         case 'CA':
-          state.statistic.plugs.currentMeasureA[index] = Number(value) / 100;
+          state.statistic.plugs.currentMeasureA[index] = Number(value);
           break;
         case 'CB':
-          state.statistic.plugs.currentMeasureB[index] = Number(value) / 100;
+          state.statistic.plugs.currentMeasureB[index] = Number(value);
           break;
         case 'CC':
-          state.statistic.plugs.currentMeasureC[index] = Number(value) / 100;
+          state.statistic.plugs.currentMeasureC[index] = Number(value);
           break;
         case 'OCE':
           state.statistic.plugs.overCurrentError[index] = Number(value);
@@ -131,7 +131,7 @@ function parseInputData(text) {
 
         // common
         case 'HV':
-          state.statistic.common.highVoltageMeasure = Number(value) / 100;
+          state.statistic.common.highVoltageMeasure = Number(value);
           break;
         case 'HVE':
           state.statistic.common.highVoltError = Number(value);
@@ -140,7 +140,7 @@ function parseInputData(text) {
           state.statistic.common.lowVoltError = Number(value);
           break;
         case 'T':
-          state.statistic.common.temperature = Number(value) / 100;
+          state.statistic.common.temperature = Number(value);
           break;
       }
     });
