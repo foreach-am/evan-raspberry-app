@@ -1,3 +1,5 @@
+const { OfflineCommand } = require('./OfflineCommand');
+
 const state = {
   // constants
   maxPlugsCount: 2, // @TODO: must be loaded from board.
@@ -70,5 +72,10 @@ for (let i = 1; i <= state.maxPlugsCount; ++i) {
     state.statistic.plugs[key][i] = 0;
   });
 }
+
+OfflineCommand.fillSavedState(state);
+state.saveState = function () {
+  OfflineCommand.saveState(state);
+};
 
 module.exports = state;

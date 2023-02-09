@@ -35,8 +35,32 @@ function firstCommand() {
   return JSON.parse(content);
 }
 
+function saveCurrentState(state) {
+  const stateFile = getFilePath('charge-state.json');
+
+  fs.writeFileSync(
+    stateFile,
+    JSON.stringify({
+      idTags: state.plugs.idTags,
+      transactionId: state.plugs.transactionId,
+      reservationId: state.plugs.reservationId,
+    })
+  );
+}
+
+function fillSavedState(state) {
+  const stateFile = getFilePath('charge-state.json');
+  const savedState = JSON.parse(fs.readFileSync(stateFile));
+
+  state.plugs.idTags = savedState.idTags;
+  state.plugs.transactionId = savedState.transactionId;
+  state.plugs.reservationId = savedState.reservationId;
+}
+
 module.exports = {
   OfflineCommand: {
+    saveState: saveCurrentState,
+    fillSavedState: fillSavedState,
     push: pushCommand,
     first: firstCommand,
   },
