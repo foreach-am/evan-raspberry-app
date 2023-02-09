@@ -8,6 +8,7 @@ const filePath = path.join(
   'data',
   'offline-command.json'
 );
+
 if (!fs.existsSync(filePath)) {
   saveFile([]);
 }
@@ -24,19 +25,24 @@ function withOfflineCommands(callback) {
         return reject(error);
       }
 
-      const parsedData = JSON.parse(content);
-      const { data: updatedData, resolveData } = callback(parsedData);
-
       try {
-        saveFile(updatedData, resolveData);
+        const parsedData = JSON.parse(content);
+        const { data: updatedData, resolveData } = callback(parsedData);
 
-        if (resolveData) {
-          resolve(resolveData);
-        } else {
-          resolve();
+        try {
+          saveFile(updatedData);
+
+          if (resolveData) {
+            resolve(resolveData);
+          } else {
+            resolve();
+          }
+        } catch (error) {
+          return reject(error);
         }
-      } catch (error) {
-        return reject(error);
+      } catch (e) {
+        fs.writeFileSync('a.txt', content, 'utf-8');
+        throw e;
       }
     });
   });
