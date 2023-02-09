@@ -1,6 +1,5 @@
 const dns = require('dns');
-const { WebSocket: WebSocketClientConstructor } = require('ws');
-const WebSocketClient = require('pws');
+const { WebSocket: WebSocketClient } = require('ws');
 const { EventCommandNameEnum } = require('./EventQueue');
 const { Logger } = require('./Logger');
 const { OfflineCommand } = require('./OfflineCommand');
@@ -71,10 +70,7 @@ async function connectWithUri(triggerPreviousEvents) {
   }
 
   Logger.info('Connecting to WebSocket server ...');
-  client = new WebSocketClient(
-    process.env.WEBSOCKET_URL,
-    WebSocketClientConstructor
-  );
+  client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
 
   client.on('error', function (error) {
     Logger.error('Could not connect to server:', error);
@@ -184,20 +180,17 @@ setInterval(function () {
   }
 
   const checkerId = uuid();
-  // pocketsPingPong.push(checkerId);
+  pocketsPingPong.push(checkerId);
 
   Logger.info('WebSocket ping to server:', checkerId);
   if (typeof currentConnection.ping === 'function') {
     currentConnection.ping(checkerId);
-  } else {
-    currentConnection.send(checkerId);
   }
 
   setTimeout(function () {
-    // const index = pocketsPingPong.findIndex(function (oldId) {
-    //   return oldId === checkerId;
-    // });
-    const index = -1;
+    const index = pocketsPingPong.findIndex(function (oldId) {
+      return oldId === checkerId;
+    });
 
     if (index !== -1) {
       // PONG response not received during 2 seconds
