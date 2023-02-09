@@ -13,11 +13,14 @@ const clientEvents = {
   instance: {},
 };
 
+let connected = false;
 /**
  * @type {import('ws')}
  */
 let client = null;
-let connected = false;
+function getConnection() {
+  return client;
+}
 
 connectWithUri(false);
 
@@ -27,14 +30,6 @@ const reconnectionDelays = {
   longDelay: 20,
 };
 let reconnectionAttempts = 0;
-
-/**
- * @type {import('ws')}
- */
-let client = null;
-function getConnection() {
-  return client;
-}
 
 async function isConnectedToInternet() {
   const checkSingle = function (host) {
