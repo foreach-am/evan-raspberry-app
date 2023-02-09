@@ -59,11 +59,11 @@ async function isConnectedToInternet() {
 }
 
 async function connectWithUri(triggerPreviousEvents) {
-  const internetConnected = await isConnectedToInternet();
-  if (!internetConnected) {
-    Logger.warning('The charger was not connected to the internet.');
-    return;
-  }
+  // const internetConnected = await isConnectedToInternet();
+  // if (!internetConnected) {
+  //   Logger.warning('The charger was not connected to the internet.');
+  //   return;
+  // }
 
   // if (client) {
   //   client.close();
