@@ -42,17 +42,13 @@ module.exports = async function (parsedServerData) {
   ) {
     state.state.plugs.transactionId[parsedServerData.body.connectorId] =
       parsedServerData.body.chargingProfile.transactionId;
-    state.saveState(
-      'PingAndRemoteStartTransaction >> parsedServerData.body.chargingProfile.transactionId'
-    );
+    state.saveState();
   }
 
   if (parsedServerData.body.transactionId) {
     state.state.plugs.transactionId[parsedServerData.body.connectorId] =
       parsedServerData.body.transactionId;
-    state.saveState(
-      'PingAndRemoteStartTransaction >> parsedServerData.body.transactionId'
-    );
+    state.saveState();
   }
 
   await ping.RemoteStartTransaction.execute(
