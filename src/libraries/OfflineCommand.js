@@ -36,6 +36,12 @@ function firstCommand() {
 }
 
 function saveCurrentState(state) {
+  console.log();
+  console.log();
+  console.log();
+  console.log('>>>>', state);
+  console.log();
+  console.log();
   if (!state || !state.plugs) {
     return;
   }
@@ -52,10 +58,17 @@ function saveCurrentState(state) {
 
 function fillSavedState(state) {
   const stateFile = getFilePath('charge-state.json');
+  console.log();
+  console.log();
+  console.log();
+  console.log('>>>> <<<<<<<<<<<<<');
+  console.log();
+  console.log();
 
   if (fs.existsSync(stateFile)) {
     try {
       const savedState = JSON.parse(fs.readFileSync(stateFile));
+      console.log({ savedState });
       if (savedState) {
         return;
       }
@@ -64,7 +77,7 @@ function fillSavedState(state) {
       state.plugs.transactionId = savedState?.transactionId;
       state.plugs.reservationId = savedState?.reservationId;
     } catch (e) {
-      // ...
+      console.log(error);
     }
   }
 }

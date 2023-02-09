@@ -81,8 +81,8 @@ function loadCurrentState() {
   OfflineCommand.fillSavedState(this.state);
 }
 
-state.saveState = saveCurrentState.bind();
-state.loadSavedState = loadCurrentState.bind();
+state.saveState = saveCurrentState.bind(state);
+state.loadSavedState = loadCurrentState.bind(state);
 
 state.loadSavedState();
 
