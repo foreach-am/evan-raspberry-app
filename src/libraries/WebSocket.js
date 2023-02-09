@@ -35,7 +35,15 @@ async function isConnectedToInternet() {
   const checkSingle = function (host) {
     return new Promise(function (resolve) {
       dns.lookup(host, function (error) {
-        resolve(!error || error.code !== 'ENOTFOUND');
+        if (error) {
+          Logger.error('Network status error: ', error.code);
+        }
+
+        if (error && error.code == 'ENOTFOUND') {
+          resolve(false);
+        } else {
+          resolve(true);
+        }
       });
     });
   };
