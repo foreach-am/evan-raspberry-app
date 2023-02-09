@@ -18,10 +18,14 @@ const state = require('./state');
 const ping = require('./ping');
 const execute = require('./execute');
 
+let meterValueInterval = null;
+
 function registerMeterValueInterval(seconds) {
+  clearInterval(meterValueInterval);
+
   const interval = seconds * 1_000;
 
-  setInterval(() => {
+  meterValueInterval = setInterval(() => {
     Raspberry.mapOnPlugs(async function (connectorId) {
       if (
         state.statistic.plugs.plugState[connectorId] !== PlugStateEnum.CHARGING
