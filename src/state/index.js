@@ -73,12 +73,12 @@ for (let i = 1; i <= state.maxPlugsCount; ++i) {
   });
 }
 
-function saveCurrentState(from) {
+function saveCurrentState() {
   OfflineCommand.saveState(this.state);
 }
 
-function loadCurrentState(state) {
-  OfflineCommand.fillSavedState(state.state);
+function loadCurrentState() {
+  OfflineCommand.fillSavedState(this.state);
 }
 
 state.saveState = saveCurrentState.bind();
