@@ -298,6 +298,9 @@ function send({ sendType, commandId, messageId, commandArgs }) {
 
 function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
   if (!currentConnection) {
+    Logger.warning(
+      `Connection missing: ${commandName} [${messageId}] with arguments.`
+    );
     return false;
   }
 
@@ -338,15 +341,20 @@ async function executeOfflineQueue() {
       return;
     }
 
-    Logger.json('Executing offline command:', offlineCommand);
-    const dataSent = sendDataToServer(offlineCommand);
+    for (let i = 0; i < 3; ++i) {
+      await sleep(10);
 
-    if (!dataSent) {
-      Logger.error('Failed to execute offline command, trying in next step.');
-      OfflineCommand.push(offlineCommand);
+      Logger.json('Executing offline command:', offlineCommand);
+      const dataSent = sendDataToServer(offlineCommand);
+
+      if (!dataSent) {
+        Logger.error('Failed to execute offline command, trying in next step.');
+        // OfflineCommand.push(offlineCommand);
+        continue;
+      }
+
+      break;
     }
-
-    await sleep(10);
   }
 }
 
