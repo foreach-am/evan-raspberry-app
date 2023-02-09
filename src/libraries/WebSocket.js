@@ -86,7 +86,7 @@ async function connectWithUri(triggerPreviousEvents) {
     // client.close();
   }
 
-  Logger.info('Connecting to WebSocket server ...');
+  Logger.info('Trying to connect to WebSocket server ...');
   client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
 
   client.on('error', function (error) {
@@ -188,7 +188,7 @@ function connectionCloseCallback(tryReconnect = true) {
 // keep alive checker - every 10 seconds
 const pocketsPingPong = [];
 setInterval(function () {
-  if (!client || client.readyState !== WebSocketClient.OPEN) {
+  if (!client) {
     return;
   }
 
@@ -208,6 +208,9 @@ setInterval(function () {
   console.log();
   console.log();
   console.log();
+  if (client.readyState !== WebSocketClient.OPEN) {
+    return;
+  }
 
   const checkerId = uuid();
   pocketsPingPong.push(checkerId);
