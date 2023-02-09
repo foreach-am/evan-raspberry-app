@@ -26,7 +26,7 @@ const reconnectionDelays = {
 let reconnectionAttempts = 0;
 
 /**
- * @type {import('pws')}
+ * @type {import('ws')}
  */
 let currentConnection = null;
 function getConnection() {
@@ -189,6 +189,8 @@ setInterval(function () {
   Logger.info('WebSocket ping to server:', checkerId);
   if (typeof currentConnection.ping === 'function') {
     currentConnection.ping(checkerId);
+  } else {
+    currentConnection.send(checkerId);
   }
 
   setTimeout(function () {
