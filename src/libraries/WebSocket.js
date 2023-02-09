@@ -12,6 +12,10 @@ const clientEvents = {
   connection: {},
   instance: {},
 };
+
+/**
+ * @type {import('ws')}
+ */
 let client = null;
 let connected = false;
 
@@ -66,7 +70,8 @@ async function connectWithUri(triggerPreviousEvents) {
   // }
 
   if (client) {
-    return;
+    client.removeAllListeners();
+    client.close();
   }
 
   Logger.info('Connecting to WebSocket server ...');
