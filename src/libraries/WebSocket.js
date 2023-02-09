@@ -31,9 +31,9 @@ let reconnectionAttempts = 0;
 /**
  * @type {import('ws')}
  */
-let currentConnection = null;
+let client = null;
 function getConnection() {
-  return currentConnection;
+  return client;
 }
 
 async function isConnectedToInternet() {
@@ -89,25 +89,24 @@ async function connectWithUri(triggerPreviousEvents) {
 
   client.on('open', async function () {
     reconnectionAttempts = 0;
-    currentConnection = client;
     connected = true;
 
-    currentConnection.on('error', function (error) {
+    client.on('error', function (error) {
       Logger.error('WebSocket connection error:', error);
       connectionCloseCallback();
     });
 
-    currentConnection.on('unexpected-response', function (error) {
+    client.on('unexpected-response', function (error) {
       Logger.error('Could not connect to server:', error);
       connectionCloseCallback();
     });
 
-    currentConnection.on('close', function (code, description) {
+    client.on('close', function (code, description) {
       Logger.error(`WebSocket connection closed [${code}]: ${description}`);
       connectionCloseCallback();
     });
 
-    currentConnection.on('pong', function (binaryPayload) {
+    client.on('pong', function (binaryPayload) {
       const checkerId = Buffer.from(binaryPayload).toString('utf-8');
       Logger.info('WebSocket pong received:', checkerId);
 
@@ -120,13 +119,13 @@ async function connectWithUri(triggerPreviousEvents) {
       }
     });
 
-    currentConnection.on('drain', function () {
+    client.on('drain', function () {
       Logger.info('WebSocket connection event triggered drain');
     });
-    currentConnection.on('pause', function () {
+    client.on('pause', function () {
       Logger.info('WebSocket connection event triggered pause');
     });
-    currentConnection.on('resume', function () {
+    client.on('resume', function () {
       Logger.info('WebSocket connection event triggered resume');
     });
 
@@ -134,11 +133,11 @@ async function connectWithUri(triggerPreviousEvents) {
       Object.keys(clientEvents.instance).forEach(function (eventName) {
         clientEvents.instance[eventName].forEach(function (listener) {
           if (eventName === 'message') {
-            currentConnection.on(eventName, function (buffer) {
+            client.on(eventName, function (buffer) {
               messageParser(buffer, listener);
             });
           } else {
-            currentConnection.on(eventName, listener);
+            client.on(eventName, listener);
           }
         });
       });
@@ -162,8 +161,8 @@ function connectionCloseCallback(tryReconnect = true) {
     Logger.warning('WebSocket - closing connection.');
     connected = false;
 
-    // if (currentConnection) {
-    //   currentConnection.close();
+    // if (client) {
+    //   client.close();
     // }
   }
 
@@ -177,19 +176,28 @@ function connectionCloseCallback(tryReconnect = true) {
 // keep alive checker - every 10 seconds
 const pocketsPingPong = [];
 setInterval(function () {
-  if (
-    !currentConnection ||
-    currentConnection.readyState !== currentConnection.OPEN
-  ) {
+  if (!client || client.readyState !== WebSocketClient.OPEN) {
     return;
   }
+
+  console.log();
+  console.log();
+  console.log();
+  console.log();
+  console.log();
+  console.log();
+  console.log();
+  console.log(client.readyState, client.OPEN, WebSocketClient.OPEN);
+  console.log();
+  console.log();
+  console.log();
 
   const checkerId = uuid();
   pocketsPingPong.push(checkerId);
 
   Logger.info('WebSocket ping to server:', checkerId);
-  if (typeof currentConnection.ping === 'function') {
-    currentConnection.ping(checkerId);
+  if (typeof client.ping === 'function') {
+    client.ping(checkerId);
   }
 
   setTimeout(function () {
@@ -260,16 +268,16 @@ function register(eventName, callback) {
   clientEvents.instance[eventName] = clientEvents.instance[eventName] || [];
   clientEvents.instance[eventName].push(callback);
 
-  if (!currentConnection) {
+  if (!client) {
     return Logger.warn('WebSocket is not connected to server right now.');
   }
 
   if (eventName === 'message') {
-    currentConnection.on(eventName, function (buffer) {
+    client.on(eventName, function (buffer) {
       messageParser(buffer, callback);
     });
   } else {
-    currentConnection.on(eventName, callback);
+    client.on(eventName, callback);
   }
 }
 
@@ -280,7 +288,7 @@ function startServer() {
 function send({ sendType, commandId, messageId, commandArgs }) {
   const commandName = EventCommandNameEnum[commandId];
 
-  if (!currentConnection || !isConnected()) {
+  if (!client || !isConnected()) {
     Logger.info(`Skipping ${commandName} - not connected.`);
     if (EventQueue.isOfflineCacheableCommand(commandName)) {
       OfflineCommand.push({
@@ -303,14 +311,13 @@ function send({ sendType, commandId, messageId, commandArgs }) {
 }
 
 function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
-  if (!currentConnection) {
+  const commandName = EventCommandNameEnum[commandId];
+  if (!client) {
     Logger.warning(
       `Connection missing: ${commandName} [${messageId}] with arguments.`
     );
     return false;
   }
-
-  const commandName = EventCommandNameEnum[commandId];
 
   const dataToSend =
     sendType === SendTypeEnum.Request
@@ -324,11 +331,11 @@ function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
   );
 
   try {
-    if (currentConnection.readyState !== currentConnection.OPEN) {
+    if (client.readyState !== WebSocketClient.OPEN) {
       return false;
     }
 
-    currentConnection.send(dataToSenJson, { binary: false });
+    client.send(dataToSenJson, { binary: false });
     return true;
   } catch (error) {
     Logger.error(
@@ -365,7 +372,7 @@ async function executeOfflineQueue() {
 }
 
 function isConnected() {
-  return !!currentConnection && connected;
+  return !!client && connected;
   // return connected;
 }
 
