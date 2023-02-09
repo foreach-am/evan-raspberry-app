@@ -194,9 +194,10 @@ setInterval(function () {
   }
 
   setTimeout(function () {
-    const index = pocketsPingPong.findIndex(function (oldId) {
-      return oldId === checkerId;
-    });
+    // const index = pocketsPingPong.findIndex(function (oldId) {
+    //   return oldId === checkerId;
+    // });
+    // const index = 1;
 
     if (index !== -1) {
       // PONG response not received during 2 seconds
