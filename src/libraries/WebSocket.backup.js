@@ -206,8 +206,16 @@ function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
     commandArgs
   );
 
-  currentConnection.sendUTF(dataToSenJson);
-  return true;
+  try {
+    currentConnection.sendUTF(dataToSenJson);
+    return true;
+  } catch (e) {
+    Logger.error(
+      `Calling ${commandName} [${messageId}] with arguments:`,
+      error
+    );
+    return false;
+  }
 }
 
 async function executeOfflineQueue() {

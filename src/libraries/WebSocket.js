@@ -318,6 +318,10 @@ function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
     currentConnection.send(dataToSenJson, { binary: false });
     return true;
   } catch (e) {
+    Logger.error(
+      `Calling ${commandName} [${messageId}] with arguments:`,
+      error
+    );
     return false;
   }
 }
