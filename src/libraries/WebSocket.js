@@ -1,3 +1,4 @@
+const dns = require('dns');
 const { WebSocket: WebSocketClient } = require('ws');
 const { EventCommandNameEnum } = require('./EventQueue');
 const { Logger } = require('./Logger');
@@ -31,11 +32,43 @@ function getConnection() {
   return currentConnection;
 }
 
-function connectWithUri(triggerPreviousEvents) {
-  if (client) {
-    // client.close();
-    // ....
+async function isConnectedToInternet() {
+  const checkSingle = function (host) {
+    return new Promise(function (resolve) {
+      dns.lookup(host, function (error) {
+        resolve(!error);
+      });
+    });
+  };
+
+  const checkHosts = [
+    'google.com',
+    'www.google.com',
+    'amazon.com',
+    'www.amazon.com',
+    '8.8.8.8',
+  ];
+  for (const host of checkHosts) {
+    const success = await checkSingle(host);
+    if (success) {
+      return true;
+    }
   }
+
+  return false;
+}
+
+async function connectWithUri(triggerPreviousEvents) {
+  const internetConnected = await isConnectedToInternet();
+  if (!internetConnected) {
+    Logger.warning('The charger was not connected to the internet.');
+    return;
+  }
+
+  // if (client) {
+  //   client.close();
+  //   // ...
+  // }
 
   Logger.info('Connecting to WebSocket server ...');
   client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);

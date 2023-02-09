@@ -18,7 +18,8 @@ function logJson(title, ...args) {
   const spaces = '          : ';
   args.forEach(function (arg) {
     try {
-      let dataString = JSON.stringify(arg, null, 2);
+      // let dataString = JSON.stringify(arg, null, 2);
+      let dataString = JSON.stringify(arg);
       dataString = dataString.replace(/\n/g, '\n' + spaces);
       dataString = spaces + dataString;
 
