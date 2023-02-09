@@ -52,11 +52,18 @@ function fillSavedState(state) {
   const stateFile = getFilePath('charge-state.json');
 
   if (fs.existsSync(stateFile)) {
-    const savedState = JSON.parse(fs.readFileSync(stateFile));
+    try {
+      const savedState = JSON.parse(fs.readFileSync(stateFile));
+      if (savedState) {
+        return;
+      }
 
-    state.plugs.idTags = savedState.idTags;
-    state.plugs.transactionId = savedState.transactionId;
-    state.plugs.reservationId = savedState.reservationId;
+      state.plugs.idTags = savedState?.idTags;
+      state.plugs.transactionId = savedState?.transactionId;
+      state.plugs.reservationId = savedState?.reservationId;
+    } catch (e) {
+      // ...
+    }
   }
 }
 

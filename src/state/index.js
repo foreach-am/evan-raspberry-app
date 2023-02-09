@@ -74,8 +74,10 @@ for (let i = 1; i <= state.maxPlugsCount; ++i) {
 }
 
 OfflineCommand.fillSavedState(state);
-state.saveState = function () {
-  OfflineCommand.saveState(state);
-};
+function saveCurrentState() {
+  OfflineCommand.saveState(this);
+}
+
+state.saveState = saveCurrentState.bind(state);
 
 module.exports = state;
