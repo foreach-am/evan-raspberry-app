@@ -184,7 +184,7 @@ setInterval(function () {
   }
 
   const checkerId = uuid();
-  pocketsPingPong.push(checkerId);
+  // pocketsPingPong.push(checkerId);
 
   Logger.info('WebSocket ping to server:', checkerId);
   if (typeof currentConnection.ping === 'function') {
