@@ -1,4 +1,4 @@
-const { OfflineCommand } = require('./OfflineCommand');
+const { OfflineCommand } = require('../libraries/OfflineCommand');
 
 const state = {
   // constants
