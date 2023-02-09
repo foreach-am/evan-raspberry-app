@@ -315,6 +315,10 @@ function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
   );
 
   try {
+    if (currentConnection.readyState !== currentConnection.OPEN) {
+      return false;
+    }
+
     currentConnection.send(dataToSenJson, { binary: false });
     return true;
   } catch (error) {

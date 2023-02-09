@@ -207,6 +207,10 @@ function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
   );
 
   try {
+    if (currentConnection.readyState !== currentConnection.OPEN) {
+      return false;
+    }
+
     currentConnection.sendUTF(dataToSenJson);
     return true;
   } catch (error) {
