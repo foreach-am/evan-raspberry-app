@@ -73,9 +73,9 @@ for (let i = 1; i <= state.maxPlugsCount; ++i) {
   });
 }
 
-OfflineCommand.fillSavedState(state);
+OfflineCommand.fillSavedState(state.state);
 function saveCurrentState() {
-  OfflineCommand.saveState(this);
+  OfflineCommand.saveState(this.state);
 }
 
 state.saveState = saveCurrentState.bind(state);
