@@ -317,9 +317,9 @@ function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
   try {
     currentConnection.send(dataToSenJson, { binary: false });
     return true;
-  } catch (e) {
+  } catch (error) {
     Logger.error(
-      `Calling ${commandName} [${messageId}] with arguments:`,
+      `ERROR -> Calling ${commandName} [${messageId}] with arguments:`,
       error
     );
     return false;
