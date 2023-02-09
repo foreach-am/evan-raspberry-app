@@ -17,7 +17,7 @@ let connected = false;
 /**
  * @type {import('ws')}
  */
-let client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
+let client = null;
 function getConnection() {
   return client;
 }
@@ -65,13 +65,13 @@ async function isConnectedToInternet() {
   return false;
 }
 
-let networkConnected = false;
-async function checkNetwork() {
-  networkConnected = await isConnectedToInternet();
-}
+// let networkConnected = false;
+// async function checkNetwork() {
+//   networkConnected = await isConnectedToInternet();
+// }
 
-checkNetwork();
-setInterval(checkNetwork, 2000);
+// checkNetwork();
+// setInterval(checkNetwork, 2000);
 
 async function connectWithUri(triggerPreviousEvents) {
   // const internetConnected = await isConnectedToInternet();
@@ -87,7 +87,7 @@ async function connectWithUri(triggerPreviousEvents) {
   }
 
   Logger.info('Trying to connect to WebSocket server ...');
-  // client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
+  client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
 
   client.on('error', function (error) {
     Logger.error('Could not connect to server:', error);
@@ -192,22 +192,6 @@ setInterval(function () {
     return;
   }
 
-  console.log();
-  console.log();
-  console.log();
-  console.log();
-  console.log();
-  console.log();
-  console.log();
-  console.log(
-    networkConnected,
-    client.readyState,
-    client.OPEN,
-    WebSocketClient.OPEN
-  );
-  console.log();
-  console.log();
-  console.log();
   if (client.readyState !== WebSocketClient.OPEN) {
     return;
   }
