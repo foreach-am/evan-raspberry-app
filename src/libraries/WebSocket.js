@@ -26,7 +26,7 @@ const reconnectionDelays = {
 let reconnectionAttempts = 0;
 
 /**
- * @type {import('ws')}
+ * @type {import('pws')}
  */
 let currentConnection = null;
 function getConnection() {
@@ -187,7 +187,9 @@ setInterval(function () {
   pocketsPingPong.push(checkerId);
 
   Logger.info('WebSocket ping to server:', checkerId);
-  currentConnection.ping(checkerId);
+  if (typeof currentConnection.ping === 'function') {
+    currentConnection.ping(checkerId);
+  }
 
   setTimeout(function () {
     const index = pocketsPingPong.findIndex(function (oldId) {
