@@ -1,90 +1,43 @@
 const path = require('path');
 const fs = require('fs');
+const uuid = require('../utils/uuid');
 
-const filePath = path.join(
-  __dirname,
-  '..',
-  '..',
-  'data',
-  'offline-command.json'
-);
-
-if (!fs.existsSync(filePath)) {
-  saveFile([]);
+function getFilePath(...fileName) {
+  return path.join(__dirname, '..', '..', 'data', ...fileName);
 }
 
-function saveFile(data) {
+function saveFile(fileName, data) {
   const updatedContent = JSON.stringify(data);
-  fs.writeFileSync(filePath, updatedContent, 'utf-8');
+  fs.writeFileSync(getFilePath(fileName), updatedContent, 'utf-8');
 }
 
-function withOfflineCommands(callback) {
-  return new Promise(function (resolve, reject) {
-    fs.readFile(filePath, 'utf-8', function (error, content) {
-      if (error) {
-        return reject(error);
-      }
-
-      try {
-        const parsedData = JSON.parse(content);
-        const { data: updatedData, resolveData } = callback(parsedData);
-
-        try {
-          saveFile(updatedData);
-
-          if (resolveData) {
-            resolve(resolveData);
-          } else {
-            resolve();
-          }
-        } catch (error) {
-          return reject(error);
-        }
-      } catch (e) {
-        fs.writeFileSync('a.txt', content, 'utf-8');
-        throw e;
-      }
-    });
+function getCommandFiles() {
+  return fs.readdirSync(getFilePath()).filter(function (fileName) {
+    return /^offline\-.+\.json$/.test(fileName);
   });
 }
 
 function pushCommand(commandValue) {
-  return withOfflineCommands(function (data) {
-    data.push(commandValue);
-
-    return {
-      resolveData: null,
-      data,
-    };
-  });
-}
-
-function shiftCommand() {
-  return withOfflineCommands(function (data) {
-    const first = data.shift();
-
-    return {
-      resolveData: first,
-      data,
-    };
-  });
+  const fileName = 'offline-' + Date.now() + '-' + uuid() + '.json';
+  saveFile(fileName, commandValue);
 }
 
 function firstCommand() {
-  return withOfflineCommands(function (data) {
-    const first = data[0];
+  const files = getCommandFiles();
+  if (files.length === 0) {
+    return null;
+  }
 
-    return {
-      resolveData: first,
-      data,
-    };
-  });
+  const filePath = getFilePath(files[0]);
+  const content = fs.readFileSync(filePath);
+  fs.unlinkSync(filePath);
+
+  return JSON.parse(content);
 }
 
 module.exports = {
   OfflineCommand: {
     push: pushCommand,
-    shift: shiftCommand,
     first: firstCommand,
   },
 };

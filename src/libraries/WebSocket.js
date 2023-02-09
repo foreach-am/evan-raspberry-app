@@ -322,7 +322,7 @@ function sendDataToServer({ sendType, commandId, messageId, commandArgs }) {
 async function executeOfflineQueue() {
   // eslint-disable-next-line no-constant-condition
   while (true) {
-    const offlineCommand = await OfflineCommand.first();
+    const offlineCommand = OfflineCommand.first();
     if (!offlineCommand) {
       return;
     }
@@ -330,13 +330,12 @@ async function executeOfflineQueue() {
     Logger.json('Executing offline command:', offlineCommand);
     const dataSent = sendDataToServer(offlineCommand);
 
-    if (dataSent) {
-      await OfflineCommand.shift();
-    } else {
+    if (!dataSent) {
       Logger.error('Failed to execute offline command, trying in next step.');
+      OfflineCommand.push(offlineCommand);
     }
 
-    await sleep(50);
+    await sleep(10);
   }
 }
 
