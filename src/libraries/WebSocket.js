@@ -1,5 +1,6 @@
 const dns = require('dns');
-const { WebSocket: WebSocketClient } = require('ws');
+const { WebSocket: WebSocketClientConstructor } = require('ws');
+const WebSocketClient = require('pws');
 const { EventCommandNameEnum } = require('./EventQueue');
 const { Logger } = require('./Logger');
 const { OfflineCommand } = require('./OfflineCommand');
@@ -65,13 +66,15 @@ async function connectWithUri(triggerPreviousEvents) {
   //   return;
   // }
 
-  // if (client) {
-  //   client.close();
-  //   // ...
-  // }
+  if (client) {
+    return;
+  }
 
   Logger.info('Connecting to WebSocket server ...');
-  client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
+  client = new WebSocketClient(
+    process.env.WEBSOCKET_URL,
+    WebSocketClientConstructor
+  );
 
   client.on('error', function (error) {
     Logger.error('Could not connect to server:', error);
