@@ -93,7 +93,9 @@ ComPort.onSerialPort('open', function () {
         state.switch.plugs.stopTransaction[connectorId] = true;
         state.switch.plugs.chargeStart[connectorId] = true;
         state.state.plugs.transactionId[connectorId] = '';
-        state.saveState();
+        state.saveState(
+          'client.js >> state.state.plugs.transactionId[connectorId]'
+        );
 
         if (state.switch.plugs.sendStatusNotification[connectorId]) {
           state.switch.plugs.sendStatusNotification[connectorId] = false;

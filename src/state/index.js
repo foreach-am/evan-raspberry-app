@@ -74,8 +74,18 @@ for (let i = 1; i <= state.maxPlugsCount; ++i) {
 }
 
 OfflineCommand.fillSavedState(state.state);
-function saveCurrentState() {
+function saveCurrentState(from) {
+  console.log();
+  console.log();
+  console.log();
+  console.log('>>>', from);
+  console.log();
+  console.log();
+  console.log();
   OfflineCommand.saveState(this.state);
+  console.log();
+  console.log();
+  console.log();
 }
 
 state.saveState = saveCurrentState.bind(state);

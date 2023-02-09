@@ -19,7 +19,9 @@ module.exports = async function (parsedServerData, connectorId, reason) {
   state.state.plugs.transactionId[connectorId] = '';
   state.state.plugs.idTags[connectorId] = '';
   state.state.plugs.idTagInfoStatus[connectorId] = '';
-  state.saveState();
+  state.saveState(
+    'UpdateFlagStopTransaction >> state.state.plugs.idTagInfoStatus[connectorId]'
+  );
 
   // await ping.StatusNotification.execute(
   //   uuid(),
