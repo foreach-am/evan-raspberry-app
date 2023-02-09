@@ -50,11 +50,14 @@ function saveCurrentState(state) {
 
 function fillSavedState(state) {
   const stateFile = getFilePath('charge-state.json');
-  const savedState = JSON.parse(fs.readFileSync(stateFile));
 
-  state.plugs.idTags = savedState.idTags;
-  state.plugs.transactionId = savedState.transactionId;
-  state.plugs.reservationId = savedState.reservationId;
+  if (fs.existsSync(stateFile)) {
+    const savedState = JSON.parse(fs.readFileSync(stateFile));
+
+    state.plugs.idTags = savedState.idTags;
+    state.plugs.transactionId = savedState.transactionId;
+    state.plugs.reservationId = savedState.reservationId;
+  }
 }
 
 module.exports = {
