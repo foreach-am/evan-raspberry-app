@@ -116,6 +116,15 @@ ComPort.onSerialPort('open', function () {
 
       if (
         state.statistic.plugs.plugState[connectorId] ===
+          PlugStateEnum.CHARGING &&
+        state.state.plugs.transactionId[connectorId] === '' &&
+        state.state.plugs.idTags[connectorId] === ''
+      ) {
+        state.loadSavedState();
+      }
+
+      if (
+        state.statistic.plugs.plugState[connectorId] ===
           PlugStateEnum.PLUG_SOFT_LOCK &&
         state.statistic.plugs.plugState[connectorId] !==
           state.state.plugs.previousPlugState[connectorId]
