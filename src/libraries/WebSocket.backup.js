@@ -32,7 +32,10 @@ function connectionCloseCallback() {
 // keep alive checker - every 10 seconds
 const pocketsPingPong = [];
 setInterval(function () {
-  if (!currentConnection) {
+  if (
+    !currentConnection ||
+    currentConnection.readyState !== currentConnection.OPEN
+  ) {
     return;
   }
 
