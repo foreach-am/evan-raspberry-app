@@ -57,6 +57,14 @@ async function isConnectedToInternet() {
   return false;
 }
 
+let networkConnected = false;
+async function checkNetwork() {
+  networkConnected = await isConnectedToInternet();
+}
+
+checkNetwork();
+setInterval(checkNetwork, 4000);
+
 async function connectWithUri(triggerPreviousEvents) {
   // const internetConnected = await isConnectedToInternet();
   // if (!internetConnected) {
@@ -65,6 +73,7 @@ async function connectWithUri(triggerPreviousEvents) {
   // }
 
   if (client) {
+    Logger.info('Removing all listeners on WebSocket ...');
     client.removeAllListeners();
     // client.close();
   }
@@ -182,7 +191,12 @@ setInterval(function () {
   console.log();
   console.log();
   console.log();
-  console.log(client.readyState, client.OPEN, WebSocketClient.OPEN);
+  console.log(
+    networkConnected,
+    client.readyState,
+    client.OPEN,
+    WebSocketClient.OPEN
+  );
   console.log();
   console.log();
   console.log();
