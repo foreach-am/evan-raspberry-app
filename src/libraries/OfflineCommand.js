@@ -36,16 +36,18 @@ function firstCommand() {
 }
 
 function saveCurrentState(state) {
-  const stateFile = getFilePath('charge-state.json');
+  if (!state || !state.plugs) {
+    return;
+  }
 
-  fs.writeFileSync(
-    stateFile,
-    JSON.stringify({
-      idTags: state.plugs.idTags,
-      transactionId: state.plugs.transactionId,
-      reservationId: state.plugs.reservationId,
-    })
-  );
+  const stateFile = getFilePath('charge-state.json');
+  const content = JSON.stringify({
+    idTags: state.plugs.idTags,
+    transactionId: state.plugs.transactionId,
+    reservationId: state.plugs.reservationId,
+  });
+
+  fs.writeFileSync(stateFile, content);
 }
 
 function fillSavedState(state) {
