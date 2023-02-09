@@ -17,7 +17,7 @@ let connected = false;
 /**
  * @type {import('ws')}
  */
-let client = null;
+let client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
 function getConnection() {
   return client;
 }
@@ -87,7 +87,7 @@ async function connectWithUri(triggerPreviousEvents) {
   }
 
   Logger.info('Trying to connect to WebSocket server ...');
-  client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
+  // client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
 
   client.on('error', function (error) {
     Logger.error('Could not connect to server:', error);
