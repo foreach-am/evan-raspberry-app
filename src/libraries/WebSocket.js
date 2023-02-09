@@ -35,7 +35,7 @@ async function isConnectedToInternet() {
   const checkSingle = function (host) {
     return new Promise(function (resolve) {
       dns.lookup(host, function (error) {
-        resolve(!error);
+        resolve(!error || error.code !== 'ENOTFOUND');
       });
     });
   };
@@ -63,7 +63,7 @@ async function checkNetwork() {
 }
 
 checkNetwork();
-setInterval(checkNetwork, 4000);
+setInterval(checkNetwork, 2000);
 
 async function connectWithUri(triggerPreviousEvents) {
   // const internetConnected = await isConnectedToInternet();
