@@ -68,8 +68,7 @@ function fillSavedState(state) {
   if (fs.existsSync(stateFile)) {
     try {
       const savedState = JSON.parse(fs.readFileSync(stateFile));
-      console.log({ savedState });
-      if (savedState) {
+      if (!savedState) {
         return;
       }
 
