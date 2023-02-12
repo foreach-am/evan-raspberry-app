@@ -219,9 +219,9 @@ setInterval(function () {
 }, 5_000);
 
 function reconnect() {
-  if (connected) {
-    return;
-  }
+  // if (connected) {
+  //   return;
+  // }
 
   Logger.info('Reconnecting to server ...');
 
@@ -376,7 +376,7 @@ async function executeOfflineQueue() {
 }
 
 function isConnected() {
-  return !!client && connected;
+  return !!client && client.readyState === WebSocketClient.OPEN;
   // return connected;
 }
 
