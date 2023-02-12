@@ -6,7 +6,9 @@ const state = require('../../state');
 
 const event = EventCommandEnum.EVENT_HEARTBEAT;
 
-let timer = null;
+// let timer = null;
+let interval = null;
+
 function sendHeartBeat({ messageId }) {
   const commandArgs = {};
 
@@ -17,12 +19,18 @@ function sendHeartBeat({ messageId }) {
     commandArgs: commandArgs,
   });
 
-  timer = setTimeout(function () {
-    sendHeartBeatHandler(uuid());
-  }, state.state.common.bootNotRequireTime * 1_000);
+  // timer = setTimeout(function () {
+  //   sendHeartBeatHandler(uuid());
+  // }, state.state.common.bootNotRequireTime * 1_000);
 }
 
 function sendHeartBeatHandler(messageId) {
+  if (!interval) {
+    interval = setInterval(function () {
+      sendHeartBeatHandler(uuid());
+    }, state.state.common.bootNotRequireTime * 1_000);
+  }
+
   const data = {
     messageId: messageId,
   };
@@ -37,7 +45,7 @@ function sendHeartBeatHandler(messageId) {
 }
 
 function cleanup() {
-  clearTimeout(timer);
+  // clearTimeout(timer);
 }
 
 module.exports = {
