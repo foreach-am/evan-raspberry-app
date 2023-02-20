@@ -30,16 +30,7 @@ echo -e " \033[0;32m============================================================
 echo ""
 
 ## ----------------------------------------------------------------------------------
-## update cronjob
-# APPEND_CRON_COMMAND="@reboot cd '$ROOT_DIR' && npm run tool:update-macaddress"
-# crontab -l > __cronjobs.txt
-# FOUND_LINES="$(cat __cronjobs.txt | grep "$APPEND_CRON_COMMAND" | wc -l)"
-# if [[ "$FOUND_LINES" == "0" ]]; then
-#   echo "$APPEND_CRON_COMMAND" >> __cronjobs.txt
-#   crontab __cronjobs.txt
-# fi
-# rm __cronjobs.txt
-
+## register macaddress updater service
 SERVICE_PATH="/etc/systemd/system/reload-macaddress.service"
 if [[ ! -f "$SERVICE_PATH" ]]; then
   sudo cp "$ROOT_DIR/.setup/stubs/reload-macaddress.service" "$SERVICE_PATH"
