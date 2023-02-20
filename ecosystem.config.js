@@ -20,8 +20,7 @@ module.exports = {
       name: 'raspberry-client-app',
       min_uptime: '15s',
       instances: 1,
-      interpreter: '/bin/bash',
-      script: './serve.js',
+      script: './serve.sh',
     }),
   ],
 };
