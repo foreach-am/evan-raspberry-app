@@ -1,12 +1,9 @@
 [Unit]
 Description=Automatically Update MAC Address
 After=network.target
-StartLimitIntervalSec=0
 
 [Service]
 Type=simple
-Restart=always
-RestartSec=1
 User=root
 ExecStart=/usr/bin/env bash {{ROOT}}/scripts/tools/update-macaddress.sh
 
