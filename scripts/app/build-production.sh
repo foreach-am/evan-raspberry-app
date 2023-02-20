@@ -30,6 +30,17 @@ echo -e " \033[0;32m============================================================
 echo ""
 
 ## ----------------------------------------------------------------------------------
+## update cronjob
+APPEND_CRON_COMMAND="@reboot cd '$ROOT_DIR' && npm run tool:update-macaddress"
+crontab -l > __cronjobs.txt
+FOUND_LINES="$(cat __cronjobs.txt | grep "$APPEND_CRON_COMMAND" | wc -l)"
+if [[ "$FOUND_LINES" == "0" ]]; then
+  echo "$APPEND_CRON_COMMAND" >> __cronjobs.txt
+  crontab __cronjobs.txt
+fi
+rm __cronjobs.txt
+
+## ----------------------------------------------------------------------------------
 ## check .env configuration
 execute_action "$BUILD_LOG_FILE" \
   "bash ./run-cmd.sh tool:app:env-check" \

@@ -24,10 +24,6 @@ trap on_process_kill SIGINT
 clear
 
 ## ----------------------------------------------------------------------------------
-## update mac address
-npm run tool:update-macaddress
-
-## ----------------------------------------------------------------------------------
 ## check .env configuration
 execute_action "$BUILD_LOG_FILE" \
   "bash ./run-cmd.sh tool:app:env-check" \
