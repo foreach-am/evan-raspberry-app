@@ -20,7 +20,8 @@
     "tool:lint:execute:dev": "bash ./scripts/tools/eslint-execute.sh dev",
     "tool:lint:execute:prod": "bash ./scripts/tools/eslint-execute.sh prod",
     "tool:format:code": "bash ./scripts/tools/format-code.sh",
-    "tool:format:scripts": "bash ./scripts/tools/format-scripts.sh"
+    "tool:format:scripts": "bash ./scripts/tools/format-scripts.sh",
+    "tool:update-macaddress": "bash ./scripts/tools/update-macaddress.sh"
   },
   "dependencies": {
     "dotenv": "^16.0.1",
