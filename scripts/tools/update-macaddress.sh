@@ -65,10 +65,14 @@ fi
 
 network_state "down"
 if [[ "$SAVED_MACADDRES_VALUE" == "" ]]; then
+  echo ">>>>>>>>> Generating new MAC Address ..."
   sudo macchanger -r "$NETWORK_INTERFACE"
+
+  echo ">>>>>>>>> Saving new MAC Address ..."
   CURRENT_MACADDRESS="$(get_macaddress "$NETWORK_INTERFACE")"
   echo "$CURRENT_MACADDRESS" > "$SAVED_MACADDRES_PATH"
 else
+  echo ">>>>>>>>> Updating MAC Address ..."
   sudo macchanger -m "$SAVED_MACADDRES_VALUE" "$NETWORK_INTERFACE"
 fi
 
