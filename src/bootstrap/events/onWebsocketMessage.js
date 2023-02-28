@@ -29,11 +29,12 @@ async function closePreviousTransactions() {
     console.log();
     console.log({
       initial: initialState[connectorId],
-      filled: state.statistic.plugs.plugState[connectorId],
+      filled: state.statistic.plugs.transactionId[connectorId],
     });
     console.log();
     if (
-      initialState[connectorId] === state.statistic.plugs.plugState[connectorId]
+      initialState[connectorId] ===
+      state.statistic.plugs.transactionId[connectorId]
     ) {
       continue;
     }
