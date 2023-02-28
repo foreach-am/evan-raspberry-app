@@ -21,17 +21,18 @@ async function closePreviousTransactions() {
     return;
   }
 
+  console.log();
+  console.log();
+  console.log();
+  console.log();
+  console.log();
+  console.log({
+    initial: initialState,
+    filled: state.state.plugs.transactionId,
+  });
+  console.log();
+
   for (const connectorId in state.state.plugs.transactionId) {
-    console.log();
-    console.log();
-    console.log();
-    console.log();
-    console.log();
-    console.log({
-      initial: initialState[connectorId],
-      filled: state.state.plugs.transactionId[connectorId],
-    });
-    console.log();
     if (
       initialState[connectorId] ===
       state.statistic.plugs.transactionId[connectorId]
