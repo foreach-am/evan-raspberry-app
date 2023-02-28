@@ -5,9 +5,13 @@ const uuid = require('../../utils/uuid');
 const state = require('../../state');
 const execute = require('../../execute');
 
-const initialState = JSON.stringify(
-  JSON.parse(state.state.plugs.transactionId)
-);
+const initialState = (() => {
+  try {
+    return JSON.parse(JSON.stringify(state.state.plugs.transactionId));
+  } catch (e) {
+    return {};
+  }
+})();
 
 async function closePreviousTransactions() {
   const lastTimeSaved = LastTime.getLastTime();
