@@ -34,8 +34,7 @@ async function closePreviousTransactions() {
 
   for (const connectorId in state.state.plugs.transactionId) {
     if (
-      initialState[connectorId] ===
-      state.statistic.plugs.transactionId[connectorId]
+      initialState[connectorId] === state.state.plugs.transactionId[connectorId]
     ) {
       continue;
     }
