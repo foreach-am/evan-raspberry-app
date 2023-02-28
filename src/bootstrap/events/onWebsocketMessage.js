@@ -5,6 +5,10 @@ const uuid = require('../../utils/uuid');
 const state = require('../../state');
 const execute = require('../../execute');
 
+const initialState = JSON.stringify(
+  JSON.parse(state.state.plugs.transactionId)
+);
+
 async function closePreviousTransactions() {
   const lastTimeSaved = LastTime.getLastTime();
   if (!lastTimeSaved) {
@@ -13,6 +17,12 @@ async function closePreviousTransactions() {
 
   state.loadSavedState();
   for (const connectorId in state.state.plugs.transactionId) {
+    if (
+      initialState[connectorId] === state.statistic.plugs.plugState[connectorId]
+    ) {
+      continue;
+    }
+
     state.state.plugs.previousPlugState[connectorId] =
       state.statistic.plugs.plugState[connectorId];
 
