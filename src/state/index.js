@@ -1,4 +1,4 @@
-const { OfflineCommand } = require('../libraries/OfflineCommand');
+const { StateKeeper } = require('../libraries/OfflineManager');
 
 const state = {
   // constants
@@ -74,11 +74,11 @@ for (let i = 1; i <= state.maxPlugsCount; ++i) {
 }
 
 function saveCurrentState() {
-  OfflineCommand.saveState(this.state);
+  StateKeeper.saveState(this.state);
 }
 
 function loadCurrentState() {
-  OfflineCommand.fillSavedState(this.state);
+  StateKeeper.fillSavedState(this.state);
 }
 
 state.saveState = saveCurrentState.bind(state);

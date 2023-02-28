@@ -2,7 +2,7 @@ const url = require('url');
 const { client: WebSocketClient } = require('websocket');
 const { EventCommandNameEnum } = require('./EventQueue');
 const { Logger } = require('./Logger');
-const { OfflineCommand } = require('./OfflineCommand');
+const { OfflineCommand } = require('./OfflineManager');
 const { EventQueue } = require('./EventQueue');
 
 const sleep = require('../utils/sleep');

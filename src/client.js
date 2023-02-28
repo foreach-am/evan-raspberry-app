@@ -19,8 +19,6 @@ const execute = require('./execute');
 
 async function onDataReady() {
   Raspberry.mapOnPlugs(async function (connectorId) {
-    Raspberry.logDateAndTime();
-
     Logger.json(`Plug state ${connectorId}:`, {
       wsConnected: WebSocket.isConnected(),
       state: state.statistic.plugs.plugState[connectorId],

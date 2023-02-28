@@ -1,12 +1,35 @@
 const { WebSocket } = require('../../libraries/WebSocket');
+const { LastTime } = require('../../libraries/OfflineManager');
 const ping = require('../../ping');
+const uuid = require('../../utils/uuid');
+const state = require('../../state');
+const execute = require('../../execute');
 
-function closePreviousTransactions() {
-  // ...
+async function closePreviousTransactions() {
+  const lastTimeSaved = LastTime.getLastTime();
+  if (!lastTimeSaved) {
+    return;
+  }
+
+  state.loadSavedState();
+  for (const connectorId in state.state.plugs.transactionId) {
+    state.state.plugs.previousPlugState[connectorId] =
+      state.statistic.plugs.plugState[connectorId];
+
+    await execute.UpdateFlagStopTransaction(
+      {},
+      connectorId,
+      ping.StopTransaction.ReasonEnum.Reboot
+    );
+  }
 }
 
-function sendBootNotification() {
-  ping.BootNotification.execute(uuid());
+function registerLastTimeInterval() {
+  LastTime.register(2);
+}
+
+async function sendBootNotification() {
+  await ping.BootNotification.execute(uuid());
 }
 
 module.exports = function (onWsMessage) {
@@ -18,7 +41,8 @@ module.exports = function (onWsMessage) {
   WebSocket.onConnect(async function (connection) {
     WebSocket.register('message', onWsMessage);
 
-    closePreviousTransactions();
-    sendBootNotification();
+    await closePreviousTransactions();
+    await sendBootNotification();
+    await registerLastTimeInterval();
   });
 };

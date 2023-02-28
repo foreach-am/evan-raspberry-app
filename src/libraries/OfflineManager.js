@@ -1,14 +1,14 @@
 const fs = require('fs');
-const { getFilePath } = require('./DataManager');
+const DataManager = require('./DataManager');
 const uuid = require('../utils/uuid');
 
 function saveFile(fileName, data) {
   const updatedContent = JSON.stringify(data);
-  fs.writeFileSync(getFilePath(fileName), updatedContent, 'utf-8');
+  fs.writeFileSync(DataManager.getFilePath(fileName), updatedContent, 'utf-8');
 }
 
 function getCommandFiles() {
-  return fs.readdirSync(getFilePath()).filter(function (fileName) {
+  return fs.readdirSync(DataManager.getFilePath()).filter(function (fileName) {
     return /^offline\-.+\.json$/.test(fileName);
   });
 }
@@ -24,7 +24,7 @@ function firstCommand() {
     return null;
   }
 
-  const filePath = getFilePath(files[0]);
+  const filePath = DataManager.getFilePath(files[0]);
   const content = fs.readFileSync(filePath);
   fs.unlinkSync(filePath);
 
@@ -32,17 +32,11 @@ function firstCommand() {
 }
 
 function saveCurrentState(state) {
-  console.log();
-  console.log();
-  console.log();
-  console.log('>>>>', state);
-  console.log();
-  console.log();
   if (!state || !state.plugs) {
     return;
   }
 
-  const stateFile = getFilePath('charge-state.json');
+  const stateFile = DataManager.getFilePath('charge-state.json');
   const content = JSON.stringify({
     idTags: state.plugs.idTags,
     transactionId: state.plugs.transactionId,
@@ -53,7 +47,7 @@ function saveCurrentState(state) {
 }
 
 function fillSavedState(state) {
-  const stateFile = getFilePath('charge-state.json');
+  const stateFile = DataManager.getFilePath('charge-state.json');
   if (fs.existsSync(stateFile)) {
     try {
       const savedState = JSON.parse(fs.readFileSync(stateFile));
@@ -70,11 +64,38 @@ function fillSavedState(state) {
   }
 }
 
+let lastTimeInterval = null;
+function registerLastTimeInterval(seconds) {
+  const filePath = DataManager.getFilePath('last-time.data');
+
+  clearInterval(lastTimeInterval);
+  const interval = seconds * 1_000;
+
+  lastTimeInterval = setInterval(() => {
+    fs.writeFileSync(filePath, new Date().toISOString(), 'utf-8');
+  }, interval);
+}
+
+function getLastTimeSaved() {
+  const filePath = DataManager.getFilePath('last-time.data');
+  if (fs.existsSync(filePath)) {
+    return fs.readFileSync(filePath, 'utf-8');
+  }
+
+  return null;
+}
+
 module.exports = {
   OfflineCommand: {
-    saveState: saveCurrentState,
-    fillSavedState: fillSavedState,
     push: pushCommand,
     first: firstCommand,
+  },
+  StateKeeper: {
+    saveState: saveCurrentState,
+    fillSavedState: fillSavedState,
+  },
+  LastTime: {
+    register: registerLastTimeInterval,
+    getLastTime: getLastTimeSaved,
   },
 };

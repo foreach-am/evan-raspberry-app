@@ -3,7 +3,7 @@
 const fs = require('fs');
 const childProcess = require('child_process');
 const { Gpio } = require('onoff');
-const { getFilePath } = require('./DataManager');
+const DataManager = require('./DataManager');
 const { CoreEvent, CoreEventEnum } = require('./CoreEvent');
 const { ComEmitter } = require('./ComEmitter');
 
@@ -12,22 +12,6 @@ const state = require('../state');
 const buttonReset = new Gpio(5, 'out', 'rising', {
   debounceTimeout: 500,
 });
-
-function logDateAndTime() {
-  const filePath = getFilePath('charge-datetime.data');
-  const current = new Date().toISOString();
-
-  fs.writeFileSync(filePath, current, 'utf-8');
-}
-
-function getLastDateTime() {
-  const filePath = getFilePath('charge-datetime.data');
-  if (!fs.existsSync(filePath)) {
-    return null;
-  }
-
-  return fs.readFileSync(filePath, 'utf-8');
-}
 
 async function restartSoftware() {
   return new Promise(async function (resolve, reject) {
@@ -99,8 +83,6 @@ async function mapOnPlugs(callback) {
 
 module.exports = {
   Raspberry: {
-    logDateAndTime: logDateAndTime,
-    getLastDateTime: getLastDateTime,
     restartSoftware: restartSoftware,
     restartHardware: restartHardware,
     mapOnPlugs: mapOnPlugs,

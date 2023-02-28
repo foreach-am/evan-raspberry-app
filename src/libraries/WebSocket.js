@@ -2,7 +2,7 @@ const dns = require('dns');
 const { WebSocket: WebSocketClient } = require('ws');
 const { EventCommandNameEnum } = require('./EventQueue');
 const { Logger } = require('./Logger');
-const { OfflineCommand } = require('./OfflineCommand');
+const { OfflineCommand } = require('./OfflineManager');
 const { EventQueue } = require('./EventQueue');
 
 const sleep = require('../utils/sleep');
