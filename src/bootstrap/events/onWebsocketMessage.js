@@ -1,4 +1,4 @@
-const WebSocket = require('../../libraries/WebSocket');
+const { WebSocket } = require('../../libraries/WebSocket');
 const ping = require('../../ping');
 
 function closePreviousTransactions() {
