@@ -29,7 +29,7 @@ async function closePreviousTransactions() {
     console.log();
     console.log({
       initial: initialState[connectorId],
-      filled: state.statistic.plugs.transactionId[connectorId],
+      filled: state.state.plugs.transactionId[connectorId],
     });
     console.log();
     if (
