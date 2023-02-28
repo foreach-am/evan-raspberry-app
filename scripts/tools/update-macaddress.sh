@@ -11,7 +11,7 @@ else
 fi
 
 source "$(dirname "$0")/../includes.sh"
-SAVED_MACADDRES_PATH="$ROOT_DIR/data/macaddress.dat"
+SAVED_MACADDRES_PATH="$ROOT_DIR/data/macaddress.data"
 
 ## ----------------------------------------------------------------------------------
 ## install tools if missing

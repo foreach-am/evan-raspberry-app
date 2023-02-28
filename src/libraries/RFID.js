@@ -41,7 +41,7 @@ function onExit() {
 
 CoreEvent.register(CoreEventEnum.EVENT_UNCAUGHT_EXCEPTION, onExit);
 CoreEvent.register(CoreEventEnum.EVENT_UNHANDLED_REJECTION, onExit);
-CoreEvent.register(CoreEventEnum.EVENT_USIGNINT, onExit);
+CoreEvent.register(CoreEventEnum.EVENT_SIGINT, onExit);
 
 module.export = {
   RFID: {

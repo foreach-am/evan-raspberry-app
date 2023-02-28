@@ -1,10 +1,6 @@
-const path = require('path');
 const fs = require('fs');
+const { getFilePath } = require('./DataManager');
 const uuid = require('../utils/uuid');
-
-function getFilePath(...fileName) {
-  return path.join(__dirname, '..', '..', 'data', ...fileName);
-}
 
 function saveFile(fileName, data) {
   const updatedContent = JSON.stringify(data);
@@ -58,13 +54,6 @@ function saveCurrentState(state) {
 
 function fillSavedState(state) {
   const stateFile = getFilePath('charge-state.json');
-  console.log();
-  console.log();
-  console.log();
-  console.log('>>>> <<<<<<<<<<<<<');
-  console.log();
-  console.log();
-
   if (fs.existsSync(stateFile)) {
     try {
       const savedState = JSON.parse(fs.readFileSync(stateFile));
