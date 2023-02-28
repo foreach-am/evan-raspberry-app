@@ -4,6 +4,7 @@ const ping = require('../../ping');
 const uuid = require('../../utils/uuid');
 const state = require('../../state');
 const execute = require('../../execute');
+const { ComEmitter } = require('../../libraries/ComEmitter');
 
 const initialState = (() => {
   try {
@@ -21,6 +22,16 @@ async function closePreviousTransactions() {
 
   state.loadSavedState();
   for (const connectorId in state.state.plugs.transactionId) {
+    console.log();
+    console.log();
+    console.log();
+    console.log();
+    console.log();
+    console.log({
+      initial: initialState[connectorId],
+      filled: state.statistic.plugs.plugState[connectorId],
+    });
+    console.log();
     if (
       initialState[connectorId] === state.statistic.plugs.plugState[connectorId]
     ) {
@@ -29,6 +40,8 @@ async function closePreviousTransactions() {
 
     state.state.plugs.previousPlugState[connectorId] =
       state.statistic.plugs.plugState[connectorId];
+
+    await ComEmitter.plugStop(connectorId);
 
     await execute.UpdateFlagStopTransaction(
       {},
