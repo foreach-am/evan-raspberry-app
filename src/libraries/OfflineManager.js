@@ -59,7 +59,7 @@ function fillSavedState(state) {
       state.plugs.transactionId = savedState?.transactionId;
       state.plugs.reservationId = savedState?.reservationId;
     } catch (e) {
-      console.log(error);
+      console.log(e);
     }
   }
 }
