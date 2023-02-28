@@ -8,6 +8,7 @@ const { ComEmitter } = require('../../libraries/ComEmitter');
 
 const initialState = (() => {
   try {
+    state.loadSavedState();
     return JSON.parse(JSON.stringify(state.state.plugs.transactionId));
   } catch (e) {
     return {};
@@ -20,7 +21,6 @@ async function closePreviousTransactions() {
     return;
   }
 
-  state.loadSavedState();
   for (const connectorId in state.state.plugs.transactionId) {
     console.log();
     console.log();
