@@ -5,40 +5,38 @@ const uuid = require('../../utils/uuid');
 const state = require('../../state');
 const execute = require('../../execute');
 const { ComEmitter } = require('../../libraries/ComEmitter');
+const { PlugStateEnum } = require('../../libraries/PlugState');
 
 const initialState = (() => {
   try {
     state.loadSavedState();
-    return JSON.parse(JSON.stringify(state.state.plugs.transactionId));
+    return {
+      transaction: JSON.parse(JSON.stringify(state.state.plugs.transactionId)),
+      plugState: JSON.parse(JSON.stringify(state.statistic.plugs.plugState)),
+    };
   } catch (e) {
     return {};
   }
 })();
 
-async function closePreviousTransactions() {
+async function closePreviousTransactionsInCaseOfPowerReset() {
   const lastTimeSaved = LastTime.getLastTime();
-
-  console.log();
-  console.log();
-  console.log();
-  console.log();
-  console.log();
-  console.log({
-    initial: initialState,
-    filled: state.state.plugs.transactionId,
-    lastTimeSaved,
-  });
-  console.log();
-
   if (!lastTimeSaved) {
     return;
   }
 
   for (const connectorId in state.state.plugs.transactionId) {
     if (
-      initialState[connectorId] === state.state.plugs.transactionId[connectorId]
+      initialState.transaction[connectorId] === state.state.plugs.transactionId[connectorId]
     ) {
-      await ComEmitter.proxire(connectorId);
+      if (
+        initialState.transaction[connectorId] &&
+        parseInt(initialState.transaction[connectorId]) > 0 &&
+        initialState.plugState[connectorId] === PlugStateEnum.CHARGING
+      ) {
+        await ComEmitter.proxire(connectorId);
+      }
+
       continue;
     }
 
@@ -72,7 +70,7 @@ module.exports = function (onWsMessage) {
   WebSocket.onConnect(async function (connection) {
     WebSocket.register('message', onWsMessage);
 
-    await closePreviousTransactions();
+    await closePreviousTransactionsInCaseOfPowerReset();
     await sendBootNotification();
     await registerLastTimeInterval();
   });

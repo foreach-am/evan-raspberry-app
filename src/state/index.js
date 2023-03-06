@@ -74,11 +74,11 @@ for (let i = 1; i <= state.maxPlugsCount; ++i) {
 }
 
 function saveCurrentState() {
-  StateKeeper.saveState(this.state);
+  StateKeeper.saveState(this.state, this.statistic);
 }
 
 function loadCurrentState() {
-  StateKeeper.fillSavedState(this.state);
+  StateKeeper.fillSavedState(this.state, this.statistic);
 }
 
 state.saveState = saveCurrentState.bind(state);

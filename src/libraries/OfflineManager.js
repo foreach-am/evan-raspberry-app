@@ -31,8 +31,8 @@ function firstCommand() {
   return JSON.parse(content);
 }
 
-function saveCurrentState(state) {
-  if (!state || !state.plugs) {
+function saveCurrentState(state, statistic) {
+  if (!state || !state.plugs || !statistic || !statistic.plugs) {
     return;
   }
 
@@ -41,12 +41,13 @@ function saveCurrentState(state) {
     idTags: state.plugs.idTags,
     transactionId: state.plugs.transactionId,
     reservationId: state.plugs.reservationId,
+    plugState: statistic.plugs.plugState,
   });
 
   fs.writeFileSync(stateFile, content);
 }
 
-function fillSavedState(state) {
+function fillSavedState(state, statistic) {
   const stateFile = DataManager.getFilePath('charge-state.json');
   if (fs.existsSync(stateFile)) {
     try {
@@ -59,7 +60,7 @@ function fillSavedState(state) {
       state.plugs.transactionId = savedState?.transactionId;
       state.plugs.reservationId = savedState?.reservationId;
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   }
 }
