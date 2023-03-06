@@ -17,9 +17,6 @@ const initialState = (() => {
 
 async function closePreviousTransactions() {
   const lastTimeSaved = LastTime.getLastTime();
-  if (!lastTimeSaved) {
-    return;
-  }
 
   console.log();
   console.log();
@@ -29,8 +26,13 @@ async function closePreviousTransactions() {
   console.log({
     initial: initialState,
     filled: state.state.plugs.transactionId,
+    lastTimeSaved,
   });
   console.log();
+
+  if (!lastTimeSaved) {
+    return;
+  }
 
   for (const connectorId in state.state.plugs.transactionId) {
     if (
