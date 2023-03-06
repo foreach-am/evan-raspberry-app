@@ -23,7 +23,7 @@ async function closePreviousTransactionsInCaseOfPowerReset() {
 
   for (const connectorId in state.state.plugs.transactionId) {
     if (
-      initialState.transaction[connectorId] === state.state.plugs.transactionId[connectorId]
+      initialState[connectorId] === state.state.plugs.transactionId[connectorId]
     ) {
       if (
         initialState[connectorId] &&
