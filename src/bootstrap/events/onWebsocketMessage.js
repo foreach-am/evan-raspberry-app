@@ -25,14 +25,19 @@ async function closePreviousTransactionsInCaseOfPowerReset() {
     if (
       initialState[connectorId] === state.state.plugs.transactionId[connectorId]
     ) {
-      if (
-        initialState[connectorId] &&
-        parseInt(initialState.transaction[connectorId]) > 0
-      ) {
-        await ComEmitter.proxire(connectorId);
-      }
+      // if (
+      //   initialState[connectorId] &&
+      //   parseInt(initialState.transaction[connectorId]) > 0
+      // ) {
+      //   await ComEmitter.proxire(connectorId);
+      // }
 
-      continue;
+      const now = Date.now();
+      const last = new Date(lastTimeSaved);
+
+      if (now - last < 10 * 1000) {
+        continue;
+      }
     }
 
     state.state.plugs.previousPlugState[connectorId] =
