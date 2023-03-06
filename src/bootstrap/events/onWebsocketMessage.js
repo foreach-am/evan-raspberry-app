@@ -27,7 +27,9 @@ async function closePreviousTransactionsInCaseOfPowerReset() {
     console.log();
     console.log();
     console.log(initialState);
+    console.log(state.state.plugs.transactionId[connectorId]);
     console.log();
+
     if (
       initialState[connectorId] === state.state.plugs.transactionId[connectorId]
     ) {
@@ -42,7 +44,6 @@ async function closePreviousTransactionsInCaseOfPowerReset() {
       const last = new Date(lastTimeSaved);
 
       if (now - last < 10 * 1000) {
-
         continue;
       }
     }
