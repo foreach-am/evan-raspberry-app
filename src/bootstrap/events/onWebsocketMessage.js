@@ -38,6 +38,7 @@ async function closePreviousTransactions() {
     if (
       initialState[connectorId] === state.state.plugs.transactionId[connectorId]
     ) {
+      await ComEmitter.proxire(connectorId);
       continue;
     }
 
