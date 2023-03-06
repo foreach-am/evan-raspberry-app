@@ -5,15 +5,11 @@ const uuid = require('../../utils/uuid');
 const state = require('../../state');
 const execute = require('../../execute');
 const { ComEmitter } = require('../../libraries/ComEmitter');
-const { PlugStateEnum } = require('../../libraries/PlugState');
 
 const initialState = (() => {
   try {
     state.loadSavedState();
-    return {
-      transaction: JSON.parse(JSON.stringify(state.state.plugs.transactionId)),
-      plugState: JSON.parse(JSON.stringify(state.statistic.plugs.plugState)),
-    };
+    return JSON.parse(JSON.stringify(state.state.plugs.transactionId));
   } catch (e) {
     return {};
   }
@@ -30,9 +26,8 @@ async function closePreviousTransactionsInCaseOfPowerReset() {
       initialState.transaction[connectorId] === state.state.plugs.transactionId[connectorId]
     ) {
       if (
-        initialState.transaction[connectorId] &&
-        parseInt(initialState.transaction[connectorId]) > 0 &&
-        initialState.plugState[connectorId] === PlugStateEnum.CHARGING
+        initialState[connectorId] &&
+        parseInt(initialState.transaction[connectorId]) > 0
       ) {
         await ComEmitter.proxire(connectorId);
       }
