@@ -36,8 +36,8 @@ SERVICE_NAME_NEW="configure-macaddress.service"
 
 SERVICE_PATH_OLD="/etc/systemd/system/$SERVICE_NAME_OLD"
 if [[ -f "$SERVICE_PATH_OLD" ]]; then
-  sudo systemctl stop "$SERVICE_NAME_OLD
-  sudo systemctl disable "$SERVICE_NAME_OLD
+  sudo systemctl stop "$SERVICE_NAME_OLD"
+  sudo systemctl disable "$SERVICE_NAME_OLD"
 
   sudo rm "$SERVICE_PATH_OLD"
   sudo systemctl daemon-reload
