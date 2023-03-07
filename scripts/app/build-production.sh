@@ -31,23 +31,26 @@ echo ""
 
 ## ----------------------------------------------------------------------------------
 ## register macaddress updater service
-SERVICE_PATH_OLD="/etc/systemd/system/reload-macaddress.service"
+SERVICE_NAME_OLD="reload-macaddress.service"
+SERVICE_NAME_NEW="configure-macaddress.service"
+
+SERVICE_PATH_OLD="/etc/systemd/system/$SERVICE_NAME_OLD"
 if [[ -f "$SERVICE_PATH_OLD" ]]; then
-  sudo systemctl stop configure-macaddress.service
-  sudo systemctl disable configure-macaddress.service
+  sudo systemctl stop "$SERVICE_NAME_OLD
+  sudo systemctl disable "$SERVICE_NAME_OLD
 
   sudo rm "$SERVICE_PATH_OLD"
   sudo systemctl daemon-reload
   sudo systemctl reset-failed
 fi
 
-SERVICE_PATH_NEW="/etc/systemd/system/configure-macaddress.service"
+SERVICE_PATH_NEW="/etc/systemd/system/$SERVICE_NAME_NEW"
 if [[ ! -f "$SERVICE_PATH_NEW" ]]; then
-  sudo cp "$ROOT_DIR/.setup/stubs/configure-macaddress.service" "$SERVICE_PATH_NEW"
+  sudo cp "$ROOT_DIR/.setup/stubs/$SERVICE_NAME_NEW" "$SERVICE_PATH_NEW"
   sudo sed -i "s|{{ROOT}}|$ROOT_DIR|g" "$SERVICE_PATH_NEW"
 
-  sudo systemctl enable configure-macaddress.service
-  sudo systemctl start configure-macaddress.service
+  sudo systemctl enable "$SERVICE_NAME_NEW"
+  sudo systemctl start "$SERVICE_NAME_NEW"
 fi
 
 ## ----------------------------------------------------------------------------------
