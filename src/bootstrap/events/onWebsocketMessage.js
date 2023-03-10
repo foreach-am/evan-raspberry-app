@@ -5,6 +5,7 @@ const uuid = require('../../utils/uuid');
 const state = require('../../state');
 const execute = require('../../execute');
 const { ComEmitter } = require('../../libraries/ComEmitter');
+const { Logger } = require('../../libraries/Logger');
 
 const initialState = (() => {
   try {
@@ -22,17 +23,15 @@ async function closeTransactionInCaseOfPowerReset() {
   }
 
   for (const connectorId in state.state.plugs.transactionId) {
-    console.log();
-    console.log();
+    const lastTransactionId = state.state.plugs.transactionId[connectorId];
+
     console.log();
     console.log();
     console.log(initialState);
-    console.log(state.state.plugs.transactionId[connectorId]);
+    console.log(lastTransactionId);
     console.log();
 
-    if (
-      initialState[connectorId] === state.state.plugs.transactionId[connectorId]
-    ) {
+    if (initialState[connectorId] === lastTransactionId) {
       // if (
       //   initialState[connectorId] &&
       //   parseInt(initialState[connectorId]) > 0
@@ -43,6 +42,7 @@ async function closeTransactionInCaseOfPowerReset() {
       const now = Date.now();
       const last = new Date(lastTimeSaved);
 
+      Logger.info(`Checking last transaction delay [TransID: ${lastTransactionId}, Diff: ${diff}].`);
       if (now - last < 10 * 1000) {
         continue;
       }
