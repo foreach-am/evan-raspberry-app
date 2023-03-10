@@ -15,7 +15,7 @@ const initialState = (() => {
   }
 })();
 
-async function closePreviousTransactionsInCaseOfPowerReset() {
+async function closeTransactionInCaseOfPowerReset() {
   const lastTimeSaved = LastTime.getLastTime();
   if (!lastTimeSaved) {
     return;
@@ -65,8 +65,14 @@ function registerLastTimeInterval() {
   LastTime.register(2);
 }
 
+let bootNotificationAlreadySent = false;
 async function sendBootNotification() {
+  if (bootNotificationAlreadySent) {
+    return;
+  }
+
   await ping.BootNotification.execute(uuid());
+  bootNotificationAlreadySent = true;
 }
 
 module.exports = function (onWsMessage) {
@@ -78,7 +84,7 @@ module.exports = function (onWsMessage) {
   WebSocket.onConnect(async function (connection) {
     WebSocket.register('message', onWsMessage);
 
-    await closePreviousTransactionsInCaseOfPowerReset();
+    await closeTransactionInCaseOfPowerReset();
     await sendBootNotification();
     await registerLastTimeInterval();
   });
