@@ -41,9 +41,10 @@ async function closeTransactionInCaseOfPowerReset() {
 
       const now = Date.now();
       const last = new Date(lastTimeSaved);
+      const diff = now - last;
 
       Logger.info(`Checking last transaction delay [TransID: ${lastTransactionId}, Diff: ${diff}].`);
-      if (now - last < 10 * 1000) {
+      if (diff < 10 * 1000) {
         continue;
       }
     }
