@@ -24,6 +24,9 @@ async function closeTransactionInCaseOfPowerReset() {
 
   for (const connectorId in state.state.plugs.transactionId) {
     const lastTransactionId = state.state.plugs.transactionId[connectorId];
+    if (!lastTransactionId) {
+      continue;
+    }
 
     console.log();
     console.log();
@@ -43,7 +46,9 @@ async function closeTransactionInCaseOfPowerReset() {
       const last = new Date(lastTimeSaved);
       const diff = now - last;
 
-      Logger.info(`Checking last transaction delay [TransID: ${lastTransactionId}, Diff: ${diff}].`);
+      Logger.info(
+        `Checking last transaction delay [TransID: ${lastTransactionId}, Diff: ${diff}].`
+      );
       if (diff < 10 * 1000) {
         continue;
       }
