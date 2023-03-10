@@ -17,20 +17,21 @@ const initialState = (() => {
 })();
 
 async function closeTransactionInCaseOfPowerReset() {
-  console.log();
-  console.log();
-  console.log({ initialState });
-
   const lastTimeSaved = LastTime.getLastTime();
-  console.log({ lastTimeSaved });
+  if (lastTimeSaved) {
+    const last = new Date(lastTimeSaved);
+    const diff = Date.now() - last;
 
-  if (!lastTimeSaved) {
-    return;
+    Logger.info(`Checking last transaction delay: ${diff}`);
+
+    // don't close any transaction if previous action is less then 10 seconds.
+    if (diff < 10 * 1000) {
+      return;
+    }
   }
 
   for (const connectorId in state.state.plugs.transactionId) {
     const lastTransactionId = state.state.plugs.transactionId[connectorId];
-    console.log({ lastTransactionId });
     if (!lastTransactionId) {
       continue;
     }
@@ -46,13 +47,6 @@ async function closeTransactionInCaseOfPowerReset() {
       const now = Date.now();
       const last = new Date(lastTimeSaved);
       const diff = now - last;
-
-      Logger.info(
-        `Checking last transaction delay [TransID: ${lastTransactionId}, Diff: ${diff}].`
-      );
-      if (diff < 10 * 1000) {
-        continue;
-      }
     }
 
     state.state.plugs.previousPlugState[connectorId] =
