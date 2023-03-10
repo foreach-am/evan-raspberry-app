@@ -90,16 +90,6 @@ execute_action "$BUILD_LOG_FILE" \
   "Starting PM2 engine app." \
   "Failed to start PM2 engine app."
 
-execute_action "$BUILD_LOG_FILE" \
-  "pm2 save --force" \
-  "Saving re-created PM2 engine app state." \
-  "Failed to save re-created PM2 engine app state."
-
-execute_action "$BUILD_LOG_FILE" \
-  "pm2 update" \
-  "Updating PM2 in-memory cache." \
-  "Failed to update PM2 in-memory cache."
-
 ## ----------------------------------------------------------------------------------
 ## create system service
 if [[ "$(command -v systemctl)" != "" ]]; then
