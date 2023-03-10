@@ -17,22 +17,23 @@ const initialState = (() => {
 })();
 
 async function closeTransactionInCaseOfPowerReset() {
+  console.log();
+  console.log();
+  console.log({ initialState });
+
   const lastTimeSaved = LastTime.getLastTime();
+  console.log({ lastTimeSaved });
+
   if (!lastTimeSaved) {
     return;
   }
 
   for (const connectorId in state.state.plugs.transactionId) {
     const lastTransactionId = state.state.plugs.transactionId[connectorId];
+    console.log({ lastTransactionId });
     if (!lastTransactionId) {
       continue;
     }
-
-    console.log();
-    console.log();
-    console.log(initialState);
-    console.log(lastTransactionId);
-    console.log();
 
     if (initialState[connectorId] === lastTransactionId) {
       // if (
