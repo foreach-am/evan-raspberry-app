@@ -13,6 +13,7 @@
     "prepare": "bash ./run-cmd.sh tool:husky:init",
     "lint": "bash ./run-cmd.sh tool:lint:execute:dev",
     "format": "bash ./run-cmd.sh tool:format:code && bash ./run-cmd.sh tool:format:scripts",
+    "tool:app:node-version": "bash ./scripts/app/check-node-version.sh",
     "tool:app:env-check": "bash ./scripts/app/check-env.sh",
     "tool:husky:init": "bash ./scripts/tools/init-git-hooks.sh",
     "tool:sum-hash:build": "bash ./scripts/tools/sumhash-build.sh",

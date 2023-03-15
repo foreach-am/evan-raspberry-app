@@ -172,19 +172,3 @@ function execute_action() {
 
   end_cmd_die $? "$MESSAGE_ERROR"
 }
-
-function check_and_install_nodejs() {
-  local MUST_INSTALL_NODE=0
-  if [[ "$(command -v node)" == "" ]]; then
-    MUST_INSTALL_NODE=1
-  else
-    local NODE_VESION="$(node -v | sed 's|v||g')"
-    if [[ "$NODE_VERSION" != 16.* && "$NODE_VERSION" != 18.* ]]; then
-      MUST_INSTALL_NODE=1
-    fi
-  fi
-
-  if [[ $MUST_INSTALL_NODE == 1 ]]; then
-    bash "$ROOT_DIR/.setup/install-nodejs.sh"
-  fi
-}
