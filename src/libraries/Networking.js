@@ -1,6 +1,7 @@
 const net = require('net');
 const url = require('url');
 const BluebirdPromise = require('bluebird');
+const { Logger } = require('./Logger');
 
 BluebirdPromise.config({ cancellation: true });
 
@@ -60,7 +61,10 @@ function checkSingleHost(domain, timeout = 1000) {
 async function isConnectedToInternet() {
   for (const domain of checkDomains) {
     const success = await checkSingleHost(domain);
-    console.log(` >>>>> NetworkChecking: [${domain}]:`, success);
+    Logger.info(
+      `Checking network connection with domain [${domain}]:`,
+      success ? 'success' : 'failed'
+    );
 
     if (success) {
       return true;
