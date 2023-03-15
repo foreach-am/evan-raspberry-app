@@ -19,12 +19,12 @@ fi
 
 trap on_process_kill SIGINT
 
-## ----------------------------------------------------------------------------------
-## check and update node version
-execute_action "$BUILD_LOG_FILE" \
-  "bash ./run-cmd.sh tool:app:node-version" \
-  "Updating or installing NodeJS v18" \
-  "Failed to update or install NodeJS v18."
+# ## ----------------------------------------------------------------------------------
+# ## check and update node version
+# execute_action "$BUILD_LOG_FILE" \
+#   "bash ./run-cmd.sh tool:app:node-version" \
+#   "Updating or installing NodeJS v18" \
+#   "Failed to update or install NodeJS v18."
 
 ## ----------------------------------------------------------------------------------
 ## start

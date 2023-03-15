@@ -1,9 +1,9 @@
-const dns = require('dns');
 const { WebSocket: WebSocketClient } = require('ws');
 const { EventCommandNameEnum } = require('./EventQueue');
 const { Logger } = require('./Logger');
 const { OfflineCommand } = require('./OfflineManager');
 const { EventQueue } = require('./EventQueue');
+const { Networking } = require('./Networking');
 
 const sleep = require('../utils/sleep');
 const uuid = require('../utils/uuid');
@@ -31,54 +31,12 @@ const reconnectionDelays = {
 };
 let reconnectionAttempts = 0;
 
-async function isConnectedToInternet() {
-  const checkSingle = function (host) {
-    return new Promise(function (resolve) {
-      dns.lookup(host, function (error) {
-        if (error) {
-          Logger.error('Network status error: ', error.code);
-        }
-
-        if (error && error.code == 'ENOTFOUND') {
-          resolve(false);
-        } else {
-          resolve(true);
-        }
-      });
-    });
-  };
-
-  const checkHosts = [
-    'google.com',
-    'www.google.com',
-    'amazon.com',
-    'www.amazon.com',
-    '8.8.8.8',
-  ];
-  for (const host of checkHosts) {
-    const success = await checkSingle(host);
-    if (success) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-// let networkConnected = false;
-// async function checkNetwork() {
-//   networkConnected = await isConnectedToInternet();
-// }
-
-// checkNetwork();
-// setInterval(checkNetwork, 2000);
-
 async function connectWithUri(triggerPreviousEvents) {
-  // const internetConnected = await isConnectedToInternet();
-  // if (!internetConnected) {
-  //   Logger.warning('The charger was not connected to the internet.');
-  //   return;
-  // }
+  const internetConnected = await Networking.isConnected();
+  if (!internetConnected) {
+    Logger.warning('The charger was not connected to the internet.');
+    return;
+  }
 
   if (client) {
     Logger.info('Removing all listeners on WebSocket ...');

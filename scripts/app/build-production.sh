@@ -29,12 +29,12 @@ echo -e " \033[0;32m======================      EVAN DEPLOYMENT STARTED      ===
 echo -e " \033[0;32m===============================================================================\033[0m"
 echo ""
 
-## ----------------------------------------------------------------------------------
-## check and update node version
-execute_action "$BUILD_LOG_FILE" \
-  "bash ./run-cmd.sh tool:app:node-version" \
-  "Updating or installing NodeJS v18" \
-  "Failed to update or install NodeJS v18."
+# ## ----------------------------------------------------------------------------------
+# ## check and update node version
+# execute_action "$BUILD_LOG_FILE" \
+#   "bash ./run-cmd.sh tool:app:node-version" \
+#   "Updating or installing NodeJS v18" \
+#   "Failed to update or install NodeJS v18."
 
 ## ----------------------------------------------------------------------------------
 ## register macaddress updater service
