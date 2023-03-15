@@ -94,6 +94,14 @@ async function connectWithUri(triggerPreviousEvents) {
     connectionCloseCallback();
   });
 
+  client.on('close', function (code, reason) {
+    Logger.error('Closing WebSocket connection:', {
+      code: code,
+      reason: reason.toString('utf-8'),
+    });
+    connectionCloseCallback();
+  });
+
   client.on('unexpected-response', function (error) {
     Logger.error('Could not connect to server:', error);
     connectionCloseCallback();
@@ -376,8 +384,7 @@ async function executeOfflineQueue() {
 }
 
 function isConnected() {
-  return !!client && client.readyState === WebSocketClient.OPEN;
-  // return connected;
+  return !!client && client.readyState === WebSocketClient.OPEN && connected;
 }
 
 const SendTypeEnum = {

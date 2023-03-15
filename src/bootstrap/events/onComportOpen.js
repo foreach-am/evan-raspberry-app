@@ -2,7 +2,7 @@ const { CoreEvent, CoreEventEnum } = require('../../libraries/CoreEvent');
 const { ComPort } = require('../../libraries/ComPort');
 const { ComEmitter } = require('../../libraries/ComEmitter');
 const Raspberry = require('../../libraries/Raspberry');
-const Logger = require('../../libraries/Logger');
+const { Logger } = require('../../libraries/Logger');
 
 module.exports = function (onSerialPortOpen) {
   ComPort.onLongIdle(async function () {
