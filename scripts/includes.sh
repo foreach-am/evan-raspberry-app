@@ -175,7 +175,7 @@ function execute_action() {
 
 function check_and_install_nodejs() {
   local MUST_INSTALL_NODE=0
-  if [[ "$(command -v node)" === "" ]]; then
+  if [[ "$(command -v node)" == "" ]]; then
     MUST_INSTALL_NODE=1
   else
     local NODE_VESION="$(node -v | sed 's|v||g')"
