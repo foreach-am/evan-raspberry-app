@@ -21,6 +21,15 @@ mv "$HOME/.bashrc_temp" "$HOME/.bashrc"
 
 # make executable link
 echo "export PATH=\"\$PATH:/opt/nodejs/node-v$NODE_VERSION-linux-$CPU_VERSION/bin/\"" >> "$HOME/.bashrc"
+if [[ -d /usr/local/bin ]]; then
+  EXECUTABLES="node npm npx"
+  for EXECUTABLE in $EXECUTABLES; do
+    sudo rm "/usr/local/bin/$EXECUTABLE"
+    sudo ln -s \
+      "/opt/nodejs/node-v$NODE_VERSION-linux-$CPU_VERSION/bin/$EXECUTABLE" \
+      "/usr/local/bin/$EXECUTABLE"
+  done
+fi
 
 # cleanup
 sudo rm node-v$NODE_VERSION-linux-$CPU_VERSION.tar.xz

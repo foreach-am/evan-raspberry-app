@@ -20,10 +20,6 @@ fi
 trap on_process_kill SIGINT
 
 ## ----------------------------------------------------------------------------------
-## check and update node version
-check_and_install_nodejs
-
-## ----------------------------------------------------------------------------------
 ## start
 clear
 
@@ -32,6 +28,14 @@ echo -e " \033[0;32m============================================================
 echo -e " \033[0;32m======================      EVAN DEPLOYMENT STARTED      ======================\033[0m"
 echo -e " \033[0;32m===============================================================================\033[0m"
 echo ""
+
+## ----------------------------------------------------------------------------------
+## check and update node version
+check_and_install_nodejs
+execute_action "$BUILD_LOG_FILE" \
+  "bash ./run-cmd.sh tool:app:env-check" \
+  "Checking .env configration" \
+  ".env file was not configured properly or it missing."
 
 ## ----------------------------------------------------------------------------------
 ## register macaddress updater service
