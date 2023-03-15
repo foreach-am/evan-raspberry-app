@@ -24,7 +24,7 @@ const checkDomains = checkHosts
   }, []);
 
 function checkSingleHost(domain, timeout = 1000) {
-  const promiseCallback = function (resolve) {
+  const promiseCallback = function (resolve, reject, onCancel) {
     const urlInfo = url.parse(domain);
     if (urlInfo.port === null) {
       if (urlInfo.protocol === 'http:') {
@@ -49,6 +49,10 @@ function checkSingleHost(domain, timeout = 1000) {
     };
 
     const netClient = new net.Socket();
+    onCancel(function () {
+      netClient.destroy();
+    });
+
     netClient.on('data', function () {});
     netClient.on('close', function () {});
     netClient.on('error', triggerResult(false));
