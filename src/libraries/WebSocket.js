@@ -239,7 +239,7 @@ function register(eventName, callback) {
   clientEvents.instance[eventName].push(callback);
 
   if (!client) {
-    return Logger.warn('WebSocket is not connected to server right now.');
+    return Logger.warning('WebSocket is not connected to server right now.');
   }
 
   if (eventName === 'message') {

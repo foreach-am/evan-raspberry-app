@@ -153,7 +153,7 @@ function onConnect(callback) {
 
 function register(event, callback) {
   if (!currentConnection) {
-    return Logger.warn('WebSocket is not connected to server right now.');
+    return Logger.warning('WebSocket is not connected to server right now.');
   }
 
   currentConnection.on(event, callback);
