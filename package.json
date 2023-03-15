@@ -25,6 +25,7 @@
     "tool:update-macaddress": "bash ./scripts/tools/update-macaddress.sh"
   },
   "dependencies": {
+    "bluebird": "^3.7.2",
     "dotenv": "^16.0.1",
     "onoff": "^6.0.3",
     "pws": "^7.0.0",

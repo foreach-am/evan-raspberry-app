@@ -1,5 +1,8 @@
 const net = require('net');
 const url = require('url');
+const BluebirdPromise = require('bluebird');
+
+BluebirdPromise.config({ cancellation: true });
 
 const checkHosts = ['google.com', 'amazon.com', 'apple.com', 'facebook.com'];
 const subdomains = ['', 'www'];
@@ -19,8 +22,8 @@ const checkDomains = checkHosts
     return [...acc, ...list];
   }, []);
 
-function checkSingleHost(domain) {
-  return new Promise(function (resolve) {
+function checkSingleHost(domain, timeout = 1000) {
+  const promiseCallback = function (resolve) {
     const urlInfo = url.parse(domain);
     if (urlInfo.port === null) {
       if (urlInfo.protocol === 'http:') {
@@ -49,13 +52,15 @@ function checkSingleHost(domain) {
     netClient.on('close', function () {});
     netClient.on('error', triggerResult(false));
     netClient.connect(connectionConfig, triggerResult(true));
-  });
+  };
+
+  return new BluebirdPromise(promiseCallback).timeout(timeout);
 }
 
 async function isConnectedToInternet() {
   for (const domain of checkDomains) {
     const success = await checkSingleHost(domain);
-    console.log(` >>>>> NetworkChecking: [domain]:`, success);
+    console.log(` >>>>> NetworkChecking: [${domain}]:`, success);
 
     if (success) {
       return true;
