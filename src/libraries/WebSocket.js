@@ -215,7 +215,7 @@ function onConnect(callback) {
   clientEvents.connection['open'] = clientEvents.connection['open'] || [];
   clientEvents.connection['open'].push(callback);
 
-  client.on('open', callback);
+  client?.on('open', callback);
 }
 
 function messageParser(buffer, callback) {
