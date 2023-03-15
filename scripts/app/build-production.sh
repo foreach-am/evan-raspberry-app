@@ -31,7 +31,6 @@ echo ""
 
 ## ----------------------------------------------------------------------------------
 ## check and update node version
-check_and_install_nodejs
 execute_action "$BUILD_LOG_FILE" \
   "bash ./run-cmd.sh tool:app:node-version" \
   "Updating or installing NodeJS v18" \
