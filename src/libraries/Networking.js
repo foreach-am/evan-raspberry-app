@@ -31,7 +31,11 @@ function checkSingleHost(domain) {
     }
 
     const connectionPort = Number.parseInt(urlInfo.port || '80');
-    const connectionConfig = { port: connectionPort, host: hostname };
+    const connectionHostname = urlInfo.hostname || urlInfo.pathname;
+    const connectionConfig = {
+      port: connectionPort,
+      host: connectionHostname,
+    };
 
     const triggerResult = function (result) {
       return function () {
