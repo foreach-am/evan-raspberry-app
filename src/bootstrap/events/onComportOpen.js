@@ -1,7 +1,7 @@
 const { CoreEvent, CoreEventEnum } = require('../../libraries/CoreEvent');
 const { ComPort } = require('../../libraries/ComPort');
 const { ComEmitter } = require('../../libraries/ComEmitter');
-const Raspberry = require('../../libraries/Raspberry');
+const { Raspberry } = require('../../libraries/Raspberry');
 const { Logger } = require('../../libraries/Logger');
 
 module.exports = function (onSerialPortOpen) {
@@ -14,6 +14,8 @@ module.exports = function (onSerialPortOpen) {
   });
 
   ComPort.onSerialPort('open', function () {
+    Logger.info('ComPort opened, calling listener ...');
+
     ComEmitter.masterRead();
     onSerialPortOpen();
   });
