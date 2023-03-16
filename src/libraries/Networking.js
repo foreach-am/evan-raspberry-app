@@ -59,7 +59,11 @@ function checkSingleHost(domain, timeout = 1000) {
     netClient.connect(connectionConfig, triggerResult(true));
   };
 
-  return new BluebirdPromise(promiseCallback).timeout(timeout);
+  try {
+    return new BluebirdPromise(promiseCallback).timeout(timeout);
+  } catch (e) {
+    return Promise.resolve(false);
+  }
 }
 
 async function isConnectedToInternet() {
