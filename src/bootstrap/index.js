@@ -1,6 +1,6 @@
 module.exports = {
   onComportOpen: require('./events/onComportOpen'),
-  onWebsocketMessage: require('./events/onWebsocketMessage'),
+  onWebsocketEvent: require('./events/onWebsocketEvent'),
 
   registerMeterValueInterval: require('./register/registerMeterValueInterval'),
 };

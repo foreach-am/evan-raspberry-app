@@ -76,14 +76,18 @@ async function sendBootNotification() {
   bootNotificationAlreadySent = true;
 }
 
-module.exports = function (onWsMessage) {
+module.exports = function ({ onConnect, onMessage }) {
   WebSocket.register('close', function () {
     ping.Heartbeat.cleanup();
   });
 
   // eslint-disable-next-line no-unused-vars
   WebSocket.onConnect(async function (connection) {
-    WebSocket.register('message', onWsMessage);
+    if (typeof onConnect === 'function') {
+      onConnect();
+    }
+
+    WebSocket.register('message', onMessage);
 
     await closeTransactionInCaseOfPowerReset();
     await sendBootNotification();

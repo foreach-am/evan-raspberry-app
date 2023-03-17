@@ -37,8 +37,8 @@ async function onDataReady() {
 
     if (
       WebSocket.isConnected() &&
-      // state.statistic.plugs.plugState[connectorId] ===
-      //   PlugStateEnum.PLUG_SOFT_LOCK &&
+      state.statistic.plugs.plugState[connectorId] ===
+        PlugStateEnum.PLUG_SOFT_LOCK &&
       state.state.plugs.softLockDueConnectionLose[connectorId]
     ) {
       await ComEmitter.plugOn(connectorId);
@@ -193,90 +193,90 @@ async function onDataReady() {
   }, 2_000);
 }
 
-bootstrap.onComportOpen(function () {
-  ComPort.register(onDataReady);
+async function onWsMessage(message) {
+  if (message.type !== 'utf8' && message.type !== 'utf-8') {
+    Logger.warning('Non UTF-8 data was received:', message);
+    return;
+  }
 
-  bootstrap.onWebsocketMessage(async function (message) {
-    if (message.type !== 'utf8' && message.type !== 'utf-8') {
-      Logger.warning('Non UTF-8 data was received:', message);
+  const parsedServerData = DataParser.parse(message.utf8Data);
+
+  const isServerCommand =
+    parsedServerData.messageType === MessageTypeEnum.TYPE_REQUEST;
+  if (isServerCommand) {
+    switch (parsedServerData.command) {
+      case EventCommandNameEnum[EventCommandEnum.EVENT_RESERVE_NOW]:
+        await execute.PingReserveNow(parsedServerData);
+        break;
+
+      case EventCommandNameEnum[EventCommandEnum.EVENT_CHANGE_AVAILABILITY]:
+        await execute.ChangeConnectorAvailability(parsedServerData);
+        break;
+
+      case EventCommandNameEnum[EventCommandEnum.EVENT_CHANGE_CONFIGURATION]:
+        await execute.ChangeStationConfiguration(parsedServerData);
+        break;
+
+      case EventCommandNameEnum[
+        EventCommandEnum.EVENT_REMOTE_START_TRANSACTION
+      ]:
+        await execute.PingAndRemoteStartTransaction(parsedServerData);
+        break;
+
+      case EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_STOP_TRANSACTION]:
+        await execute.PingAndRemoteStopTransaction(parsedServerData);
+        break;
+
+      case EventCommandNameEnum[EventCommandEnum.EVENT_RESET]:
+        await execute.PingAndReset(parsedServerData);
+        break;
+    }
+  } else {
+    const foundMessage = EventQueue.getByMessageId(parsedServerData.messageId);
+    if (!foundMessage) {
       return;
     }
 
-    const parsedServerData = DataParser.parse(message.utf8Data);
+    const { commandId, connectorId, messageId } = foundMessage;
 
-    const isServerCommand =
-      parsedServerData.messageType === MessageTypeEnum.TYPE_REQUEST;
-    if (isServerCommand) {
-      switch (parsedServerData.command) {
-        case EventCommandNameEnum[EventCommandEnum.EVENT_RESERVE_NOW]:
-          await execute.PingReserveNow(parsedServerData);
-          break;
-
-        case EventCommandNameEnum[EventCommandEnum.EVENT_CHANGE_AVAILABILITY]:
-          await execute.ChangeConnectorAvailability(parsedServerData);
-          break;
-
-        case EventCommandNameEnum[EventCommandEnum.EVENT_CHANGE_CONFIGURATION]:
-          await execute.ChangeStationConfiguration(parsedServerData);
-          break;
-
-        case EventCommandNameEnum[
-          EventCommandEnum.EVENT_REMOTE_START_TRANSACTION
-        ]:
-          await execute.PingAndRemoteStartTransaction(parsedServerData);
-          break;
-
-        case EventCommandNameEnum[
-          EventCommandEnum.EVENT_REMOTE_STOP_TRANSACTION
-        ]:
-          await execute.PingAndRemoteStopTransaction(parsedServerData);
-          break;
-
-        case EventCommandNameEnum[EventCommandEnum.EVENT_RESET]:
-          await execute.PingAndReset(parsedServerData);
-          break;
-      }
-    } else {
-      const foundMessage = EventQueue.getByMessageId(
-        parsedServerData.messageId
-      );
-      if (!foundMessage) {
-        return;
-      }
-
-      const { commandId, connectorId, messageId } = foundMessage;
-
-      switch (commandId) {
-        case EventCommandEnum.EVENT_BOOT_NOTIFICATION:
-          await execute.BootNotification(parsedServerData, function () {
-            bootstrap.registerMeterValueInterval(
-              state.state.common.bootNotRequireTime
-            );
-          });
-          break;
-
-        case EventCommandEnum.EVENT_HEARTBEAT:
-          await execute.Heartbeat(parsedServerData);
-          break;
-
-        case EventCommandEnum.EVENT_AUTHORIZE:
-          await execute.UpdateFlagAuthorize(parsedServerData, connectorId);
-          break;
-
-        case EventCommandEnum.EVENT_START_TRANSACTION:
-          await execute.UpdateFlagStartTransaction(
-            parsedServerData,
-            connectorId
+    switch (commandId) {
+      case EventCommandEnum.EVENT_BOOT_NOTIFICATION:
+        await execute.BootNotification(parsedServerData, function () {
+          bootstrap.registerMeterValueInterval(
+            state.state.common.bootNotRequireTime
           );
-          break;
+        });
+        break;
 
-        case EventCommandEnum.EVENT_STOP_TRANSACTION:
-          // await execute.UpdateFlagStopTransaction(parsedServerData, connectorId);
-          break;
-      }
+      case EventCommandEnum.EVENT_HEARTBEAT:
+        await execute.Heartbeat(parsedServerData);
+        break;
 
-      EventQueue.makeFinished(messageId);
+      case EventCommandEnum.EVENT_AUTHORIZE:
+        await execute.UpdateFlagAuthorize(parsedServerData, connectorId);
+        break;
+
+      case EventCommandEnum.EVENT_START_TRANSACTION:
+        await execute.UpdateFlagStartTransaction(parsedServerData, connectorId);
+        break;
+
+      case EventCommandEnum.EVENT_STOP_TRANSACTION:
+        // await execute.UpdateFlagStopTransaction(parsedServerData, connectorId);
+        break;
     }
+
+    EventQueue.makeFinished(messageId);
+  }
+}
+
+function onWsConnect() {
+  ComPort.register(onDataReady);
+}
+
+bootstrap.onComportOpen(function () {
+  bootstrap.onWebsocketEvent({
+    onConnect: onWsConnect,
+    onMessage: onWsMessage,
   });
 
   WebSocket.startServer();
