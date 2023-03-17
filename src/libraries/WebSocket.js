@@ -22,7 +22,8 @@ function getConnection() {
   return client;
 }
 
-connectWithUri(false);
+// connectWithUri(false);
+connectWithUri(true);
 
 const reconnectionMaxAttempts = 10;
 const reconnectionDelays = {
