@@ -23,6 +23,7 @@ async function onDataReady() {
       wsConnected: WebSocket.isConnected(),
       state: state.statistic.plugs.plugState[connectorId],
       softLocked: !!state.state.plugs.softLockDueConnectionLose[connectorId],
+      softLockedValue: state.state.plugs.softLockDueConnectionLose[connectorId],
       plugCurrent: state.statistic.plugs.plugState[connectorId],
       plugPrevious: state.state.plugs.previousPlugState[connectorId],
     });
@@ -36,10 +37,17 @@ async function onDataReady() {
     }
 
     if (
+      // connected to internet
       WebSocket.isConnected() &&
+
+      // soft-lock state
       state.statistic.plugs.plugState[connectorId] ===
         PlugStateEnum.PLUG_SOFT_LOCK &&
-      state.state.plugs.softLockDueConnectionLose[connectorId]
+
+        // locked due internet lose, or initial state
+      (state.state.plugs.softLockDueConnectionLose[connectorId] ||
+        typeof state.state.plugs.softLockDueConnectionLose[connectorId] ===
+          'undefined')
     ) {
       await ComEmitter.plugOn(connectorId);
       state.state.plugs.softLockDueConnectionLose[connectorId] = false;
