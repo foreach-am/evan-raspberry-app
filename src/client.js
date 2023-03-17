@@ -37,11 +37,12 @@ async function onDataReady() {
 
     if (
       WebSocket.isConnected() &&
-      state.statistic.plugs.plugState[connectorId] ===
-        PlugStateEnum.PLUG_SOFT_LOCK &&
+      // state.statistic.plugs.plugState[connectorId] ===
+      //   PlugStateEnum.PLUG_SOFT_LOCK &&
       state.state.plugs.softLockDueConnectionLose[connectorId]
     ) {
       await ComEmitter.plugOn(connectorId);
+      state.state.plugs.softLockDueConnectionLose[connectorId] = false;
     }
 
     if (
