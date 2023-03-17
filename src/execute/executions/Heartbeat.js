@@ -20,8 +20,8 @@ module.exports = async function (parsedServerData) {
 
         // locked due internet lose, or initial state
       (state.state.plugs.softLockDueConnectionLose[connectorId] ||
-        typeof state.state.plugs.softLockDueConnectionLose[connectorId] ===
-          'undefined')
+        typeof state.state.plugs.softLockDueConnectionLose[connectorId] !==
+          'boolean')
     ) {
       await ComEmitter.plugOn(connectorId);
     }
