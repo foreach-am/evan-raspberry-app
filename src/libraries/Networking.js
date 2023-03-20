@@ -6,7 +6,8 @@ const { Logger } = require('./Logger');
 const checkHosts = [
   'google.com',
   'amazon.com',
-  process.env.WEBSOCKET_URL.toString()
+  'ws.e-evan.com'
+    .toString()
     .replace('https://', '')
     .replace('wss://', '')
     .replace('https://', '')
@@ -18,9 +19,13 @@ const protocols = ['https', 'http'];
 
 const checkDomains = checkHosts
   .reduce(function (acc, domain) {
-    const list = subdomains.map(function (subdomain) {
-      return !subdomain ? domain : `${subdomain}.${domain}`;
-    });
+    const list =
+      domain.split('.').length > 2
+        ? [domain]
+        : subdomains.map(function (subdomain) {
+            return !subdomain ? domain : `${subdomain}.${domain}`;
+          });
+
     return [...acc, ...list];
   }, [])
   .reduce(function (acc, domain) {
