@@ -186,7 +186,9 @@ setInterval(function () {
   }, 2_000);
 }, 5_000);
 
+let lastConnectionCheck = Date.now();
 function reconnect() {
+  lastConnectionCheck = Date.now();
   // if (connected) {
   //   return;
   // }
@@ -212,6 +214,12 @@ function reconnect() {
     }
   }, reconnectionDelays.frequently * 1_000);
 }
+
+setInterval(() => {
+  if (!connected && Date.now() - lastConnectionCheck > 60_000) {
+    reconnect();
+  }
+}, 60_000);
 
 function onConnect(callback) {
   clientEvents.connection['open'] = clientEvents.connection['open'] || [];
