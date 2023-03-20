@@ -1,7 +1,10 @@
 const net = require('net');
 const url = require('url');
-const BluebirdPromise = require('bluebird');
+// const BluebirdPromise = require('bluebird');
 const { Logger } = require('./Logger');
+
+// const CheckerPromise = BluebirdPromise;
+const CheckerPromise = Promise;
 
 const checkHosts = [
   'google.com',
@@ -36,7 +39,9 @@ const checkDomains = checkHosts
   }, []);
 
 function checkSingleHost(domain) {
-  const promiseCallback = function (resolve, reject) {
+  let resolved = false;
+
+  const promiseCallback = function (resolve) {
     const urlInfo = url.parse(domain);
     if (urlInfo.port === null) {
       if (urlInfo.protocol === 'http:') {
@@ -56,7 +61,11 @@ function checkSingleHost(domain) {
     const triggerResult = function (result) {
       return function () {
         netClient.destroy();
-        resolve(result);
+
+        if (!resolved) {
+          resolve(result);
+          resolved = true;
+        }
       };
     };
 
@@ -65,9 +74,13 @@ function checkSingleHost(domain) {
     netClient.on('close', function () {});
     netClient.on('error', triggerResult(false));
     netClient.connect(connectionConfig, triggerResult(true));
+
+    setTimeout(() => {
+      triggerResult(false)();
+    }, 2000);
   };
 
-  return new BluebirdPromise(promiseCallback);
+  return new CheckerPromise(promiseCallback);
 }
 
 async function isConnectedToInternet() {
