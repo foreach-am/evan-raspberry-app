@@ -17,6 +17,7 @@ const state = require('./state');
 const ping = require('./ping');
 const execute = require('./execute');
 
+let timerMasterRead = null;
 async function onDataReady() {
   Raspberry.mapOnPlugs(async function (connectorId) {
     Logger.json(`Plug state ${connectorId}:`, {
@@ -196,7 +197,8 @@ async function onDataReady() {
     }
   });
 
-  setTimeout(function () {
+  clearTimeout(timerMasterRead);
+  timerMasterRead = setTimeout(function () {
     ComEmitter.masterRead();
   }, 2_000);
 }
@@ -277,8 +279,14 @@ async function onWsMessage(message) {
   }
 }
 
+let boardListenerRegistered = false;
 function onWsConnect() {
+  if(boardListenerRegistered){
+    return;
+  }
+
   ComPort.register(onDataReady);
+  boardListenerRegistered = true;
 }
 
 bootstrap.onComportOpen(function () {
