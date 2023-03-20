@@ -1,24 +1,18 @@
 global.ROOT_DIR = __dirname;
 
-async function fetchLatestVersion() {
-  return new Promise(function (resolve) {
-    try {
-      const commands = ['git reset --hard', 'git pull'];
-      require('child_process').execSync(commands.join(' && '), {
-        cwd: __dirname,
-        encoding: 'utf-8',
-      });
-    } catch (e) {
-      console.error();
-      console.error('>>> FAILED TO FETCH LATEST VERSION OF SOURCE CODE.');
-      console.error(e);
-      console.error();
-
-      setTimeout(() => {
-        resolve();
-      }, 3000);
-    }
-  });
+function fetchLatestVersion() {
+  try {
+    const commands = ['git reset --hard', 'git pull'];
+    require('child_process').execSync(commands.join(' && '), {
+      cwd: __dirname,
+      encoding: 'utf-8',
+    });
+  } catch (e) {
+    console.error();
+    console.error('>>> FAILED TO FETCH LATEST VERSION OF SOURCE CODE.');
+    console.error(e);
+    console.error();
+  }
 }
 
 function startClientApplication() {
@@ -53,7 +47,5 @@ function startApplication() {
   }, 1_000);
 }
 
-(async function () {
-  await fetchLatestVersion();
-  startApplication();
-})();
+fetchLatestVersion();
+startApplication();
