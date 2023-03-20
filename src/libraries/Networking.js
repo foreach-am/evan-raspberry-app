@@ -3,7 +3,16 @@ const url = require('url');
 const BluebirdPromise = require('bluebird');
 const { Logger } = require('./Logger');
 
-const checkHosts = ['google.com', 'amazon.com', 'apple.com', 'facebook.com'];
+const checkHosts = [
+  'google.com',
+  'amazon.com',
+  process.env.WEBSOCKET_URL.toString()
+    .replace('https://', '')
+    .replace('wss://', '')
+    .replace('https://', '')
+    .replace('ws://', ''),
+];
+
 const subdomains = ['', 'www'];
 const protocols = ['https', 'http'];
 
