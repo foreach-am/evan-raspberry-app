@@ -1,19 +1,34 @@
 const net = require('net');
 const url = require('url');
-const BluebirdPromise = require('bluebird');
+// const BluebirdPromise = require('bluebird');
 const { Logger } = require('./Logger');
 
-BluebirdPromise.config({ cancellation: true });
+// const CheckerPromise = BluebirdPromise;
+const CheckerPromise = Promise;
 
-const checkHosts = ['google.com', 'amazon.com', 'apple.com', 'facebook.com'];
+const checkHosts = [
+  'google.com',
+  'amazon.com',
+  'ws.e-evan.com'
+    .toString()
+    .replace('https://', '')
+    .replace('wss://', '')
+    .replace('https://', '')
+    .replace('ws://', ''),
+];
+
 const subdomains = ['', 'www'];
 const protocols = ['https', 'http'];
 
 const checkDomains = checkHosts
   .reduce(function (acc, domain) {
-    const list = subdomains.map(function (subdomain) {
-      return !subdomain ? domain : `${subdomain}.${domain}`;
-    });
+    const list =
+      domain.split('.').length > 2
+        ? [domain]
+        : subdomains.map(function (subdomain) {
+            return !subdomain ? domain : `${subdomain}.${domain}`;
+          });
+
     return [...acc, ...list];
   }, [])
   .reduce(function (acc, domain) {
@@ -23,8 +38,10 @@ const checkDomains = checkHosts
     return [...acc, ...list];
   }, []);
 
-function checkSingleHost(domain, timeout = 1000) {
-  const promiseCallback = function (resolve, reject, onCancel) {
+function checkSingleHost(domain) {
+  let resolved = false;
+
+  const promiseCallback = function (resolve) {
     const urlInfo = url.parse(domain);
     if (urlInfo.port === null) {
       if (urlInfo.protocol === 'http:') {
@@ -44,22 +61,26 @@ function checkSingleHost(domain, timeout = 1000) {
     const triggerResult = function (result) {
       return function () {
         netClient.destroy();
-        resolve(result);
+
+        if (!resolved) {
+          resolve(result);
+          resolved = true;
+        }
       };
     };
 
     const netClient = new net.Socket();
-    onCancel(function () {
-      netClient.destroy();
-    });
-
     netClient.on('data', function () {});
     netClient.on('close', function () {});
     netClient.on('error', triggerResult(false));
     netClient.connect(connectionConfig, triggerResult(true));
+
+    setTimeout(() => {
+      triggerResult(false)();
+    }, 2000);
   };
 
-  return new BluebirdPromise(promiseCallback).timeout(timeout);
+  return new CheckerPromise(promiseCallback);
 }
 
 async function isConnectedToInternet() {

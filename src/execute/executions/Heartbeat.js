@@ -11,10 +11,17 @@ module.exports = async function (parsedServerData) {
 
   Raspberry.mapOnPlugs(async function (connectorId) {
     if (
+      // connected to internet
       WebSocket.isConnected() &&
+
+      // soft-lock state
       state.statistic.plugs.plugState[connectorId] ===
         PlugStateEnum.PLUG_SOFT_LOCK &&
-      state.state.plugs.softLockDueConnectionLose[connectorId]
+
+        // locked due internet lose, or initial state
+      (state.state.plugs.softLockDueConnectionLose[connectorId] ||
+        typeof state.state.plugs.softLockDueConnectionLose[connectorId] !==
+          'boolean')
     ) {
       await ComEmitter.plugOn(connectorId);
     }
