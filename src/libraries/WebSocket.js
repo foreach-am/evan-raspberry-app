@@ -22,6 +22,8 @@ function getConnection() {
   return client;
 }
 
+
+// connectWithUri(false);
 connectWithUri(true);
 
 const reconnectionMaxAttempts = 10;
