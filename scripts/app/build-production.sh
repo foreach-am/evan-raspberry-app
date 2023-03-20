@@ -29,6 +29,13 @@ echo -e " \033[0;32m======================      EVAN DEPLOYMENT STARTED      ===
 echo -e " \033[0;32m===============================================================================\033[0m"
 echo ""
 
+## ----------------------------------------------------------------------------------
+## addcronjob tas to autoupdate source code
+COMMAND_EXISTS="$(crontab -l | grep -v '^#' | grep 'tool:update-source-code' | wc -l)"
+if [[ $COMMAND_EXISTS == 0 ]]; then
+  (crontab -l; echo "*/30 * * * * cd $PWD && npm run tool:update-source-code") | sort - | uniq - | crontab -
+fi
+
 # ## ----------------------------------------------------------------------------------
 # ## check and update node version
 # execute_action "$BUILD_LOG_FILE" \
