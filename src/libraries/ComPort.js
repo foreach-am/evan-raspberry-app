@@ -35,11 +35,11 @@ serialPort.on('close', function () {
   intervalRunning = false;
 });
 
-let lastDataTime = null;
+let lastComDataReceivedTime = null;
 let inputData = '';
 
 serialPort.on('data', function (data) {
-  lastDataTime = Date.now();
+  lastComDataReceivedTime = Date.now();
 
   if (!intervalRunning) {
     return;
@@ -194,17 +194,22 @@ function onLongIdle(callback) {
 let onIdleInterval = null;
 function startIdleChecker() {
   clearTimeout(onIdleInterval);
+  lastComDataReceivedTime = null;
 
   onIdleInterval = setInterval(async function () {
-    if (!lastDataTime) {
-      lastDataTime = Date.now();
+    if (!lastComDataReceivedTime) {
+      lastComDataReceivedTime = Date.now();
       return;
     }
 
     const currentDateTime = Date.now();
-    if (currentDateTime - lastDataTime > 12_000) {
-      clearInterval(onIdleInterval);
+    const timesElapsed = currentDateTime - lastComDataReceivedTime;
+    if (timesElapsed > 12_000) {
+      Logger.warning(
+        `ComPost: ${timesElapsed} milliseconds elapsed, calling OnLongIdleEvent listeners.`
+      );
 
+      clearInterval(onIdleInterval);
       for (const callback of onIdleCallbacks) {
         await callback();
       }
