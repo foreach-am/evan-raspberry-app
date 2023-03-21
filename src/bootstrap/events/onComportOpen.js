@@ -4,15 +4,15 @@ const { ComEmitter } = require('../../libraries/ComEmitter');
 const { Raspberry } = require('../../libraries/Raspberry');
 const { Logger } = require('../../libraries/Logger');
 
+ComPort.onLongIdle(async function () {
+  Logger.info('ComPort stuck, calling hardware and software reset ...');
+
+  await Raspberry.restartHardware();
+  await Raspberry.restartSoftware();
+  await ComPort.close();
+});
+
 module.exports = function (onSerialPortOpen) {
-  ComPort.onLongIdle(async function () {
-    Logger.info('ComPort stuck, calling hardware and software reset ...');
-
-    await Raspberry.restartHardware();
-    await Raspberry.restartSoftware();
-    await ComPort.close();
-  });
-
   ComPort.onSerialPort('open', function () {
     Logger.info('ComPort opened, calling listener ...');
 

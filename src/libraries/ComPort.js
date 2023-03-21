@@ -191,8 +191,11 @@ function onLongIdle(callback) {
   onIdleCallbacks.push(callback);
 }
 
+let onIdleInterval = null;
 function startIdleChecker() {
-  const onIdleInterval = setInterval(async function () {
+  clearTimeout(onIdleInterval);
+
+  onIdleInterval = setInterval(async function () {
     if (!lastDataTime) {
       lastDataTime = Date.now();
       return;

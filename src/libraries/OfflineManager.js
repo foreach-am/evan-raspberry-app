@@ -25,7 +25,7 @@ function firstCommand() {
   }
 
   const filePath = DataManager.getFilePath(files[0]);
-  const content = fs.readFileSync(filePath);
+  const content = fs.readFileSync(filePath, 'utf-8');
   fs.unlinkSync(filePath);
 
   return JSON.parse(content);
@@ -43,24 +43,31 @@ function saveCurrentState(state) {
     reservationId: state.plugs.reservationId,
   });
 
-  fs.writeFileSync(stateFile, content);
+  fs.writeFileSync(stateFile, content, 'utf-8');
 }
 
 function fillSavedState(state) {
   const stateFile = DataManager.getFilePath('charge-state.json');
-  if (fs.existsSync(stateFile)) {
-    try {
-      const savedState = JSON.parse(fs.readFileSync(stateFile));
-      if (!savedState) {
-        return;
-      }
+  if (!fs.existsSync(stateFile)) {
+    return;
+  }
 
-      state.plugs.idTags = savedState?.idTags;
-      state.plugs.transactionId = savedState?.transactionId;
-      state.plugs.reservationId = savedState?.reservationId;
-    } catch (e) {
-      console.error(e);
+  try {
+    const savedStateContent = fs.readFileSync(stateFile, 'utf-8');
+    if (!savedStateContent || typeof savedStateContent !== 'string') {
+      return;
     }
+
+    const savedState = JSON.parse(savedStateContent);
+    if (!savedState) {
+      return;
+    }
+
+    state.plugs.idTags = savedState?.idTags;
+    state.plugs.transactionId = savedState?.transactionId;
+    state.plugs.reservationId = savedState?.reservationId;
+  } catch (e) {
+    console.error(e);
   }
 }
 
