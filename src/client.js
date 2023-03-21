@@ -277,19 +277,21 @@ async function onWsMessage(message) {
   }
 }
 
-let boardListenerRegistered = false;
-function onWsConnect() {
-  if (boardListenerRegistered) {
-    return;
-  }
+ComPort.register(onComportDataReady);
 
-  ComPort.register(onComportDataReady);
-  boardListenerRegistered = true;
-}
+// let boardListenerRegistered = false;
+// function onWsConnect() {
+//   if (boardListenerRegistered) {
+//     return;
+//   }
+
+//   ComPort.register(onComportDataReady);
+//   boardListenerRegistered = true;
+// }
 
 bootstrap.onComportOpen(function () {
   bootstrap.registerWebsocketEvents({
-    onConnect: onWsConnect,
+    // onConnect: onWsConnect,
     onMessage: onWsMessage,
   });
 
