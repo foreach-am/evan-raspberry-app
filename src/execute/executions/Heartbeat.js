@@ -16,12 +16,12 @@ module.exports = async function (parsedServerData) {
 
       // soft-lock state
       state.statistic.plugs.plugState[connectorId] ===
-        PlugStateEnum.PLUG_SOFT_LOCK &&
+        PlugStateEnum.PLUG_SOFT_LOCK
 
-        // locked due internet lose, or initial state
-      (state.state.plugs.softLockDueConnectionLose[connectorId] ||
-        typeof state.state.plugs.softLockDueConnectionLose[connectorId] !==
-          'boolean')
+      // // locked due internet lose, or initial state
+      // && (state.state.plugs.softLockDueConnectionLose[connectorId] ||
+      //   typeof state.state.plugs.softLockDueConnectionLose[connectorId] !==
+      //     'boolean')
     ) {
       await ComEmitter.plugOn(connectorId);
     }

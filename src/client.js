@@ -23,8 +23,8 @@ async function onComportDataReady() {
     Logger.json(`Plug state ${connectorId}:`, {
       wsConnected: WebSocket.isConnected(),
       state: state.statistic.plugs.plugState[connectorId],
-      softLocked: !!state.state.plugs.softLockDueConnectionLose[connectorId],
-      softLockedValue: state.state.plugs.softLockDueConnectionLose[connectorId],
+      // softLocked: !!state.state.plugs.softLockDueConnectionLose[connectorId],
+      // softLockedValue: state.state.plugs.softLockDueConnectionLose[connectorId],
       plugCurrent: state.statistic.plugs.plugState[connectorId],
       plugPrevious: state.state.plugs.previousPlugState[connectorId],
     });
@@ -42,11 +42,11 @@ async function onComportDataReady() {
       WebSocket.isConnected() &&
       // soft-lock state
       state.statistic.plugs.plugState[connectorId] ===
-        PlugStateEnum.PLUG_SOFT_LOCK &&
-      // locked due internet lose, or initial state
-      (state.state.plugs.softLockDueConnectionLose[connectorId] ||
-        typeof state.state.plugs.softLockDueConnectionLose[connectorId] !==
-          'boolean')
+        PlugStateEnum.PLUG_SOFT_LOCK
+      // // locked due internet lose, or initial state
+      //  && (state.state.plugs.softLockDueConnectionLose[connectorId] ||
+      //   typeof state.state.plugs.softLockDueConnectionLose[connectorId] !==
+      //     'boolean')
     ) {
       await ComEmitter.plugOn(connectorId);
       state.state.plugs.softLockDueConnectionLose[connectorId] = false;
