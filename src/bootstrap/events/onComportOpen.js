@@ -5,7 +5,10 @@ const { Raspberry } = require('../../libraries/Raspberry');
 const { Logger } = require('../../libraries/Logger');
 
 function openComPort() {
-  ComPort.close();
+  if (ComPort.isOpened()) {
+    ComPort.close();
+  }
+
   ComPort.open();
 
   setTimeout(function () {

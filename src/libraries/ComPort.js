@@ -186,6 +186,10 @@ function closeSerialPort() {
   serialPort.close();
 }
 
+function isSerialPortOpen() {
+  return serialPort.isOpen;
+}
+
 const onIdleCallbacks = [];
 function onLongIdle(callback) {
   onIdleCallbacks.push(callback);
@@ -227,5 +231,6 @@ module.exports = {
     onSerialPort: onSerialPort,
     open: openSerialPort,
     close: closeSerialPort,
+    isOpened: isSerialPortOpen,
   },
 };
