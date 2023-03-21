@@ -25,7 +25,7 @@ ComPort.onLongIdle(async function () {
 
     ComPort.close();
   } else {
-    Logger.info('Restarting comport ...');
+    Logger.info('Reopening ComPort due to long delay ...');
     openComPort();
   }
 });

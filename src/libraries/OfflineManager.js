@@ -67,6 +67,7 @@ function fillSavedState(state) {
     state.plugs.transactionId = savedState?.transactionId;
     state.plugs.reservationId = savedState?.reservationId;
   } catch (e) {
+    fs.unlinkSync(stateFile);
     console.error(e);
   }
 }
