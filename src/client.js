@@ -289,7 +289,7 @@ function onWsConnect() {
 }
 
 bootstrap.onComportOpen(function () {
-  bootstrap.onWebsocketEvent({
+  bootstrap.registerWebsocketEvents({
     onConnect: onWsConnect,
     onMessage: onWsMessage,
   });
