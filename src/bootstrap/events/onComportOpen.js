@@ -4,6 +4,15 @@ const { ComEmitter } = require('../../libraries/ComEmitter');
 const { Raspberry } = require('../../libraries/Raspberry');
 const { Logger } = require('../../libraries/Logger');
 
+function openComPort() {
+  ComPort.close();
+  ComPort.open();
+
+  setTimeout(function () {
+    ComEmitter.startRun();
+  }, 1_000);
+}
+
 let restartComportAttempts = 0;
 ComPort.onLongIdle(async function () {
   Logger.info('ComPort stuck, no data received long time.');
@@ -17,9 +26,7 @@ ComPort.onLongIdle(async function () {
     ComPort.close();
   } else {
     Logger.info('Restarting comport ...');
-
-    ComPort.close();
-    ComPort.open();
+    openComPort();
   }
 });
 
@@ -31,11 +38,7 @@ module.exports = function (onSerialPortOpen) {
     onSerialPortOpen();
   });
 
-  ComPort.open();
-
-  setTimeout(function () {
-    ComEmitter.startRun();
-  }, 1_000);
+  openComPort();
 
   CoreEvent.register(CoreEventEnum.EVENT_EXIT, function () {
     ComPort.close();
