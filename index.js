@@ -1,20 +1,5 @@
 global.ROOT_DIR = __dirname;
 
-// function fetchLatestVersion() {
-//   try {
-//     const commands = ['git reset --hard', 'git pull'];
-//     require('child_process').execSync(commands.join(' && '), {
-//       cwd: __dirname,
-//       encoding: 'utf-8',
-//     });
-//   } catch (e) {
-//     console.error();
-//     console.error('>>> FAILED TO FETCH LATEST VERSION OF SOURCE CODE.');
-//     console.error(e);
-//     console.error();
-//   }
-// }
-
 function startClientApplication() {
   require('./src/configure');
   require('./src/client');
@@ -47,5 +32,4 @@ function startApplication() {
   }, 1_000);
 }
 
-// fetchLatestVersion();
 startApplication();
