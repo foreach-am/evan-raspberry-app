@@ -40,12 +40,10 @@ async function onDataReady() {
     if (
       // connected to internet
       WebSocket.isConnected() &&
-
       // soft-lock state
       state.statistic.plugs.plugState[connectorId] ===
         PlugStateEnum.PLUG_SOFT_LOCK &&
-
-        // locked due internet lose, or initial state
+      // locked due internet lose, or initial state
       (state.state.plugs.softLockDueConnectionLose[connectorId] ||
         typeof state.state.plugs.softLockDueConnectionLose[connectorId] !==
           'boolean')
@@ -283,7 +281,7 @@ ComPort.register(onDataReady);
 
 let boardListenerRegistered = false;
 function onWsConnect() {
-  if(boardListenerRegistered){
+  if (boardListenerRegistered) {
     return;
   }
 

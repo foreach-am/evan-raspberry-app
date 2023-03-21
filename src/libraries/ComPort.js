@@ -59,12 +59,20 @@ serialPort.on('data', function (data) {
   parseInputData(inputData);
   inputData = '';
 
-  Object.keys(onReadyCallbacks).forEach(function (callIndex) {
-    const callback = onReadyCallbacks[callIndex];
-    if (typeof callback === 'function') {
-      callback();
-    }
-  });
+  try {
+    Object.keys(onReadyCallbacks).forEach(function (callIndex) {
+      const callback = onReadyCallbacks[callIndex];
+      if (typeof callback === 'function') {
+        try {
+          callback();
+        } catch (e) {
+          Logger.error(e);
+        }
+      }
+    });
+  } catch (e) {
+    Logger.error(e);
+  }
 });
 
 function getSegmentValue(segment) {
