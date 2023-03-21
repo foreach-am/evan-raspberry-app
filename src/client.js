@@ -279,13 +279,14 @@ async function onWsMessage(message) {
   }
 }
 
+ComPort.register(onDataReady);
+
 let boardListenerRegistered = false;
 function onWsConnect() {
   if(boardListenerRegistered){
     return;
   }
 
-  ComPort.register(onDataReady);
   boardListenerRegistered = true;
 }
 
