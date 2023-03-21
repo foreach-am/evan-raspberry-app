@@ -4,12 +4,23 @@ const { ComEmitter } = require('../../libraries/ComEmitter');
 const { Raspberry } = require('../../libraries/Raspberry');
 const { Logger } = require('../../libraries/Logger');
 
+let restartComportAttempts = 0;
 ComPort.onLongIdle(async function () {
-  Logger.info('ComPort stuck, calling hardware and software reset ...');
+  Logger.info('ComPort stuck, no data received long time.');
 
-  await Raspberry.restartHardware();
-  await Raspberry.restartSoftware();
-  await ComPort.close();
+  if (++restartComportAttempts === 4) {
+    Logger.info('Calling hardware and software reset ...');
+
+    await Raspberry.restartHardware();
+    await Raspberry.restartSoftware();
+
+    ComPort.close();
+  } else {
+    Logger.info('Restarting comport ...');
+
+    ComPort.close();
+    ComPort.open();
+  }
 });
 
 module.exports = function (onSerialPortOpen) {
