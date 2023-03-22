@@ -51,7 +51,7 @@ async function connectWithUri(triggerPreviousEvents) {
   client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
 
   client.on('error', function (error) {
-    Logger.error('Could not connect to server:', error);
+    Logger.error('[WS.Error] Could not connect to server:', error);
     connectionCloseCallback();
   });
 
@@ -64,7 +64,7 @@ async function connectWithUri(triggerPreviousEvents) {
   });
 
   client.on('unexpected-response', function (error) {
-    Logger.error('Could not connect to server:', error);
+    Logger.error('[WS.Unexpected] Unexpected response received from server:', error);
     connectionCloseCallback();
   });
 
@@ -78,7 +78,7 @@ async function connectWithUri(triggerPreviousEvents) {
     });
 
     client.on('unexpected-response', function (error) {
-      Logger.error('Could not connect to server:', error);
+      Logger.error('[WS.Unexpected] Unexpected response received from server:', error);
       connectionCloseCallback();
     });
 
