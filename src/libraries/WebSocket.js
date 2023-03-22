@@ -13,7 +13,7 @@ function parseIncomingMessage(request, response) {
   let body = [];
   response
     .on('data', function (chunk) {
-      body.push(chunk);
+      body.push(chunk.toString('utf-8'));
     })
     .on('end', function () {
       Logger.error(
