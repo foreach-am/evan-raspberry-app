@@ -63,8 +63,8 @@ async function connectWithUri(triggerPreviousEvents) {
     connectionCloseCallback();
   });
 
-  client.on('unexpected-response', function (error) {
-    Logger.error('[WS.Unexpected] Unexpected response received from server:', error);
+  client.on('unexpected-response', function (_req, res) {
+    Logger.error('[WS.Unexpected] Unexpected response received from server:', res);
     connectionCloseCallback();
   });
 
@@ -77,8 +77,8 @@ async function connectWithUri(triggerPreviousEvents) {
       connectionCloseCallback();
     });
 
-    client.on('unexpected-response', function (error) {
-      Logger.error('[WS.Unexpected] Unexpected response received from server:', error);
+    client.on('unexpected-response', function (_req, res) {
+      Logger.error('[WS.Unexpected] Unexpected response received from server:', res);
       connectionCloseCallback();
     });
 
