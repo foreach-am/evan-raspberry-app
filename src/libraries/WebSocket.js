@@ -5,6 +5,27 @@ const { OfflineCommand } = require('./OfflineManager');
 const { EventQueue } = require('./EventQueue');
 const { Networking } = require('./Networking');
 
+/**
+ * @param {import('http').ClientRequest} request
+ * @param {import('http').IncomingMessage} response
+ */
+function parseIncomingMessage(request, response) {
+  let body = [];
+  response
+    .on('data', function (chunk) {
+      body.push(chunk);
+    })
+    .on('end', function () {
+      Logger.error(
+        '[WS.Unexpected] Unexpected response received from server:',
+        {
+          body: body,
+          headers: response.rawHeaders,
+        }
+      );
+    });
+}
+
 const sleep = require('../utils/sleep');
 const uuid = require('../utils/uuid');
 
@@ -21,7 +42,6 @@ let client = null;
 function getConnection() {
   return client;
 }
-
 
 // connectWithUri(false);
 connectWithUri(true);
@@ -63,8 +83,8 @@ async function connectWithUri(triggerPreviousEvents) {
     connectionCloseCallback();
   });
 
-  client.on('unexpected-response', function (_req, res) {
-    Logger.error('[WS.Unexpected] Unexpected response received from server:', res);
+  client.on('unexpected-response', function (req, res) {
+    parseIncomingMessage(req, res);
     connectionCloseCallback();
   });
 
@@ -77,8 +97,8 @@ async function connectWithUri(triggerPreviousEvents) {
       connectionCloseCallback();
     });
 
-    client.on('unexpected-response', function (_req, res) {
-      Logger.error('[WS.Unexpected] Unexpected response received from server:', res);
+    client.on('unexpected-response', function (req, res) {
+      parseIncomingMessage(req, res);
       connectionCloseCallback();
     });
 
