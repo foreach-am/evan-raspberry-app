@@ -19,7 +19,7 @@ function parseIncomingMessage(request, response) {
       Logger.error(
         '[WS.Unexpected] Unexpected response received from server:',
         {
-          requested: `${request.method}: ${request.protocol}://${request.host}/${request.path}`,
+          requested: `${request.method}: ${request.protocol}//${request.host}${request.path}`,
           received: {
           body: bodyChunks.join(''),
           headers: response.headers,
