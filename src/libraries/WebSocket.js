@@ -10,17 +10,20 @@ const { Networking } = require('./Networking');
  * @param {import('http').IncomingMessage} response
  */
 function parseIncomingMessage(request, response) {
-  let body = [];
+  const bodyChunks = [];
   response
     .on('data', function (chunk) {
-      body.push(chunk.toString('utf-8'));
+      bodyChunks.push(chunk.toString('utf-8'));
     })
     .on('end', function () {
       Logger.error(
         '[WS.Unexpected] Unexpected response received from server:',
         {
-          body: body,
-          headers: response.rawHeaders,
+          requested: `${request.method}: ${request.protocol}://${request.host}/${request.path}`,
+          received: {
+          body: bodyChunks.join(''),
+          headers: response.headers,
+          }
         }
       );
     });
