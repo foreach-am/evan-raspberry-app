@@ -184,6 +184,11 @@ function onSerialPort(event, callback) {
   serialPort.on(event, callback);
 }
 
+function onceSerialPort(event, callback) {
+  Logger.info('SerialPort event registered ONCE:', event);
+  serialPort.once(event, callback);
+}
+
 function openSerialPort() {
   Logger.info('SerialPort opening called.');
   serialPort.open();
@@ -237,6 +242,7 @@ module.exports = {
     register: registerCallback,
     unregister: unregisterCallback,
     onSerialPort: onSerialPort,
+    onceSerialPort: onceSerialPort,
     open: openSerialPort,
     close: closeSerialPort,
     isOpened: isSerialPortOpen,
