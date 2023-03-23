@@ -310,10 +310,18 @@ const initialComState = ComStateManager.get();
 
 async function changeTransactionInCaseOfPowerReset(lastTimeSaved) {
   if (lastTimeSaved) {
-    const last = new Date(lastTimeSaved);
-    const diff = Date.now() - last;
+    const nowString = new Date.toISOString();
 
-    Logger.info(`Checking last transaction delay: ${diff}`);
+    const last = new Date(lastTimeSaved).getTime();
+    const now = new Date(nowString).getTime();
+    const diff = now - last;
+
+    Logger.info(`Checking last transaction delay: ${diff}`, {
+      nowString,
+      lastTimeSaved,
+      now,
+      last,
+    });
 
     // don't close any transaction if previous action is less then 10 seconds.
     if (diff < 10 * 1000) {
