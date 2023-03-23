@@ -305,6 +305,12 @@ const initialState = (() => {
 const initialComState = ComStateManager.get();
 
 async function changeTransactionInCaseOfPowerReset(lastTimeSaved) {
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>> ', {
+    lastTimeSaved,
+    initialComState,
+    initialState,
+  });
+
   if (lastTimeSaved) {
     const last = new Date(lastTimeSaved);
     const diff = Date.now() - last;
@@ -323,11 +329,6 @@ async function changeTransactionInCaseOfPowerReset(lastTimeSaved) {
       continue;
     }
 
-    console.log('>>>>>>>>>>>>>>>>> ', {
-      lastTimeSaved,
-      initialComState,
-      initialState,
-    });
     // state.statistic.plugs.plugState[connectorId] === PlugStateEnum.PLUG_SOFT_LOCK
     if (
       initialComState[connectorId] === PlugStateEnum.CHARGING &&
