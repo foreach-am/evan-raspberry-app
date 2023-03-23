@@ -309,12 +309,6 @@ const initialState = (() => {
 const initialComState = ComStateManager.get();
 
 async function changeTransactionInCaseOfPowerReset(lastTimeSaved) {
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>> ', {
-    lastTimeSaved,
-    initialComState,
-    initialState,
-  });
-
   if (lastTimeSaved) {
     const last = new Date(lastTimeSaved);
     const diff = Date.now() - last;
@@ -392,6 +386,13 @@ async function onWsConnect() {
 
 (function () {
   const lastTimeSaved = LastTime.getLastTime();
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ', {
+    lastTimeSaved,
+    initialComState,
+    initialState,
+    rebootReason,
+  });
+
   if (
     rebootReason !== RebootSoftwareReasonEnum.COMPORT_STUCK &&
     rebootReason !== RebootSoftwareReasonEnum.BY_OCPP_PROTOCOL
