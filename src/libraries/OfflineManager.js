@@ -79,20 +79,23 @@ async function updateLastTime() {
   const filePathBackup = DataManager.getFilePath('last-time-backup.data');
   const timeNow = new Date().toISOString();
 
-  if (fs.existsSync(filePathBackup)) {
-    fs.unlinkSync(filePathBackup);
-  }
+  const writeNewTime = function () {
+    if (fs.existsSync(filePathBackup)) {
+      fs.unlinkSync(filePathBackup);
+    }
 
-  if (fs.existsSync(filePathRealtime)) {
-    fs.copyFileSync(
-      filePathRealtime,
-      filePathBackup,
-      fs.constants.COPYFILE_FICLONE
-    );
-  }
+    if (fs.existsSync(filePathRealtime)) {
+      fs.copyFileSync(
+        filePathRealtime,
+        filePathBackup,
+        fs.constants.COPYFILE_FICLONE
+      );
+    }
 
-  fs.writeFileSync(filePathRealtime, timeNow, 'utf-8');
+    fs.writeFileSync(filePathRealtime, timeNow, 'utf-8');
+  };
 
+  writeNewTime();
   for (let i = 0; i < 10; ++i) {
     await sleep(50);
     const savedTime = getLastTimeSaved();
@@ -100,7 +103,7 @@ async function updateLastTime() {
       break;
     } else {
       Logger.warning('SaveTime is not the same, refreshing value ...');
-      fs.writeFileSync(filePath, timeNow, 'utf-8');
+      writeNewTime();
     }
   }
 }
