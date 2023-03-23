@@ -6,7 +6,13 @@ sudo chmod -R 777 /opt/teamviewer
 cd /opt/teamviewer
 
 # download teamviewer
+
 wget https://download.teamviewer.com/download/linux/teamviewer-host_armhf.deb
 
 # install teamviewer
 sudo dpkg --install teamviewer-host_armhf.deb
+sudo apt-get install -f -y
+
+# start services
+sudo systemctl enable teamviewerd
+sudo systemctl start teamviewerd
