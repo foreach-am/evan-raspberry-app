@@ -102,7 +102,10 @@ function registerLastTimeInterval(seconds) {
 function getLastTimeSaved() {
   const filePath = DataManager.getFilePath('last-time.data');
   if (fs.existsSync(filePath)) {
-    return fs.readFileSync(filePath, 'utf-8');
+    const lastTimeSaved= fs.readFileSync(filePath, 'utf-8');
+    console.log('>>>>>> LastTome:',lastTimeSaved);
+
+    return lastTimeSaved;
   }
 
   return null;
