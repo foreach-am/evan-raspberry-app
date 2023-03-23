@@ -73,14 +73,18 @@ function fillSavedState(state) {
 }
 
 let lastTimeInterval = null;
-function registerLastTimeInterval(seconds) {
+function updateLastTime() {
   const filePath = DataManager.getFilePath('last-time.data');
+  fs.writeFileSync(filePath, new Date().toISOString(), 'utf-8');
+}
 
+function registerLastTimeInterval(seconds) {
   clearInterval(lastTimeInterval);
   const interval = seconds * 1_000;
 
+  updateLastTime();
   lastTimeInterval = setInterval(() => {
-    fs.writeFileSync(filePath, new Date().toISOString(), 'utf-8');
+    updateLastTime();
   }, interval);
 }
 
