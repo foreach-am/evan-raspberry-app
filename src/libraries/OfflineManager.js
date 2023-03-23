@@ -83,7 +83,7 @@ async function updateLastTime() {
     fs.unlinkSync(filePathBackup);
   }
 
-  fs.copyFileSync(filePathRealtime, filePathBackup, 0777);
+  fs.copyFileSync(filePathRealtime, filePathBackup, fs.constants.COPYFILE_FICLONE);
   fs.writeFileSync(filePathRealtime, timeNow, 'utf-8');
 
   for (let i = 0; i < 10; ++i) {
