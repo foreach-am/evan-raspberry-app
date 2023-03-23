@@ -329,6 +329,7 @@ async function changeTransactionInCaseOfPowerReset(lastTimeSaved) {
 
     // state.statistic.plugs.plugState[connectorId] === PlugStateEnum.PLUG_SOFT_LOCK
     if (
+      lastTimeSaved &&
       initialComState[connectorId] === PlugStateEnum.CHARGING &&
       initialState[connectorId] === lastTransactionId
     ) {
@@ -386,9 +387,9 @@ async function onWsConnect() {
 
 (function () {
   const lastTimeSaved = LastTime.getLastTime();
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.');
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.');
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.');
+  console.log(
+    '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+  );
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ', {
     lastTimeSaved,
     initialComState,
