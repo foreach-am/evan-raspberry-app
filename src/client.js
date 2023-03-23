@@ -310,7 +310,7 @@ const initialComState = ComStateManager.get();
 
 async function changeTransactionInCaseOfPowerReset(lastTimeSaved) {
   if (lastTimeSaved) {
-    const nowString = new Date.toISOString();
+    const nowString = new Date().toISOString();
 
     const last = new Date(lastTimeSaved).getTime();
     const now = new Date(nowString).getTime();
