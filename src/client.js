@@ -304,8 +304,7 @@ const initialState = (() => {
 
 const initialComState = ComStateManager.get();
 
-async function changeTransactionInCaseOfPowerReset() {
-  const lastTimeSaved = LastTime.getLastTime();
+async function changeTransactionInCaseOfPowerReset(lastTimeSaved) {
   if (lastTimeSaved) {
     const last = new Date(lastTimeSaved);
     const diff = Date.now() - last;
@@ -382,15 +381,16 @@ async function onWsConnect() {
   }
 }
 
-(async function () {
+(function () {
+  const lastTimeSaved = LastTime.getLastTime();
   if (
     rebootReason !== RebootSoftwareReasonEnum.COMPORT_STUCK &&
     rebootReason !== RebootSoftwareReasonEnum.BY_OCPP_PROTOCOL
   ) {
-    await changeTransactionInCaseOfPowerReset();
+    changeTransactionInCaseOfPowerReset(lastTimeSaved);
   }
 
-  await registerLastTimeInterval();
+  registerLastTimeInterval();
 })();
 
 bootstrap.onComportOpen(rebootReason, async function () {
