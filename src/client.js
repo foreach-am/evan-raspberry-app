@@ -395,7 +395,7 @@ const rebootReason = RebootManager.getReason();
 
 bootstrap.onComportOpen(rebootReason, async function () {
   bootstrap.registerWebsocketEvents({
-    onConnect: onWsConnect,
+    // onConnect: onWsConnect,
     onMessage: onWsMessage,
   });
 
