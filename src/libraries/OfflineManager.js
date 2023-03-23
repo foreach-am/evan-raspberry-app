@@ -1,7 +1,7 @@
 const fs = require('fs');
 const DataManager = require('./DataManager');
 const uuid = require('../utils/uuid');
-const {Logger} = require('./Logger');
+const { Logger } = require('./Logger');
 
 function saveFile(fileName, data) {
   const updatedContent = JSON.stringify(data);
@@ -76,15 +76,18 @@ function fillSavedState(state) {
 let lastTimeInterval = null;
 function updateLastTime() {
   const filePath = DataManager.getFilePath('last-time.data');
-  fs.writeFileSync(filePath, new Date().toISOString(), 'utf-8');
+  const timeNow = new Date().toISOString();
+
+  fs.writeFileSync(filePath, timeNow, 'utf-8');
 
   let i = 0;
   while (++i < 10) {
     const savedTime = getLastTimeSaved();
-    if (savedTime) {
+    if (savedTime && savedTime === timeNow) {
       break;
     } else {
-      fs.writeFileSync(filePath, new Date().toISOString(), 'utf-8');
+      Logger.warning('SaveTime is not the same, refreshing value ...');
+      fs.writeFileSync(filePath, timeNow, 'utf-8');
     }
   }
 }
@@ -102,8 +105,8 @@ function registerLastTimeInterval(seconds) {
 function getLastTimeSaved() {
   const filePath = DataManager.getFilePath('last-time.data');
   if (fs.existsSync(filePath)) {
-    const lastTimeSaved= fs.readFileSync(filePath, 'utf-8');
-    console.log('>>>>>> LastTome:',lastTimeSaved);
+    const lastTimeSaved = fs.readFileSync(filePath, 'utf-8');
+    console.log('>>>>>> LastTome:', lastTimeSaved);
 
     return lastTimeSaved;
   }
