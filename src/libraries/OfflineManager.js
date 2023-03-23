@@ -76,6 +76,16 @@ let lastTimeInterval = null;
 function updateLastTime() {
   const filePath = DataManager.getFilePath('last-time.data');
   fs.writeFileSync(filePath, new Date().toISOString(), 'utf-8');
+
+  let i = 0;
+  while (++i < 10) {
+    const savedTime = getLastTimeSaved();
+    if (savedTime) {
+      break;
+    } else {
+      fs.writeFileSync(filePath, new Date().toISOString(), 'utf-8');
+    }
+  }
 }
 
 function registerLastTimeInterval(seconds) {
@@ -133,12 +143,11 @@ function getComportState() {
     }
 
     const savedState = JSON.parse(savedStateContent);
-    return savedState ||  {};
+    return savedState || {};
   } catch (e) {
     console.error(e);
   }
 }
-
 
 module.exports = {
   OfflineCommand: {

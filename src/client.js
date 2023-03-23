@@ -323,7 +323,11 @@ async function changeTransactionInCaseOfPowerReset(lastTimeSaved) {
       continue;
     }
 
-    console.log('>>>>>', lastTimeSaved, initialComState, initialState);
+    console.log('>>>>>>>>>>>>>>>>> ', {
+      lastTimeSaved,
+      initialComState,
+      initialState,
+    });
     // state.statistic.plugs.plugState[connectorId] === PlugStateEnum.PLUG_SOFT_LOCK
     if (
       initialComState[connectorId] === PlugStateEnum.CHARGING &&
