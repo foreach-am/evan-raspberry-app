@@ -347,7 +347,7 @@ async function changeTransactionInCaseOfPowerReset(lastTimeSaved, waitForNetwork
       const now = new Date(nowString).getTime();
       const diff = now - last;
 
-      if (diff <= 10 * 60 * 1000) {
+      if (diff <= 2 * 60 * 1000) {
         await ComEmitter.plugReset(connectorId);
         setTimeout(async () => {
           await ComEmitter.proxire(connectorId);
@@ -394,6 +394,8 @@ let intervalNetwork = setInterval(function () {
 }, 1000);
 
 async function onWsConnect() {
+  clearInterval(intervalNetwork);
+
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ', {
     lastTimeSaved,
     initialComState,
