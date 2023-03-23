@@ -15,6 +15,7 @@ const {
 } = require('./libraries/Raspberry');
 const {
   LastTime,
+  ComState: ComStateManager,
   Reboot: RebootManager,
 } = require('./libraries/OfflineManager');
 const bootstrap = require('./bootstrap');
@@ -26,6 +27,12 @@ const execute = require('./execute');
 
 let timerMasterRead = null;
 async function onComportDataReady() {
+  const currentState = {};
+  Raspberry.mapOnPlugs(function (connectorId) {
+    currentState[connectorId] = state.statistic.plugs.plugState[connectorId];
+  });
+  ComStateManager.set(currentState);
+
   Raspberry.mapOnPlugs(async function (connectorId) {
     Logger.json(`Plug state ${connectorId}:`, {
       wsConnected: WebSocket.isConnected(),
@@ -295,6 +302,8 @@ const initialState = (() => {
   }
 })();
 
+const initialComState = ComStateManager.get();
+
 async function changeTransactionInCaseOfPowerReset() {
   const lastTimeSaved = LastTime.getLastTime();
   if (lastTimeSaved) {
@@ -315,13 +324,22 @@ async function changeTransactionInCaseOfPowerReset() {
       continue;
     }
 
-    if (initialState[connectorId] === lastTransactionId) {
-      // if (
-      //   initialState[connectorId] &&
-      //   parseInt(initialState[connectorId]) > 0
-      // ) {
-      //   await ComEmitter.proxire(connectorId);
-      // }
+    // state.statistic.plugs.plugState[connectorId] === PlugStateEnum.PLUG_SOFT_LOCK
+    if (
+      initialComState[connectorId] === PlugStateEnum.CHARGING &&
+      initialState[connectorId] === lastTransactionId
+    ) {
+      const last = new Date(lastTimeSaved);
+      const diff = Date.now() - last;
+
+      if (diff <= 10 * 60 * 1000) {
+        await ComEmitter.plugReset(connectorId);
+        setTimeout(async () => {
+          await ComEmitter.proxire(connectorId);
+        }, 1000);
+
+        return;
+      }
     }
 
     state.state.plugs.previousPlugState[connectorId] =
@@ -332,7 +350,8 @@ async function changeTransactionInCaseOfPowerReset() {
     await execute.UpdateFlagStopTransaction(
       {},
       connectorId,
-      ping.StopTransaction.ReasonEnum.Reboot
+      ping.StopTransaction.ReasonEnum.Reboot,
+      new Date(lastTimeSaved).toISOString()
     );
   }
 }
@@ -352,15 +371,17 @@ async function sendBootNotification() {
 }
 
 // let boardListenerRegistered = false;
-async function onWsConnect() {
-  // if (boardListenerRegistered) {
-  //   return;
-  // }
+// async function onWsConnect() {
+//   if (boardListenerRegistered) {
+//     return;
+//   }
 
-  // ComPort.register(onComportDataReady);
-  // boardListenerRegistered = true;
+//   ComPort.register(onComportDataReady);
+//   boardListenerRegistered = true;
+// }
 
-  const rebootReason = RebootManager.getReason();
+const rebootReason = RebootManager.getReason();
+(async function () {
   if (
     rebootReason !== RebootSoftwareReasonEnum.COMPORT_STUCK &&
     rebootReason !== RebootSoftwareReasonEnum.BY_OCPP_PROTOCOL
@@ -370,9 +391,9 @@ async function onWsConnect() {
   }
 
   await registerLastTimeInterval();
-}
+})();
 
-bootstrap.onComportOpen(function () {
+bootstrap.onComportOpen(rebootReason, async function () {
   bootstrap.registerWebsocketEvents({
     onConnect: onWsConnect,
     onMessage: onWsMessage,

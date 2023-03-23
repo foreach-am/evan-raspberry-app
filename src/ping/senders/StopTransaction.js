@@ -10,11 +10,12 @@ function sendStopTransaction({
   idTag,
   transactionId,
   reason,
+  timestamp,
 }) {
   const commandArgs = {
     transactionId: transactionId,
     idTag: idTag,
-    timestamp: new Date().toISOString(),
+    timestamp: timestamp,
     meterStop: (state.statistic.plugs.powerKwh[connectorId] || 0) * 1_000,
     reason: reason,
   };
@@ -32,7 +33,8 @@ function sendStopTransactionHandler(
   connectorId,
   idTag,
   transactionId,
-  reason
+  reason,
+  timestamp = null
 ) {
   const data = {
     connectorId: connectorId,
@@ -40,6 +42,7 @@ function sendStopTransactionHandler(
     idTag: idTag,
     transactionId: transactionId,
     reason: reason,
+    timestamp: timestamp || new Date().toISOString(),
   };
 
   return EventQueue.register({

@@ -26,6 +26,10 @@ function emitPlugStop(connectorId) {
   return ComPort.emit(`PLUG${connectorId}STOP:`);
 }
 
+function emitPlugReset(connectorId) {
+  return ComPort.emit(`PLUG${connectorId}RESET:`);
+}
+
 function emitPlugOn(connectorId) {
   return ComPort.emit(`PLUG${connectorId}ONN:`);
 }
@@ -42,6 +46,7 @@ module.exports = {
     extLedOff: emitExtLedOff,
     proxire: emitProxire,
     plugStop: emitPlugStop,
+    plugReset: emitPlugReset,
     plugOn: emitPlugOn,
     plugOff: emitPlugOff,
   },

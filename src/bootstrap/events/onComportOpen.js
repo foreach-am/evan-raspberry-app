@@ -20,23 +20,29 @@ function openComPort() {
 }
 
 let restartComportAttempts = 0;
-ComPort.onLongIdle(async function () {
-  Logger.info('ComPort stuck, no data received long time.');
 
-  if (++restartComportAttempts === 4) {
-    Logger.info('Calling hardware and software reset ...');
+module.exports = function (rebootReason, onSerialPortOpen) {
+  ComPort.onLongIdle(async function () {
+    Logger.info('ComPort stuck, no data received long time.');
 
-    // await Raspberry.restartHardware();
-    await Raspberry.restartSoftware(RebootSoftwareReasonEnum.COMPORT_STUCK);
+    if (rebootReason === RebootSoftwareReasonEnum.COMPORT_STUCK) {
+      await Raspberry.restartHardware();
+      await Raspberry.restartSoftware(RebootSoftwareReasonEnum.COMPORT_STUCK);
+    } else {
+      if (++restartComportAttempts === 4) {
+        Logger.info('Calling hardware and software reset ...');
 
-    ComPort.close();
-  } else {
-    Logger.info('Reopening ComPort due to long delay ...');
-    openComPort();
-  }
-});
+        // await Raspberry.restartHardware();
+        await Raspberry.restartSoftware(RebootSoftwareReasonEnum.COMPORT_STUCK);
 
-module.exports = function (onSerialPortOpen) {
+        ComPort.close();
+      } else {
+        Logger.info('Reopening ComPort due to long delay ...');
+        openComPort();
+      }
+    }
+  });
+
   ComPort.onSerialPort('open', function () {
     Logger.info('ComPort opened, calling listener ...');
 

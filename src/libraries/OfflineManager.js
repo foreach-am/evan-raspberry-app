@@ -115,6 +115,27 @@ function getRebootReason() {
   return reason;
 }
 
+function setComportState(state) {
+  const filePath = DataManager.getFilePath('com-state.data');
+  fs.writeFileSync(filePath, JSON.stringify(state), 'utf-8');
+}
+
+function getComportState() {
+  const filePath = DataManager.getFilePath('com-state.data');
+  try {
+    const savedStateContent = fs.readFileSync(filePath, 'utf-8');
+    if (!savedStateContent || typeof savedStateContent !== 'string') {
+      return {};
+    }
+
+    const savedState = JSON.parse(savedStateContent);
+    return savedState ||  {};
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+
 module.exports = {
   OfflineCommand: {
     push: pushCommand,
@@ -127,6 +148,10 @@ module.exports = {
   LastTime: {
     register: registerLastTimeInterval,
     getLastTime: getLastTimeSaved,
+  },
+  ComState: {
+    set: setComportState,
+    get: getComportState,
   },
   Reboot: {
     putReason: putRebootReason,

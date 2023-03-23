@@ -4,7 +4,7 @@ const state = require('../../state');
 const ping = require('../../ping');
 const uuid = require('../../utils/uuid');
 
-module.exports = async function (parsedServerData, connectorId, reason) {
+module.exports = async function (parsedServerData, connectorId, reason, timestamp = null) {
   // state.state.plugs.stopTransactionStatus[connectorId] =
   //   (parsedServerData.body.idTagInfo || {}).status || 'Accepted';
 
@@ -13,7 +13,8 @@ module.exports = async function (parsedServerData, connectorId, reason) {
     connectorId,
     state.state.plugs.idTags[connectorId],
     state.state.plugs.transactionId[connectorId],
-    reason
+    reason,
+    timestamp
   );
 
   state.state.plugs.transactionId[connectorId] = '';
