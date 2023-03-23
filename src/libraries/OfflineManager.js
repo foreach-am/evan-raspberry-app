@@ -75,10 +75,16 @@ function fillSavedState(state) {
 }
 
 async function updateLastTime() {
-  const filePath = DataManager.getFilePath('last-time.data');
+  const filePathRealtime = DataManager.getFilePath('last-time-realtime.data');
+  const filePathBackup = DataManager.getFilePath('last-time-backup.data');
   const timeNow = new Date().toISOString();
 
-  fs.writeFileSync(filePath, timeNow, 'utf-8');
+  if (fs.existsSync(filePathBackup)) {
+    fs.unlinkSync(filePathBackup);
+  }
+
+  fs.copyFileSync(filePathRealtime, filePathBackup, 0777);
+  fs.writeFileSync(filePathRealtime, timeNow, 'utf-8');
 
   for (let i = 0; i < 10; ++i) {
     await sleep(50);
@@ -104,19 +110,28 @@ function registerLastTimeInterval(seconds) {
 }
 
 function getLastTimeSaved() {
-  const filePath = DataManager.getFilePath('last-time.data');
-  if (fs.existsSync(filePath)) {
+  const filePathRealtime = DataManager.getFilePath('last-time-realtime.data');
+  const filePathBackup = DataManager.getFilePath('last-time-backup.data');
+
+  let lastTimeSaved = '';
+  if (fs.existsSync(filePathRealtime)) {
     try {
-      const lastTimeSaved = fs.readFileSync(filePath, 'utf-8');
-      console.log('>>>>>> LastTime:', lastTimeSaved);
+      lastTimeSaved = fs.readFileSync(filePathRealtime, 'utf-8');
     } catch (e) {
       Logger.error(e);
     }
-
-    return lastTimeSaved;
   }
 
-  return null;
+  if (lastTimeSaved && fs.existsSync(filePathBackup)) {
+    try {
+      lastTimeSaved = fs.readFileSync(filePathBackup, 'utf-8');
+    } catch (e) {
+      Logger.error(e);
+    }
+  }
+
+  console.log('>>>>>> LastTime:', lastTimeSaved);
+  return lastTimeSaved || null;
 }
 
 function putRebootReason(reason) {
