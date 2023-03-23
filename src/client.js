@@ -308,11 +308,11 @@ const initialState = (() => {
 
 const initialComState = ComStateManager.get();
 
-async function changeTransactionInCaseOfPowerReset(lastTimeSaved) {
+async function changeTransactionInCaseOfPowerReset(lastTimeSaved, waitForNetwork = 0) {
   if (lastTimeSaved) {
     const nowString = new Date().toISOString();
 
-    const last = new Date(lastTimeSaved).getTime();
+    const last = new Date(lastTimeSaved).getTime() + waitForNetwork;
     const now = new Date(nowString).getTime();
     const diff = now - last;
 
@@ -324,7 +324,7 @@ async function changeTransactionInCaseOfPowerReset(lastTimeSaved) {
     });
 
     // don't close any transaction if previous action is less then 10 seconds.
-    if (diff < 10 * 1000) {
+    if (diff < 15 * 1000) {
       return;
     }
   }
@@ -341,8 +341,11 @@ async function changeTransactionInCaseOfPowerReset(lastTimeSaved) {
       initialComState[connectorId] === PlugStateEnum.CHARGING &&
       initialState[connectorId] === lastTransactionId
     ) {
-      const last = new Date(lastTimeSaved);
-      const diff = Date.now() - last;
+      const nowString = new Date().toISOString();
+
+      const last = new Date(lastTimeSaved).getTime() + waitForNetwork;
+      const now = new Date(nowString).getTime();
+      const diff = now - last;
 
       if (diff <= 10 * 60 * 1000) {
         await ComEmitter.plugReset(connectorId);
@@ -384,20 +387,13 @@ async function sendBootNotification() {
   bootNotificationAlreadySent = true;
 }
 
-async function onWsConnect() {
-  if (
-    rebootReason !== RebootSoftwareReasonEnum.COMPORT_STUCK &&
-    rebootReason !== RebootSoftwareReasonEnum.BY_OCPP_PROTOCOL
-  ) {
-    await sendBootNotification();
-  }
-}
+const lastTimeSaved = LastTime.getLastTime();
+let waitForNetwork = 0;
+let intervalNetwork = setInterval(function () {
+  ++waitForNetwork;
+}, 1000);
 
-(function () {
-  const lastTimeSaved = LastTime.getLastTime();
-  console.log(
-    '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-  );
+async function onWsConnect() {
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ', {
     lastTimeSaved,
     initialComState,
@@ -409,11 +405,12 @@ async function onWsConnect() {
     rebootReason !== RebootSoftwareReasonEnum.COMPORT_STUCK &&
     rebootReason !== RebootSoftwareReasonEnum.BY_OCPP_PROTOCOL
   ) {
-    changeTransactionInCaseOfPowerReset(lastTimeSaved);
+    await changeTransactionInCaseOfPowerReset(lastTimeSaved, waitForNetwork * 1000);
+    await sendBootNotification();
   }
 
   registerLastTimeInterval();
-})();
+}
 
 bootstrap.onComportOpen(rebootReason, async function () {
   bootstrap.registerWebsocketEvents({
