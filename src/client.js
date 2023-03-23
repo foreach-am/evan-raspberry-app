@@ -360,7 +360,9 @@ function registerLastTimeInterval() {
   LastTime.register(2);
 }
 
+const rebootReason = RebootManager.getReason();
 let bootNotificationAlreadySent = false;
+
 async function sendBootNotification() {
   if (bootNotificationAlreadySent) {
     return;
@@ -370,24 +372,21 @@ async function sendBootNotification() {
   bootNotificationAlreadySent = true;
 }
 
-// let boardListenerRegistered = false;
-// async function onWsConnect() {
-//   if (boardListenerRegistered) {
-//     return;
-//   }
+async function onWsConnect() {
+  if (
+    rebootReason !== RebootSoftwareReasonEnum.COMPORT_STUCK &&
+    rebootReason !== RebootSoftwareReasonEnum.BY_OCPP_PROTOCOL
+  ) {
+    await sendBootNotification();
+  }
+}
 
-//   ComPort.register(onComportDataReady);
-//   boardListenerRegistered = true;
-// }
-
-const rebootReason = RebootManager.getReason();
 (async function () {
   if (
     rebootReason !== RebootSoftwareReasonEnum.COMPORT_STUCK &&
     rebootReason !== RebootSoftwareReasonEnum.BY_OCPP_PROTOCOL
   ) {
     await changeTransactionInCaseOfPowerReset();
-    await sendBootNotification();
   }
 
   await registerLastTimeInterval();
@@ -395,7 +394,7 @@ const rebootReason = RebootManager.getReason();
 
 bootstrap.onComportOpen(rebootReason, async function () {
   bootstrap.registerWebsocketEvents({
-    // onConnect: onWsConnect,
+    onConnect: onWsConnect,
     onMessage: onWsMessage,
   });
 
