@@ -324,6 +324,7 @@ async function changeTransactionInCaseOfPowerReset() {
       continue;
     }
 
+    console.log('>>>>>', lastTimeSaved, initialComState, initialState);
     // state.statistic.plugs.plugState[connectorId] === PlugStateEnum.PLUG_SOFT_LOCK
     if (
       initialComState[connectorId] === PlugStateEnum.CHARGING &&
@@ -347,7 +348,6 @@ async function changeTransactionInCaseOfPowerReset() {
 
     await ComEmitter.plugStop(connectorId);
 
-    console.log('>>>>>', lastTimeSaved);
     await execute.UpdateFlagStopTransaction(
       {},
       connectorId,
