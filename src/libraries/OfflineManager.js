@@ -93,6 +93,28 @@ function getLastTimeSaved() {
   return null;
 }
 
+function putRebootReason(reason) {
+  const filePath = DataManager.getFilePath('reboot-reason.data');
+  try {
+    fs.writeFileSync(filePath, reason, 'utf-8');
+  } catch (e) {
+    // retry writing
+    fs.writeFileSync(filePath, reason, 'utf-8');
+  }
+}
+
+function getRebootReason() {
+  const filePath = DataManager.getFilePath('reboot-reason.data');
+  if (!fs.existsSync(filePath)) {
+    return null;
+  }
+
+  const reason = fs.readFileSync(filePath, 'utf-8');
+  fs.unlinkSync(filePath);
+
+  return reason;
+}
+
 module.exports = {
   OfflineCommand: {
     push: pushCommand,
@@ -105,5 +127,9 @@ module.exports = {
   LastTime: {
     register: registerLastTimeInterval,
     getLastTime: getLastTimeSaved,
+  },
+  Reboot: {
+    putReason: putRebootReason,
+    getReason: getRebootReason,
   },
 };

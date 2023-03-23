@@ -1,7 +1,10 @@
 const { CoreEvent, CoreEventEnum } = require('../../libraries/CoreEvent');
 const { ComPort } = require('../../libraries/ComPort');
 const { ComEmitter } = require('../../libraries/ComEmitter');
-const { Raspberry } = require('../../libraries/Raspberry');
+const {
+  Raspberry,
+  RebootSoftwareReasonEnum,
+} = require('../../libraries/Raspberry');
 const { Logger } = require('../../libraries/Logger');
 
 function openComPort() {
@@ -23,8 +26,8 @@ ComPort.onLongIdle(async function () {
   if (++restartComportAttempts === 4) {
     Logger.info('Calling hardware and software reset ...');
 
-    await Raspberry.restartHardware();
-    await Raspberry.restartSoftware();
+    // await Raspberry.restartHardware();
+    await Raspberry.restartSoftware(RebootSoftwareReasonEnum.COMPORT_STUCK);
 
     ComPort.close();
   } else {

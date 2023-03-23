@@ -6,6 +6,7 @@ const { Gpio } = require('onoff');
 const DataManager = require('./DataManager');
 const { CoreEvent, CoreEventEnum } = require('./CoreEvent');
 const { ComEmitter } = require('./ComEmitter');
+const { Reboot } = require('./OfflineManager');
 
 const state = require('../state');
 
@@ -13,7 +14,16 @@ const buttonReset = new Gpio(5, 'out', 'rising', {
   debounceTimeout: 500,
 });
 
-async function restartSoftware() {
+const RebootSoftwareReasonEnum = {
+  COMPORT_STUCK: 1,
+  BY_OCPP_PROTOCOL: 2,
+};
+
+async function restartSoftware(reason = null) {
+  if (reason) {
+    Reboot.putReason(reason);
+  }
+
   return new Promise(async function (resolve, reject) {
     const callback = function (error, stdout, stderr) {
       if (error) {
@@ -82,6 +92,7 @@ async function mapOnPlugs(callback) {
 }
 
 module.exports = {
+  RebootSoftwareReasonEnum: RebootSoftwareReasonEnum,
   Raspberry: {
     restartSoftware: restartSoftware,
     restartHardware: restartHardware,

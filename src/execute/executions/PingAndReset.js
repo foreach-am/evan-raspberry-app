@@ -1,4 +1,7 @@
-const { Raspberry } = require('../../libraries/Raspberry');
+const {
+  Raspberry,
+  RebootSoftwareReasonEnum,
+} = require('../../libraries/Raspberry');
 const { PlugStateEnum } = require('../../libraries/PlugState');
 
 const state = require('../../state');
@@ -35,7 +38,9 @@ module.exports = async function (parsedServerData) {
       );
 
       restartTriggered = true;
-      await Raspberry.restartSoftware();
+      await Raspberry.restartSoftware(
+        RebootSoftwareReasonEnum.BY_OCPP_PROTOCOL
+      );
     }
   }
 

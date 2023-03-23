@@ -9,7 +9,14 @@ const {
   EventCommandNameEnum,
 } = require('./libraries/EventQueue');
 const { PlugStateEnum } = require('./libraries/PlugState');
-const { Raspberry } = require('./libraries/Raspberry');
+const {
+  Raspberry,
+  RebootSoftwareReasonEnum,
+} = require('./libraries/Raspberry');
+const {
+  LastTime,
+  Reboot: RebootManager,
+} = require('./libraries/OfflineManager');
 const bootstrap = require('./bootstrap');
 
 const uuid = require('./utils/uuid');
@@ -279,19 +286,95 @@ async function onWsMessage(message) {
 
 ComPort.register(onComportDataReady);
 
-// let boardListenerRegistered = false;
-// function onWsConnect() {
-//   if (boardListenerRegistered) {
-//     return;
-//   }
+const initialState = (() => {
+  try {
+    state.loadSavedState();
+    return JSON.parse(JSON.stringify(state.state.plugs.transactionId));
+  } catch (e) {
+    return {};
+  }
+})();
 
-//   ComPort.register(onComportDataReady);
-//   boardListenerRegistered = true;
-// }
+async function changeTransactionInCaseOfPowerReset() {
+  const lastTimeSaved = LastTime.getLastTime();
+  if (lastTimeSaved) {
+    const last = new Date(lastTimeSaved);
+    const diff = Date.now() - last;
+
+    Logger.info(`Checking last transaction delay: ${diff}`);
+
+    // don't close any transaction if previous action is less then 10 seconds.
+    if (diff < 10 * 1000) {
+      return;
+    }
+  }
+
+  for (const connectorId in state.state.plugs.transactionId) {
+    const lastTransactionId = state.state.plugs.transactionId[connectorId];
+    if (!lastTransactionId) {
+      continue;
+    }
+
+    if (initialState[connectorId] === lastTransactionId) {
+      // if (
+      //   initialState[connectorId] &&
+      //   parseInt(initialState[connectorId]) > 0
+      // ) {
+      //   await ComEmitter.proxire(connectorId);
+      // }
+    }
+
+    state.state.plugs.previousPlugState[connectorId] =
+      state.statistic.plugs.plugState[connectorId];
+
+    await ComEmitter.plugStop(connectorId);
+
+    await execute.UpdateFlagStopTransaction(
+      {},
+      connectorId,
+      ping.StopTransaction.ReasonEnum.Reboot
+    );
+  }
+}
+
+function registerLastTimeInterval() {
+  LastTime.register(2);
+}
+
+let bootNotificationAlreadySent = false;
+async function sendBootNotification() {
+  if (bootNotificationAlreadySent) {
+    return;
+  }
+
+  await ping.BootNotification.execute(uuid());
+  bootNotificationAlreadySent = true;
+}
+
+// let boardListenerRegistered = false;
+async function onWsConnect() {
+  // if (boardListenerRegistered) {
+  //   return;
+  // }
+
+  // ComPort.register(onComportDataReady);
+  // boardListenerRegistered = true;
+
+  const rebootReason = RebootManager.getReason();
+  if (
+    rebootReason !== RebootSoftwareReasonEnum.COMPORT_STUCK &&
+    rebootReason !== RebootSoftwareReasonEnum.BY_OCPP_PROTOCOL
+  ) {
+    await changeTransactionInCaseOfPowerReset();
+    await sendBootNotification();
+  }
+
+  await registerLastTimeInterval();
+}
 
 bootstrap.onComportOpen(function () {
   bootstrap.registerWebsocketEvents({
-    // onConnect: onWsConnect,
+    onConnect: onWsConnect,
     onMessage: onWsMessage,
   });
 
