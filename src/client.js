@@ -347,6 +347,7 @@ async function changeTransactionInCaseOfPowerReset() {
 
     await ComEmitter.plugStop(connectorId);
 
+    console.log('>>>>>', lastTimeSaved);
     await execute.UpdateFlagStopTransaction(
       {},
       connectorId,
