@@ -143,6 +143,10 @@ function setComportState(state) {
 
 function getComportState() {
   const filePath = DataManager.getFilePath('com-state.data');
+  if (!fs.existsSync(filePath)) {
+    return {};
+  }
+
   try {
     const savedStateContent = fs.readFileSync(filePath, 'utf-8');
     if (!savedStateContent || typeof savedStateContent !== 'string') {
