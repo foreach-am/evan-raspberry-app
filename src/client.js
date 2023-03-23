@@ -386,6 +386,9 @@ async function onWsConnect() {
 
 (function () {
   const lastTimeSaved = LastTime.getLastTime();
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.');
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.');
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.');
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ', {
     lastTimeSaved,
     initialComState,
