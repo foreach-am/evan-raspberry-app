@@ -291,7 +291,11 @@ async function onWsMessage(message) {
   }
 }
 
-ComPort.register(onComportDataReady);
+ComPort.register(function () {
+  setTimeout(function () {
+    onComportDataReady();
+  }, 1500);
+});
 
 const initialState = (() => {
   try {
