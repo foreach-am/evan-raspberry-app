@@ -1,6 +1,7 @@
 const fs = require('fs');
 const DataManager = require('./DataManager');
 const uuid = require('../utils/uuid');
+const {Logger} = require('./Logger');
 
 function saveFile(fileName, data) {
   const updatedContent = JSON.stringify(data);
@@ -139,13 +140,16 @@ function getComportState() {
   try {
     const savedStateContent = fs.readFileSync(filePath, 'utf-8');
     if (!savedStateContent || typeof savedStateContent !== 'string') {
+      Logger.warning('savedStateContent', savedStateContent);
       return {};
     }
 
     const savedState = JSON.parse(savedStateContent);
+    Logger.warning('savedState', savedState);
+
     return savedState || {};
   } catch (e) {
-    console.error(e);
+    Logger.error(e);
   }
 }
 

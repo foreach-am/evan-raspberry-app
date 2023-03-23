@@ -85,7 +85,7 @@ CoreEvent.register(CoreEventEnum.EVENT_SIGINT, function () {
   buttonReset.unexport();
 });
 
-async function mapOnPlugs(callback) {
+function mapOnPlugs(callback) {
   for (let connectorId = 1; connectorId <= state.maxPlugsCount; ++connectorId) {
     callback(connectorId);
   }
