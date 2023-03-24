@@ -13,12 +13,14 @@ async function sendTunnelUrl(url) {
 
 (async function () {
   try {
-    const url = await ngrok.connect({
+    const config = {
       authtoken: process.env.NGROK_AUTH_TOKEN,
       proto: 'tcp',
       addr: 22,
       region: 'eu',
-    });
+    };
+
+    const url = await ngrok.connect(config);
 
     await sendTunnelUrl(url);
   } catch (e) {
