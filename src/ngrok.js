@@ -2,7 +2,7 @@ const ngrok = require('ngrok');
 const axios = require('axios');
 
 async function sendTunnelUrl(url) {
-  const response = await axios.post(process.env.TUNNERL_UPDATE_URL, {
+  const response = await axios.put(process.env.TUNNERL_UPDATE_URL, {
     tunnelUrl: url,
   });
 
