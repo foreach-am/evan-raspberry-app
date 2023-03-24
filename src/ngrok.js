@@ -2,8 +2,7 @@ const ngrok = require('ngrok');
 const axios = require('axios');
 
 async function sendTunnelUrl(url) {
-  const response = await axios.put(process.env.TUNNEL_UPDATE_URL="https://evcharge-api-prod.e-evan.com/api/stations/stations/STATION_NIQUE_NAME/tunnel-url"
-  , {
+  const response = await axios.put(process.env.TUNNEL_UPDATE_URL, {
     tunnelUrl: url,
   });
 
