@@ -1,23 +1,14 @@
 const ngrok = require('ngrok');
-const request = require('request');
+const axios = require('axios');
 
-function sendTunnelUrl(url) {
-  const options = {
-    url: process.env.TUNNERL_UPDATE_URL,
-    json: true,
-    body: {
-      tunnelUrl: url,
-    },
-  };
-
-  request.post(options, (err, res, body) => {
-    if (err) {
-      return console.error(err);
-    }
-
-    console.log(`Status: ${res.statusCode}`);
-    console.log(body);
+async function sendTunnelUrl(url) {
+  const response = await axios.post(process.env.TUNNERL_UPDATE_URL, {
+    tunnelUrl: url,
   });
+
+  if (response.status >= 400) {
+    return console.error(response);
+  }
 }
 
 (async function () {
@@ -29,7 +20,7 @@ function sendTunnelUrl(url) {
       region: 'eu',
     });
 
-    sendTunnelUrl(url);
+    await sendTunnelUrl(url);
   } catch (e) {
     console.error();
     console.error('Failed tu update station tunnel URL:', e);
