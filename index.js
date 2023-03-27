@@ -4,7 +4,6 @@ function startClientApplication() {
   require('./src/configure');
   require('./src/client');
   require('./src/lighting');
-  require('./src/ngrok');
 }
 
 let intervalSteps = 5;
