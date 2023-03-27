@@ -31,5 +31,10 @@ module.exports = {
       instances: 1,
       script: './index.js',
     }),
+    buildApp({
+      name: 'raspberry-ssh-tunnel',
+      instances: 1,
+      script: './tunnel.js',
+    }),
   ],
 };
