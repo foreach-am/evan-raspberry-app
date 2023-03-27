@@ -79,7 +79,7 @@ async function updateLastTime() {
   const filePathBackup = DataManager.getFilePath('last-time-backup.data');
   const timeNow = new Date().toISOString();
 
-  const writeNewTime = function () {
+  const writeNewTime = async function () {
     if (fs.existsSync(filePathBackup)) {
       fs.unlinkSync(filePathBackup);
     }
@@ -93,11 +93,12 @@ async function updateLastTime() {
     }
 
     fs.writeFileSync(filePathRealtime, timeNow, 'utf-8');
+    await sleep(200);
   };
 
-  writeNewTime();
+  await writeNewTime();
   for (let i = 0; i < 4; ++i) {
-    await sleep(100);
+    await sleep(50);
     const savedTime = getLastTimeSaved();
     if (savedTime && savedTime === timeNow) {
       break;
@@ -106,7 +107,7 @@ async function updateLastTime() {
         timeNow: timeNow,
         savedTime: savedTime,
       });
-      writeNewTime();
+      await writeNewTime();
     }
   }
 }
