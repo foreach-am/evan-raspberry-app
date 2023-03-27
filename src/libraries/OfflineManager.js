@@ -102,7 +102,10 @@ async function updateLastTime() {
     if (savedTime && savedTime === timeNow) {
       break;
     } else {
-      Logger.warning('SaveTime is not the same, refreshing value ...');
+      Logger.warning('SaveTime is not the same, refreshing value ...', {
+        timeNow: timeNow,
+        savedTime: savedTime,
+      });
       writeNewTime();
     }
   }

@@ -43,11 +43,18 @@ module.exports = function (rebootReason, onSerialPortOpen) {
     }
   });
 
-  ComPort.onSerialPort('open', function () {
-    Logger.info('ComPort opened, calling listener ...');
+  const onSerialPortOpenOrResume = function (eventName) {
+    Logger.info(`ComPort opened, calling listener [${eventName}] ...`);
 
     ComEmitter.masterRead();
     onSerialPortOpen();
+  };
+
+  ComPort.onSerialPort('open', function () {
+    onSerialPortOpenOrResume('open');
+  });
+  ComPort.onSerialPort('resume', function () {
+    onSerialPortOpenOrResume('resume');
   });
 
   openComPort();

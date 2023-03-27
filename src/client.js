@@ -25,6 +25,7 @@ const state = require('./state');
 const ping = require('./ping');
 const execute = require('./execute');
 
+
 let timerMasterRead = null;
 async function onComportDataReady() {
   const currentState = {};
