@@ -22,15 +22,13 @@ async function sendTunnelUrl(url) {
     };
 
     const url = await ngrok.connect(config);
-    console.log('Station SSH tunnel URL generated.');
-    console.log();
+    console.log('[TUNNEL] >>> Station SSH tunnel URL generated.');
 
     await sendTunnelUrl(url);
-    console.log('Station SSH tunnel URL updated.');
-    console.log();
+    console.log('[TUNNEL] >>> Station SSH tunnel URL updated.');
   } catch (e) {
     console.error();
-    console.error('Failed to generate/update station tunnel URL:', e);
+    console.error('[TUNNEL] >>> Failed to generate/update station tunnel URL:', e);
     console.error();
   }
 })();
