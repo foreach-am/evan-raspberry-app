@@ -1,7 +1,8 @@
+require('./configure');
+
 global.ROOT_DIR = __dirname;
 
 function startClientApplication() {
-  require('./src/configure');
   require('./src/client');
   require('./src/lighting');
 }
