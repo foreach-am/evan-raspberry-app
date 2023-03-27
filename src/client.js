@@ -348,7 +348,7 @@ async function changeTransactionInCaseOfPowerReset(lastTimeSaved, waitForNetwork
       const now = new Date(nowString).getTime();
       const diff = now - last;
 
-      if (diff <= 150 * 60 * 1000) {
+      if (diff <= 15 * 60 * 1000) {
         await ComEmitter.plugReset(connectorId);
         setTimeout(async () => {
           await ComEmitter.proxire(connectorId);
