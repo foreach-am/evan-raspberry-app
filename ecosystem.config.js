@@ -26,13 +26,13 @@ function buildApp(configs) {
 module.exports = {
   apps: [
     buildApp({
-      name: 'raspberry-client-app',
+      name: 'app',
       min_uptime: '5s',
       instances: 1,
       script: './index.js',
     }),
     buildApp({
-      name: 'raspberry-ssh-tunnel',
+      name: 'tunnel',
       instances: 1,
       script: './tunnel.js',
     }),
