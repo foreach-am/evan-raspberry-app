@@ -324,7 +324,7 @@ async function changeTransactionInCaseOfPowerReset(lastTimeSaved, waitForNetwork
       last,
     });
 
-    // don't close any transaction if previous action is less then 10 seconds.
+    // don't close any transaction if previous action is less then 15 seconds.
     if (diff < 15 * 1000) {
       return;
     }
@@ -348,7 +348,7 @@ async function changeTransactionInCaseOfPowerReset(lastTimeSaved, waitForNetwork
       const now = new Date(nowString).getTime();
       const diff = now - last;
 
-      if (diff <= 15 * 60 * 1000) {
+      if (diff <= 150 * 60 * 1000) {
         await ComEmitter.plugReset(connectorId);
         setTimeout(async () => {
           await ComEmitter.proxire(connectorId);
