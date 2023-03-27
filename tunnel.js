@@ -1,3 +1,4 @@
+const childProcess = require('child_process');
 const ngrok = require('ngrok');
 const axios = require('axios');
 require('./configure');
@@ -10,6 +11,15 @@ async function sendTunnelUrl(url) {
   if (response.status >= 400) {
     return console.error(response);
   }
+}
+
+function restart() {
+  const options = {
+    cwd: global.ROOT_DIR,
+  };
+
+  console.log('[TUNNEL] >>> Restarting SSH tunnel.');
+  childProcess.exec('npm run restart:runnel', options, callback);
 }
 
 (async function () {
@@ -30,5 +40,9 @@ async function sendTunnelUrl(url) {
     console.error();
     console.error('[TUNNEL] >>> Failed to generate/update station tunnel URL:', e);
     console.error();
+
+    setTimeout(function () {
+      restart();
+    }, 5_000);
   }
 })();

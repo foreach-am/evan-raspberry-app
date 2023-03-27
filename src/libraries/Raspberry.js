@@ -1,9 +1,7 @@
 /* eslint-disable no-console */
 
-const fs = require('fs');
 const childProcess = require('child_process');
 const { Gpio } = require('onoff');
-const DataManager = require('./DataManager');
 const { CoreEvent, CoreEventEnum } = require('./CoreEvent');
 const { ComEmitter } = require('./ComEmitter');
 const { Reboot } = require('./OfflineManager');
@@ -41,7 +39,7 @@ async function restartSoftware(reason = null) {
     };
 
     if (process.env.NODE_ENV === 'production') {
-      childProcess.exec('npm run restart', options, callback);
+      childProcess.exec('npm run restart:app', options, callback);
     } else {
       console.log('');
       console.log(' Software restart are impossible during development mode.');
