@@ -25,7 +25,6 @@ const state = require('./state');
 const ping = require('./ping');
 const execute = require('./execute');
 
-
 let timerMasterRead = null;
 async function onComportDataReady() {
   const currentState = {};
@@ -309,7 +308,10 @@ const initialState = (() => {
 
 const initialComState = ComStateManager.get();
 
-async function changeTransactionInCaseOfPowerReset(lastTimeSaved, waitForNetwork = 0) {
+async function changeTransactionInCaseOfPowerReset(
+  lastTimeSaved,
+  waitForNetwork = 0
+) {
   if (lastTimeSaved) {
     const nowString = new Date().toISOString();
 
@@ -384,8 +386,20 @@ async function sendBootNotification() {
     return;
   }
 
-  await ping.BootNotification.execute(uuid());
   bootNotificationAlreadySent = true;
+
+  if (
+    rebootReason !== RebootSoftwareReasonEnum.COMPORT_STUCK &&
+    rebootReason !== RebootSoftwareReasonEnum.BY_OCPP_PROTOCOL
+  ) {
+    await changeTransactionInCaseOfPowerReset(
+      lastTimeSaved,
+      waitForNetwork * 1000
+    );
+    await ping.BootNotification.execute(uuid());
+  }
+
+  registerLastTimeInterval();
 }
 
 const lastTimeSaved = LastTime.getLastTime();
@@ -395,24 +409,10 @@ let intervalNetwork = setInterval(function () {
 }, 1000);
 
 async function onWsConnect() {
+  waitForNetwork = 0;
   clearInterval(intervalNetwork);
 
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ', {
-    lastTimeSaved,
-    initialComState,
-    initialState,
-    rebootReason,
-  });
-
-  if (
-    rebootReason !== RebootSoftwareReasonEnum.COMPORT_STUCK &&
-    rebootReason !== RebootSoftwareReasonEnum.BY_OCPP_PROTOCOL
-  ) {
-    await changeTransactionInCaseOfPowerReset(lastTimeSaved, waitForNetwork * 1000);
-    await sendBootNotification();
-  }
-
-  registerLastTimeInterval();
+  sendBootNotification();
 }
 
 bootstrap.onComportOpen(rebootReason, async function () {
