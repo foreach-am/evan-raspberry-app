@@ -96,8 +96,8 @@ async function updateLastTime() {
   };
 
   writeNewTime();
-  for (let i = 0; i < 10; ++i) {
-    await sleep(50);
+  for (let i = 0; i < 4; ++i) {
+    await sleep(100);
     const savedTime = getLastTimeSaved();
     if (savedTime && savedTime === timeNow) {
       break;
