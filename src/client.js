@@ -392,6 +392,7 @@ async function sendBootNotification() {
     rebootReason !== RebootSoftwareReasonEnum.COMPORT_STUCK &&
     rebootReason !== RebootSoftwareReasonEnum.BY_OCPP_PROTOCOL
   ) {
+    const lastTimeSaved = LastTime.getLastTime();
     await changeTransactionInCaseOfPowerReset(
       lastTimeSaved,
       waitForNetwork * 1000
@@ -402,7 +403,6 @@ async function sendBootNotification() {
   registerLastTimeInterval();
 }
 
-const lastTimeSaved = LastTime.getLastTime();
 let waitForNetwork = 0;
 let intervalNetwork = setInterval(function () {
   ++waitForNetwork;
