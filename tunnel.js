@@ -19,7 +19,13 @@ function restart() {
   };
 
   console.log('[TUNNEL] >>> Restarting SSH tunnel.');
-  childProcess.exec('npm run restart:runnel', options, callback);
+  childProcess.exec('npm run restart:runnel', options, function (error) {
+    if (error) {
+      return console.error('[TUNNEL] >>> Failed to restart app:', error);
+    }
+
+    console.log('[TUNNEL] >>> Restart of SSH tunnel successfully completed.');
+  });
 }
 
 (async function () {
@@ -38,7 +44,10 @@ function restart() {
     console.log('[TUNNEL] >>> Station SSH tunnel URL updated.');
   } catch (e) {
     console.error();
-    console.error('[TUNNEL] >>> Failed to generate/update station tunnel URL:', e);
+    console.error(
+      '[TUNNEL] >>> Failed to generate/update station tunnel URL:',
+      e
+    );
     console.error();
 
     setTimeout(function () {
