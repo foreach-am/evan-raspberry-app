@@ -1,18 +1,26 @@
 const fs = require('fs');
-const DataManager = require('./DataManager');
 const uuid = require('../utils/uuid');
 const { Logger } = require('./Logger');
 const sleep = require('../utils/sleep');
 
+function getFilePath(...fileName) {
+  return path.join(__dirname, '..', '..', 'data', ...fileName);
+}
+
 function saveFile(fileName, data) {
-  const updatedContent = JSON.stringify(data);
-  fs.writeFileSync(DataManager.getFilePath(fileName), updatedContent, 'utf-8');
+  fs.writeFileSync(
+    getFilePath('offline-data', fileName),
+    JSON.stringify(data),
+    'utf-8'
+  );
 }
 
 function getCommandFiles() {
-  return fs.readdirSync(DataManager.getFilePath()).filter(function (fileName) {
-    return /^offline\-.+\.json$/.test(fileName);
-  });
+  return fs
+    .readdirSync(getFilePath('offline-data'))
+    .filter(function (fileName) {
+      return /^offline\-.+\.json$/.test(fileName);
+    });
 }
 
 function pushCommand(commandValue) {
@@ -26,7 +34,7 @@ function firstCommand() {
     return null;
   }
 
-  const filePath = DataManager.getFilePath(files[0]);
+  const filePath = getFilePath(files[0]);
   const content = fs.readFileSync(filePath, 'utf-8');
   fs.unlinkSync(filePath);
 
@@ -38,7 +46,7 @@ function saveCurrentState(state) {
     return;
   }
 
-  const stateFile = DataManager.getFilePath('charge-state.json');
+  const stateFile = getFilePath('charge-state.json');
   const content = JSON.stringify({
     idTags: state.plugs.idTags,
     transactionId: state.plugs.transactionId,
@@ -49,7 +57,7 @@ function saveCurrentState(state) {
 }
 
 function fillSavedState(state) {
-  const stateFile = DataManager.getFilePath('charge-state.json');
+  const stateFile = getFilePath('charge-state.json');
   if (!fs.existsSync(stateFile)) {
     return;
   }
@@ -75,8 +83,8 @@ function fillSavedState(state) {
 }
 
 async function updateLastTime() {
-  const filePathRealtime = DataManager.getFilePath('last-time-realtime.data');
-  const filePathBackup = DataManager.getFilePath('last-time-backup.data');
+  const filePathRealtime = getFilePath('last-time-realtime.data');
+  const filePathBackup = getFilePath('last-time-backup.data');
   const timeNow = new Date().toISOString();
 
   const writeNewTime = async function () {
@@ -120,8 +128,8 @@ function registerLastTimeInterval(seconds) {
 }
 
 function getLastTimeSaved() {
-  const filePathRealtime = DataManager.getFilePath('last-time-realtime.data');
-  const filePathBackup = DataManager.getFilePath('last-time-backup.data');
+  const filePathRealtime = getFilePath('last-time-realtime.data');
+  const filePathBackup = getFilePath('last-time-backup.data');
 
   let lastTimeSaved = '';
   if (fs.existsSync(filePathRealtime)) {
@@ -145,7 +153,7 @@ function getLastTimeSaved() {
 }
 
 function putRebootReason(reason) {
-  const filePath = DataManager.getFilePath('reboot-reason.data');
+  const filePath = getFilePath('reboot-reason.data');
   try {
     fs.writeFileSync(filePath, reason, 'utf-8');
   } catch (e) {
@@ -155,7 +163,7 @@ function putRebootReason(reason) {
 }
 
 function getRebootReason() {
-  const filePath = DataManager.getFilePath('reboot-reason.data');
+  const filePath = getFilePath('reboot-reason.data');
   if (!fs.existsSync(filePath)) {
     return null;
   }
@@ -167,12 +175,12 @@ function getRebootReason() {
 }
 
 function setComportState(state) {
-  const filePath = DataManager.getFilePath('com-state.data');
+  const filePath = getFilePath('com-state.data');
   fs.writeFileSync(filePath, JSON.stringify(state), 'utf-8');
 }
 
 function getComportState() {
-  const filePath = DataManager.getFilePath('com-state.data');
+  const filePath = getFilePath('com-state.data');
   if (!fs.existsSync(filePath)) {
     return {};
   }
@@ -194,12 +202,12 @@ function getComportState() {
 }
 
 function putLastPowerValue(transactionId, value) {
-  const filePath = DataManager.getFilePath(`last-power-${transactionId}.data`);
+  const filePath = getFilePath(`last-power/${transactionId}.data`);
   fs.writeFileSync(filePath, value.toString(), 'utf-8');
 }
 
 function getLastPowerValue(transactionId) {
-  const filePath = DataManager.getFilePath(`last-power-${transactionId}.data`);
+  const filePath = getFilePath(`last-power/${transactionId}.data`);
   if (!fs.existsSync(filePath)) {
     return 0;
   }
