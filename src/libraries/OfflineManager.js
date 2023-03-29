@@ -193,6 +193,27 @@ function getComportState() {
   }
 }
 
+function putLastPowerValue(value) {
+  const filePath = DataManager.getFilePath('last-power.data');
+  fs.writeFileSync(filePath, value.toString(), 'utf-8');
+}
+
+function getLastPowerValue() {
+  const filePath = DataManager.getFilePath('last-power.data');
+  if (!fs.existsSync(filePath)) {
+    return 0;
+  }
+
+  const value = fs.readFileSync(filePath, 'utf-8');
+  const parsed = Number(value);
+
+  if (isNaN(parsed)) {
+    return 0;
+  }
+
+  return parsed || 0;
+}
+
 module.exports = {
   OfflineCommand: {
     push: pushCommand,
@@ -213,5 +234,9 @@ module.exports = {
   Reboot: {
     putReason: putRebootReason,
     getReason: getRebootReason,
+  },
+  PowerValue: {
+    putPowerValue: putLastPowerValue,
+    getPowerValue: getLastPowerValue,
   },
 };

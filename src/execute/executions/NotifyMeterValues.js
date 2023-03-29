@@ -1,6 +1,7 @@
 const state = require('../../state');
 const ping = require('../../ping');
 const uuid = require('../../utils/uuid');
+const { PowerValue } = require('../../libraries/OfflineManager');
 
 function getCosFi() {
   // @TODO: calculate real value
@@ -17,7 +18,12 @@ function createMeterValue(context, measurand, location, unit, value) {
   };
 }
 
+const previouslySavedPower = PowerValue.getPowerValue();
+
 module.exports = async function (parsedServerData, connectorId) {
+  const powerValue =
+    state.statistic.plugs.powerKwh[connectorId] * 1_000 + previouslySavedPower;
+
   const meterValue = [
     {
       timestamp: new Date().toISOString(),
@@ -55,7 +61,7 @@ module.exports = async function (parsedServerData, connectorId) {
           ping.MeterValues.MeasurandEnum.ENERGY_ACTIVE_IMPORT_REGISTER,
           ping.MeterValues.LocationEnum.OUTLET,
           ping.MeterValues.UnitEnum.WH,
-          state.statistic.plugs.powerKwh[connectorId] * 1_000
+          powerValue
         ),
         // createMeterValue(
         //   ping.MeterValues.ContextEnum.SAMPLE_PERIODIC,
@@ -74,6 +80,8 @@ module.exports = async function (parsedServerData, connectorId) {
       ],
     },
   ];
+
+  PowerValue.putPowerValue(powerValue);
 
   await ping.MeterValues.execute(
     uuid(),
