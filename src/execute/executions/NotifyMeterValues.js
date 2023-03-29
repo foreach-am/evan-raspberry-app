@@ -18,11 +18,19 @@ function createMeterValue(context, measurand, location, unit, value) {
   };
 }
 
-const previouslySavedPower = PowerValue.getPowerValue();
+const previouslySavedPower = {};
 
 module.exports = async function (parsedServerData, connectorId) {
+  const transactionId = state.state.plugs.transactionId[connectorId];
+
+  if (typeof previouslySavedPower[transactionId] === 'undefined') {
+    previouslySavedPower[transactionId] =
+      PowerValue.getPowerValue(transactionId);
+  }
+
   const powerValue =
-    state.statistic.plugs.powerKwh[connectorId] * 1_000 + previouslySavedPower;
+    state.statistic.plugs.powerKwh[connectorId] * 1_000 +
+    previouslySavedPower[transactionId];
 
   const meterValue = [
     {
@@ -81,12 +89,12 @@ module.exports = async function (parsedServerData, connectorId) {
     },
   ];
 
-  PowerValue.putPowerValue(powerValue);
+  PowerValue.putPowerValue(transactionId, powerValue);
 
   await ping.MeterValues.execute(
     uuid(),
     connectorId,
-    state.state.plugs.transactionId[connectorId],
+    transactionId,
     meterValue
   );
 };

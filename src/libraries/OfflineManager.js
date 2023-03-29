@@ -193,13 +193,13 @@ function getComportState() {
   }
 }
 
-function putLastPowerValue(value) {
-  const filePath = DataManager.getFilePath('last-power.data');
+function putLastPowerValue(transactionId, value) {
+  const filePath = DataManager.getFilePath(`last-power-${transactionId}.data`);
   fs.writeFileSync(filePath, value.toString(), 'utf-8');
 }
 
-function getLastPowerValue() {
-  const filePath = DataManager.getFilePath('last-power.data');
+function getLastPowerValue(transactionId) {
+  const filePath = DataManager.getFilePath(`last-power-${transactionId}.data`);
   if (!fs.existsSync(filePath)) {
     return 0;
   }
