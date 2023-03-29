@@ -21,7 +21,8 @@ function restart() {
   console.log('[TUNNEL] >>> Restarting SSH tunnel.');
   childProcess.exec('npm run restart:runnel', options, function (error) {
     if (error) {
-      return console.error('[TUNNEL] >>> Failed to restart app:', error);
+      console.error('[TUNNEL] >>> Failed to restart tunnel app:', error);
+      throw new Error('Failed to restart tunnel app.');
     }
 
     console.log('[TUNNEL] >>> Restart of SSH tunnel successfully completed.');

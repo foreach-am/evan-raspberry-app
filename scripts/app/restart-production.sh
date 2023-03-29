@@ -34,7 +34,7 @@ clear
 ## check .env configuration
 execute_action "$BUILD_LOG_FILE" \
   "bash ./run-cmd.sh tool:app:env-check" \
-  "Checking .env configration" \
+  "Checking .env configuration" \
   ".env file was not configured properly or it missing."
 
 ## ----------------------------------------------------------------------------------
