@@ -34,7 +34,7 @@ function firstCommand() {
     return null;
   }
 
-  const filePath = getFilePath(files[0]);
+  const filePath = getFilePath('offline-data', files[0]);
   const content = fs.readFileSync(filePath, 'utf-8');
   fs.unlinkSync(filePath);
 
