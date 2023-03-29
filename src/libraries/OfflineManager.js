@@ -4,7 +4,7 @@ const { Logger } = require('./Logger');
 const sleep = require('../utils/sleep');
 
 function getFilePath(...fileName) {
-  return path.join(__dirname, '..', '..', 'data', ...fileName);
+  return require('path').join(__dirname, '..', '..', 'data', ...fileName);
 }
 
 function saveFile(fileName, data) {
