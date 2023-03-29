@@ -1,0 +1,12 @@
+[Unit]
+Description=Open SSH Tunnel
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/env bash {{ROOT}}/scripts/tools/register-tunnel.sh
+
+[Install]
+WantedBy=multi-user.target

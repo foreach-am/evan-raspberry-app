@@ -45,26 +45,26 @@ fi
 
 ## ----------------------------------------------------------------------------------
 ## register macaddress updater service
-SERVICE_NAME_OLD="reload-macaddress.service"
-SERVICE_NAME_NEW="configure-macaddress.service"
+SERVICE_NAME="configure-macaddress.service"
+SERVICE_PATH="/etc/systemd/system/$SERVICE_NAME"
+if [[ ! -f "$SERVICE_PATH" ]]; then
+  sudo cp "$ROOT_DIR/.setup/stubs/$SERVICE_NAME" "$SERVICE_PATH"
+  sudo sed -i "s|{{ROOT}}|$ROOT_DIR|g" "$SERVICE_PATH"
 
-SERVICE_PATH_OLD="/etc/systemd/system/$SERVICE_NAME_OLD"
-if [[ -f "$SERVICE_PATH_OLD" ]]; then
-  sudo systemctl stop "$SERVICE_NAME_OLD"
-  sudo systemctl disable "$SERVICE_NAME_OLD"
-
-  sudo rm "$SERVICE_PATH_OLD"
-  sudo systemctl daemon-reload
-  sudo systemctl reset-failed
+  sudo systemctl enable "$SERVICE_NAME"
+  sudo systemctl start "$SERVICE_NAME"
 fi
 
-SERVICE_PATH_NEW="/etc/systemd/system/$SERVICE_NAME_NEW"
-if [[ ! -f "$SERVICE_PATH_NEW" ]]; then
-  sudo cp "$ROOT_DIR/.setup/stubs/$SERVICE_NAME_NEW" "$SERVICE_PATH_NEW"
-  sudo sed -i "s|{{ROOT}}|$ROOT_DIR|g" "$SERVICE_PATH_NEW"
+## ----------------------------------------------------------------------------------
+## register tunnel updater service
+SERVICE_NAME="configure-tunnel.service"
+SERVICE_PATH="/etc/systemd/system/$SERVICE_NAME"
+if [[ ! -f "$SERVICE_PATH" ]]; then
+  sudo cp "$ROOT_DIR/.setup/stubs/$SERVICE_NAME" "$SERVICE_PATH"
+  sudo sed -i "s|{{ROOT}}|$ROOT_DIR|g" "$SERVICE_PATH"
 
-  sudo systemctl enable "$SERVICE_NAME_NEW"
-  sudo systemctl start "$SERVICE_NAME_NEW"
+  sudo systemctl enable "$SERVICE_NAME"
+  sudo systemctl start "$SERVICE_NAME"
 fi
 
 ## ----------------------------------------------------------------------------------
