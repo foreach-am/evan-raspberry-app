@@ -26,7 +26,7 @@ module.exports = function (rebootReason, onSerialPortOpen) {
     Logger.info('ComPort stuck, no data received long time.');
 
     if (rebootReason === RebootSoftwareReasonEnum.COMPORT_STUCK) {
-      await Raspberry.restartHardware();
+      // await Raspberry.restartHardware();
       await Raspberry.restartSoftware(RebootSoftwareReasonEnum.COMPORT_STUCK);
     } else {
       if (++restartComportAttempts === 4) {
