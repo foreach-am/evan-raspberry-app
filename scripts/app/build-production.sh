@@ -100,6 +100,11 @@ fi
 ## ----------------------------------------------------------------------------------
 ## build production
 execute_action "$BUILD_LOG_FILE" \
+  "pm2 delete all && pm2 save --force" \
+  "Deleting previous PM2 engine app." \
+  "Failed to delete previous PM2 engine app."
+
+execute_action "$BUILD_LOG_FILE" \
   "pm2 restart ecosystem.config.js && pm2 save --force" \
   "Starting PM2 engine app." \
   "Failed to start PM2 engine app."
