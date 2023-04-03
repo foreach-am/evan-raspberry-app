@@ -20,6 +20,9 @@ function openComPort() {
 }
 
 let restartComportAttempts = 0;
+ComPort.register(function () {
+  restartComportAttempts = 0;
+});
 
 module.exports = function (rebootReason, onSerialPortOpen) {
   ComPort.onLongIdle(async function () {
@@ -31,11 +34,10 @@ module.exports = function (rebootReason, onSerialPortOpen) {
     } else {
       if (++restartComportAttempts === 4) {
         Logger.info('Calling hardware and software reset ...');
+        ComPort.close();
 
         // await Raspberry.restartHardware();
         await Raspberry.restartSoftware(RebootSoftwareReasonEnum.COMPORT_STUCK);
-
-        ComPort.close();
       } else {
         Logger.info('Reopening ComPort due to long delay ...');
         openComPort();
