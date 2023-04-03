@@ -24,6 +24,8 @@ async function restartSoftware(reason = null) {
 
   return new Promise(async function (resolve, reject) {
     const callback = function (error, stdout, stderr) {
+      console.log(stdout);
+
       if (error) {
         return reject(error);
       }

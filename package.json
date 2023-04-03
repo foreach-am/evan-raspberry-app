@@ -8,8 +8,7 @@
   "scripts": {
     "start": "bash ./scripts/app/run-development.sh",
     "build": "bash ./scripts/app/build-production.sh",
-    "restart:tunnel": "bash ./scripts/app/restart-production.sh tunnel",
-    "restart:app": "bash ./scripts/app/restart-production.sh app",
+    "restart:app": "bash ./scripts/app/restart-production.sh",
     "postinstall": "bash ./scripts/hooks/package/post-install.sh",
     "prepare": "bash ./run-cmd.sh tool:husky:init",
     "lint": "bash ./run-cmd.sh tool:lint:execute:dev",
