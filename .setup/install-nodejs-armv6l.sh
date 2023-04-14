@@ -10,7 +10,7 @@ sudo chmod -R 777 /opt/nodejs
 cd /opt/nodejs
 
 # download & extract nodejs
-wget https://unofficial-builds.nodejs.org/download/release/$NODE_VERSION/node-$NODE_VERSION-linux-armv6l.tar.gz;
+wget https://unofficial-builds.nodejs.org/download/release/v$NODE_VERSION/node-v$NODE_VERSION-linux-armv6l.tar.gz;
 tar -xJf node-v$NODE_VERSION-linux-armv6l.tar.gz
 
 # remove old links
