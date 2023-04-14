@@ -49,9 +49,9 @@ fi
 ## ----------------------------------------------------------------------------------
 ## restart production
 execute_action "$BUILD_LOG_FILE" \
-  "pm2 restart $1" \
-  "Starting PM2 engine $1." \
-  "Failed to start PM2 engine $1."
+  "pm2 restart app" \
+  "Starting PM2 engine app." \
+  "Failed to start PM2 engine app."
 
 ## ----------------------------------------------------------------------------------
 ## empty message
