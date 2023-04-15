@@ -351,7 +351,13 @@ async function changeTransactionInCaseOfPowerReset(
       const diff = now - last;
 
       if (diff <= 15 * 60 * 1000) {
-        await ComEmitter.plugReset(connectorId);
+        if (
+          state.statistic.plugs.plugState[connectorId] ===
+          PlugStateEnum.CHARGING
+        ) {
+          await ComEmitter.plugReset(connectorId);
+        }
+
         setTimeout(async () => {
           await ComEmitter.proxire(connectorId);
         }, 1000);
