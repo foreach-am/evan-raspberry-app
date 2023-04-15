@@ -5,6 +5,7 @@ const { Gpio } = require('onoff');
 const { CoreEvent, CoreEventEnum } = require('./CoreEvent');
 const { ComEmitter } = require('./ComEmitter');
 const { Reboot } = require('./OfflineManager');
+const {Logger} = require('./Logger');
 
 const state = require('../state');
 
@@ -23,25 +24,14 @@ async function restartSoftware(reason = null) {
   }
 
   return new Promise(async function (resolve, reject) {
-    const callback = function (error, stdout, stderr) {
-      console.log(stdout);
-
-      if (error) {
-        return reject(error);
-      }
-      if (stderr) {
-        return reject(stderr);
-      }
-
-      resolve();
-    };
-
     const options = {
       cwd: global.ROOT_DIR,
     };
 
     if (process.env.NODE_ENV === 'production') {
-      childProcess.exec('npm run restart:app', options, callback);
+      Logger.info('Restarting engine with options:', options);
+      console.log(childProcess.execSync('npm run restart:app || pmr restart app', options));
+      resolve();
     } else {
       console.log('');
       console.log(' Software restart are impossible during development mode.');
@@ -52,6 +42,7 @@ async function restartSoftware(reason = null) {
       console.log('');
 
       process.exit(1_000_001);
+      reject();
     }
   });
 }
