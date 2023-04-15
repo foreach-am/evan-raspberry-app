@@ -11,8 +11,6 @@ const serialPort = new SerialPort({
 let onReadyCallbackIndex = 0;
 let onReadyCallbacks = {};
 
-let intervalRunning = false;
-
 serialPort.on('pause', function () {
   Logger.info('SerialPort event handled:', 'pause');
 });
@@ -27,31 +25,29 @@ serialPort.on('error', function (error) {
 
 serialPort.on('open', function () {
   Logger.info('SerialPort connected successfully.');
-  intervalRunning = true;
 });
 
 serialPort.on('close', function () {
   Logger.info('SerialPort connection closed.');
-  intervalRunning = false;
 });
 
 let lastComDataReceivedTime = null;
 let inputData = '';
 
 serialPort.on('data', function (data) {
-  lastComDataReceivedTime = Date.now();
-
-  if (!intervalRunning) {
-    return;
-  }
-
   inputData += data;
 
   const indexStart = inputData.indexOf('*');
   const indexEnd = inputData.indexOf('@');
   if (indexStart === -1 || indexEnd === -1) {
+    if (indexStart === -1) {
+      inputData = '';
+    }
+
     return;
   }
+
+  lastComDataReceivedTime = Date.now();
 
   inputData = inputData.substring(indexStart, indexEnd + 1);
   Logger.info('SerialPort data received:', inputData);
