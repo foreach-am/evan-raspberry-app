@@ -32,7 +32,7 @@ module.exports = function (rebootReason, onSerialPortOpen) {
       // await Raspberry.restartHardware();
       await Raspberry.restartSoftware(RebootSoftwareReasonEnum.COMPORT_STUCK);
     } else {
-      if (++restartComportAttempts === 2) {
+      if (++restartComportAttempts === 4) {
         Logger.info('Calling hardware and software reset ...');
         ComPort.close();
 
