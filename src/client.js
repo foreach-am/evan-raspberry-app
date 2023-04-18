@@ -17,6 +17,7 @@ const {
   LastTime,
   ComState: ComStateManager,
   Reboot: RebootManager,
+  PowerValue,
 } = require('./libraries/OfflineManager');
 const bootstrap = require('./bootstrap');
 
@@ -308,6 +309,19 @@ const initialState = (() => {
 
 const initialComState = ComStateManager.get();
 
+function cleanUpOldMeterValueIfIsNotPowerRestart() {
+  if (initialComState[connectorId] === PlugStateEnum.CHARGING) {
+    for (const connectorId in state.state.plugs.transactionId) {
+      const lastTransactionId = state.state.plugs.transactionId[connectorId];
+      if (!lastTransactionId) {
+        continue;
+      }
+
+      PowerValue.putPowerValue(lastTransactionId, 0);
+    }
+  }
+}
+
 async function changeTransactionInCaseOfPowerReset(
   lastTimeSaved,
   waitForNetwork = 0
@@ -406,6 +420,7 @@ async function sendBootNotification() {
     await ping.BootNotification.execute(uuid());
   }
 
+  cleanUpOldMeterValueIfIsNotPowerRestart();
   registerLastTimeInterval();
 }
 
