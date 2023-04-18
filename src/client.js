@@ -1,3 +1,4 @@
+const os = require('os');
 const { DataParser, MessageTypeEnum } = require('./libraries/DataParser');
 const { Logger } = require('./libraries/Logger');
 const { WebSocket } = require('./libraries/WebSocket');
@@ -308,7 +309,6 @@ const initialState = (() => {
 })();
 
 const initialComState = ComStateManager.get();
-
 async function changeTransactionInCaseOfPowerReset(
   lastTimeSaved,
   waitForNetwork = 0
@@ -329,16 +329,6 @@ async function changeTransactionInCaseOfPowerReset(
 
     // don't close any transaction if previous action is less then 15 seconds.
     if (diff < 15 * 1000) {
-      // clear previously saved power value
-      for (const connectorId in state.state.plugs.transactionId) {
-        const lastTransactionId = state.state.plugs.transactionId[connectorId];
-        if (!lastTransactionId) {
-          continue;
-        }
-
-        PowerValue.putPowerValue(lastTransactionId, 0);
-      }
-
       return;
     }
   }
@@ -367,16 +357,11 @@ async function changeTransactionInCaseOfPowerReset(
           PlugStateEnum.CHARGING
         ) {
           await ComEmitter.plugReset(connectorId);
-        } else {
-          PowerValue.putPowerValue(lastTransactionId, 0);
         }
 
         setTimeout(async () => {
           await ComEmitter.proxire(connectorId);
         }, 1000);
-
-        if (diff <= 2 * 60 * 1000) {
-        }
 
         continue;
       }
@@ -396,6 +381,31 @@ async function changeTransactionInCaseOfPowerReset(
   }
 }
 
+function clearPowerValueOnSoftwareReboot() {
+  const osBootTimeElapsed = os.uptime();
+  Logger.info('OS boot time elapsed: ', osBootTimeElapsed);
+
+  for (const connectorId in state.state.plugs.transactionId) {
+    const lastTransactionId = state.state.plugs.transactionId[connectorId];
+    if (!lastTransactionId) {
+      continue;
+    }
+
+    if (
+      state.statistic.plugs.plugState[connectorId] !==
+      PlugStateEnum.CHARGING
+    ) {
+      continue;
+    }
+
+    // check is soft booted before 30seconds of OS boot.
+
+    if (osBootTimeElapsed > 30) {
+      PowerValue.putPowerValue(lastTransactionId, 0);
+    }
+  }
+}
+
 function registerLastTimeInterval() {
   LastTime.register(2);
 }
@@ -409,6 +419,7 @@ async function sendBootNotification() {
   }
 
   bootNotificationAlreadySent = true;
+  clearPowerValueOnSoftwareReboot();
 
   if (
     rebootReason !== RebootSoftwareReasonEnum.COMPORT_STUCK &&
@@ -417,13 +428,14 @@ async function sendBootNotification() {
     const lastTimeSaved = LastTime.getLastTime();
     await changeTransactionInCaseOfPowerReset(
       lastTimeSaved,
-      waitForNetwork * 1000
+      waitForNetwork * 1000,
     );
     await ping.BootNotification.execute(uuid());
   }
 
   registerLastTimeInterval();
 }
+
 
 let waitForNetwork = 0;
 let intervalNetwork = setInterval(function () {
