@@ -398,11 +398,12 @@ function clearPowerValueOnSoftwareReboot() {
       continue;
     }
 
-    // check is soft booted before 30seconds of OS boot.
-
-    if (osBootTimeElapsed > 30) {
-      PowerValue.putPowerValue(lastTransactionId, 0);
+    // check is OS booted 3 minutes ago.
+    if (osBootTimeElapsed < 180) {
+      continue;
     }
+
+    PowerValue.putPowerValue(lastTransactionId, 0);
   }
 }
 
