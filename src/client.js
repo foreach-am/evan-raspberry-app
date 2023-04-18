@@ -310,13 +310,13 @@ const initialState = (() => {
 const initialComState = ComStateManager.get();
 
 function cleanUpOldMeterValueIfIsNotPowerRestart() {
-  if (initialComState[connectorId] === PlugStateEnum.CHARGING) {
-    for (const connectorId in state.state.plugs.transactionId) {
-      const lastTransactionId = state.state.plugs.transactionId[connectorId];
-      if (!lastTransactionId) {
-        continue;
-      }
+  for (const connectorId in state.state.plugs.transactionId) {
+    const lastTransactionId = state.state.plugs.transactionId[connectorId];
+    if (!lastTransactionId) {
+      continue;
+    }
 
+    if (initialComState[connectorId] === PlugStateEnum.CHARGING) {
       PowerValue.putPowerValue(lastTransactionId, 0);
     }
   }
