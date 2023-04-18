@@ -316,7 +316,7 @@ function cleanUpOldMeterValueIfIsNotPowerRestart() {
       continue;
     }
 
-    if (initialComState[connectorId] === PlugStateEnum.CHARGING) {
+    if (initialComState[connectorId] !== PlugStateEnum.CHARGING) {
       PowerValue.putPowerValue(lastTransactionId, 0);
     }
   }
