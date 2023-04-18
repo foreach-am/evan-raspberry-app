@@ -309,19 +309,6 @@ const initialState = (() => {
 
 const initialComState = ComStateManager.get();
 
-function cleanUpOldMeterValueIfIsNotPowerRestart() {
-  for (const connectorId in state.state.plugs.transactionId) {
-    const lastTransactionId = state.state.plugs.transactionId[connectorId];
-    if (!lastTransactionId) {
-      continue;
-    }
-
-    if (initialComState[connectorId] !== PlugStateEnum.CHARGING) {
-      PowerValue.putPowerValue(lastTransactionId, 0);
-    }
-  }
-}
-
 async function changeTransactionInCaseOfPowerReset(
   lastTimeSaved,
   waitForNetwork = 0
@@ -342,6 +329,16 @@ async function changeTransactionInCaseOfPowerReset(
 
     // don't close any transaction if previous action is less then 15 seconds.
     if (diff < 15 * 1000) {
+      // clear previously saved power value
+      for (const connectorId in state.state.plugs.transactionId) {
+        const lastTransactionId = state.state.plugs.transactionId[connectorId];
+        if (!lastTransactionId) {
+          continue;
+        }
+
+        PowerValue.putPowerValue(lastTransactionId, 0);
+      }
+
       return;
     }
   }
@@ -370,13 +367,18 @@ async function changeTransactionInCaseOfPowerReset(
           PlugStateEnum.CHARGING
         ) {
           await ComEmitter.plugReset(connectorId);
+        } else {
+          PowerValue.putPowerValue(lastTransactionId, 0);
         }
 
         setTimeout(async () => {
           await ComEmitter.proxire(connectorId);
         }, 1000);
 
-        return;
+        if (diff <= 2 * 60 * 1000) {
+        }
+
+        continue;
       }
     }
 
@@ -420,7 +422,6 @@ async function sendBootNotification() {
     await ping.BootNotification.execute(uuid());
   }
 
-  cleanUpOldMeterValueIfIsNotPowerRestart();
   registerLastTimeInterval();
 }
 
