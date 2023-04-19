@@ -449,7 +449,7 @@ bootstrap.onComportOpen(rebootReason, async function () {
   ComPort.register(function () {
     setTimeout(function () {
       onComportDataReady();
-    }, 1_000);
+    }, 1_500);
 
     if (isAlreadyRegistered) {
       return;
