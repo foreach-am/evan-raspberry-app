@@ -425,9 +425,9 @@ async function sendBootNotification() {
       lastTimeSaved,
       waitForNetwork * 1000,
     );
-    await ping.BootNotification.execute(uuid());
   }
 
+  await ping.BootNotification.execute(uuid());
   registerLastTimeInterval();
 }
 
