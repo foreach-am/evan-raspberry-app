@@ -456,7 +456,7 @@ bootstrap.onComportOpen(rebootReason, async function () {
     ComPort.register(function () {
       setTimeout(function () {
         onComportDataReady();
-      }, 1_500);
+      }, 1_000);
     });
 
     setTimeout(function () {
@@ -467,6 +467,6 @@ bootstrap.onComportOpen(rebootReason, async function () {
       });
 
       WebSocket.startServer();
-    }, 3_000);
+    }, 2_000);
   }, 1_000);
 });
