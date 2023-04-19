@@ -405,14 +405,7 @@ function registerLastTimeInterval() {
 }
 
 const rebootReason = RebootManager.getReason();
-let bootNotificationAlreadySent = false;
-
 async function sendBootNotification() {
-  if (bootNotificationAlreadySent) {
-    return;
-  }
-
-  bootNotificationAlreadySent = true;
   clearPowerValueOnSoftwareReboot();
 
   if (
