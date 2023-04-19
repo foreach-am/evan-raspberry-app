@@ -452,18 +452,15 @@ bootstrap.onComportOpen(rebootReason, async function () {
       setTimeout(function () {
         onComportDataReady();
       }, 1_500);
+    });
 
-      if (isAlreadyRegisteredCycle) {
-        return;
-      }
-      isAlreadyRegisteredCycle = true;
-
+    setTimeout(function () {
       bootstrap.registerWebsocketEvents({
         onConnect: onWsConnect,
         onMessage: onWsMessage,
       });
 
       WebSocket.startServer();
-    });
+    }, 3_000);
   }, 2_000);
 });
