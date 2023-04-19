@@ -444,11 +444,16 @@ async function onWsConnect() {
   sendBootNotification();
 }
 
+let isAlreadyRegistered = false;
 bootstrap.onComportOpen(rebootReason, async function () {
   ComPort.register(function () {
     setTimeout(function () {
       onComportDataReady();
-    }, 1_500);
+    }, 1_000);
+
+    if (isAlreadyRegistered) {
+      return;
+    }
 
     bootstrap.registerWebsocketEvents({
       onConnect: onWsConnect,
@@ -456,6 +461,6 @@ bootstrap.onComportOpen(rebootReason, async function () {
     });
 
     WebSocket.startServer();
-
+    isAlreadyRegistered = true;
   });
 });
