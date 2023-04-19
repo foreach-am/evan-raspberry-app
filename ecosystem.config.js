@@ -13,7 +13,8 @@ function buildApp(configs) {
   return {
     exec_mode: 'cluster',
     cwd: __dirname,
-    log_date_format: 'YYYY.MM.DD HH:mm Z',
+    // log_date_format: 'YYYY.MM.DD HH:mm:ss Z',
+    log_date_format: 'HH:mm:ss Z',
     error_file: getFilePath('error', configs.name),
     out_file: getFilePath('out', configs.name),
     env: {
