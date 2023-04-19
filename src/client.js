@@ -406,6 +406,9 @@ function registerLastTimeInterval() {
 
 const rebootReason = RebootManager.getReason();
 async function sendBootNotification() {
+  Logger.info('---------------------------------------------------------');
+  Logger.info('-- Registering boot notification, please wait ...   --');
+  Logger.info('---------------------------------------------------------');
   clearPowerValueOnSoftwareReboot();
 
   if (
