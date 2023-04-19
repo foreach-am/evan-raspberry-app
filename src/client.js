@@ -442,7 +442,6 @@ async function onWsConnect() {
   sendBootNotification();
 }
 
-let isAlreadyRegisteredCycle = false;
 let timer = null;
 
 bootstrap.onComportOpen(rebootReason, async function () {
@@ -462,5 +461,5 @@ bootstrap.onComportOpen(rebootReason, async function () {
 
       WebSocket.startServer();
     }, 3_000);
-  }, 2_000);
+  }, 1_000);
 });
