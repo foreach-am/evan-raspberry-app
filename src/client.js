@@ -386,8 +386,7 @@ function clearPowerValueOnSoftwareReboot() {
     }
 
     if (
-      state.statistic.plugs.plugState[connectorId] !==
-      PlugStateEnum.CHARGING
+      state.statistic.plugs.plugState[connectorId] !== PlugStateEnum.CHARGING
     ) {
       continue;
     }
@@ -423,14 +422,13 @@ async function sendBootNotification() {
     const lastTimeSaved = LastTime.getLastTime();
     await changeTransactionInCaseOfPowerReset(
       lastTimeSaved,
-      waitForNetwork * 1000,
+      waitForNetwork * 1000
     );
   }
 
   await ping.BootNotification.execute(uuid());
   registerLastTimeInterval();
 }
-
 
 let waitForNetwork = 0;
 let intervalNetwork = setInterval(function () {
@@ -444,29 +442,28 @@ async function onWsConnect() {
   sendBootNotification();
 }
 
-// let isAlreadyRegisteredComport = false;
 let isAlreadyRegisteredCycle = false;
+let timer = null;
+
 bootstrap.onComportOpen(rebootReason, async function () {
-  // if (isAlreadyRegisteredComport) {
-  //   return;
-  // }
-  // isAlreadyRegisteredComport = true;
+  clearTimeout(timer);
+  timer = setTimeout(function () {
+    ComPort.register(function () {
+      setTimeout(function () {
+        onComportDataReady();
+      }, 1_500);
 
-  ComPort.register(function () {
-    setTimeout(function () {
-      onComportDataReady();
-    }, 1_500);
+      if (isAlreadyRegisteredCycle) {
+        return;
+      }
+      isAlreadyRegisteredCycle = true;
 
-    if (isAlreadyRegisteredCycle) {
-      return;
-    }
-    isAlreadyRegisteredCycle = true;
+      bootstrap.registerWebsocketEvents({
+        onConnect: onWsConnect,
+        onMessage: onWsMessage,
+      });
 
-    bootstrap.registerWebsocketEvents({
-      onConnect: onWsConnect,
-      onMessage: onWsMessage,
+      WebSocket.startServer();
     });
-
-    WebSocket.startServer();
-  });
+  }, 2_000);
 });
