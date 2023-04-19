@@ -293,12 +293,6 @@ async function onWsMessage(message) {
   }
 }
 
-ComPort.register(function () {
-  setTimeout(function () {
-    onComportDataReady();
-  }, 1_500);
-});
-
 const initialState = (() => {
   try {
     state.loadSavedState();
@@ -391,6 +385,13 @@ function clearPowerValueOnSoftwareReboot() {
       continue;
     }
 
+    if (
+      state.statistic.plugs.plugState[connectorId] !==
+      PlugStateEnum.CHARGING
+    ) {
+      continue;
+    }
+
     // check is OS booted 3 minutes ago.
     if (osBootTimeElapsed < 180) {
       continue;
@@ -444,10 +445,17 @@ async function onWsConnect() {
 }
 
 bootstrap.onComportOpen(rebootReason, async function () {
-  bootstrap.registerWebsocketEvents({
-    onConnect: onWsConnect,
-    onMessage: onWsMessage,
-  });
+  ComPort.register(function () {
+    setTimeout(function () {
+      onComportDataReady();
+    }, 1_500);
 
-  WebSocket.startServer();
+    bootstrap.registerWebsocketEvents({
+      onConnect: onWsConnect,
+      onMessage: onWsMessage,
+    });
+
+    WebSocket.startServer();
+
+  });
 });
