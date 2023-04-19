@@ -444,13 +444,13 @@ async function onWsConnect() {
   sendBootNotification();
 }
 
-let isAlreadyRegisteredComport = false;
+// let isAlreadyRegisteredComport = false;
 let isAlreadyRegisteredCycle = false;
 bootstrap.onComportOpen(rebootReason, async function () {
-  if (isAlreadyRegisteredComport) {
-    return;
-  }
-  isAlreadyRegisteredComport = true;
+  // if (isAlreadyRegisteredComport) {
+  //   return;
+  // }
+  // isAlreadyRegisteredComport = true;
 
   ComPort.register(function () {
     setTimeout(function () {
