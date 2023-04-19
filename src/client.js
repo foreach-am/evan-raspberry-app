@@ -383,7 +383,9 @@ async function changeTransactionInCaseOfPowerReset(
 
 function clearPowerValueOnSoftwareReboot() {
   const osBootTimeElapsed = os.uptime();
+
   Logger.info('OS boot time elapsed: ', osBootTimeElapsed);
+  Logger.info('Plu states: ', state.statistic.plugs.plugState);
 
   for (const connectorId in state.state.plugs.transactionId) {
     const lastTransactionId = state.state.plugs.transactionId[connectorId];
