@@ -405,10 +405,18 @@ function registerLastTimeInterval() {
 }
 
 const rebootReason = RebootManager.getReason();
+let bootNotificationAlreadySent = false;
+
 async function sendBootNotification() {
+  if (bootNotificationAlreadySent) {
+    return;
+  }
+
   Logger.info('---------------------------------------------------------');
-  Logger.info('-- Registering boot notification, please wait ...   --');
+  Logger.info('-- Registering boot notification, please wait ...      --');
   Logger.info('---------------------------------------------------------');
+
+  bootNotificationAlreadySent = true;
   clearPowerValueOnSoftwareReboot();
 
   if (
@@ -435,6 +443,7 @@ async function onWsConnect() {
   waitForNetwork = 0;
   clearInterval(intervalNetwork);
 
+  Logger.info('WebSocket connection established.');
   sendBootNotification();
 }
 
@@ -443,6 +452,7 @@ let timer = null;
 bootstrap.onComportOpen(rebootReason, async function () {
   clearTimeout(timer);
   timer = setTimeout(function () {
+    Logger.info('ComPort event listener registered.');
     ComPort.register(function () {
       setTimeout(function () {
         onComportDataReady();
@@ -450,6 +460,7 @@ bootstrap.onComportOpen(rebootReason, async function () {
     });
 
     setTimeout(function () {
+      Logger.info('WebSocket onConnect event listener registered.');
       bootstrap.registerWebsocketEvents({
         onConnect: onWsConnect,
         onMessage: onWsMessage,
