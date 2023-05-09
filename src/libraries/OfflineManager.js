@@ -148,17 +148,15 @@ function getLastTimeSaved() {
     }
   }
 
-  console.log('>>>>>> LastTime:', lastTimeSaved);
   return lastTimeSaved || null;
 }
 
 function putRebootReason(reason) {
   const filePath = getFilePath('reboot-reason.data');
   try {
-    fs.writeFileSync(filePath, reason, 'utf-8');
+    fs.writeFileSync(filePath, reason?.toString(), 'utf-8');
   } catch (e) {
-    // retry writing
-    fs.writeFileSync(filePath, reason, 'utf-8');
+    Logger.error('Saving restart reason failed:', e);
   }
 }
 

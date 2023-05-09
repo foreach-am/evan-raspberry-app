@@ -1,3 +1,4 @@
+const os = require('os');
 const { DataParser, MessageTypeEnum } = require('./libraries/DataParser');
 const { Logger } = require('./libraries/Logger');
 const { WebSocket } = require('./libraries/WebSocket');
@@ -17,6 +18,7 @@ const {
   LastTime,
   ComState: ComStateManager,
   Reboot: RebootManager,
+  PowerValue,
 } = require('./libraries/OfflineManager');
 const bootstrap = require('./bootstrap');
 
@@ -291,12 +293,6 @@ async function onWsMessage(message) {
   }
 }
 
-ComPort.register(function () {
-  setTimeout(function () {
-    onComportDataReady();
-  }, 1_500);
-});
-
 const initialState = (() => {
   try {
     state.loadSavedState();
@@ -307,7 +303,6 @@ const initialState = (() => {
 })();
 
 const initialComState = ComStateManager.get();
-
 async function changeTransactionInCaseOfPowerReset(
   lastTimeSaved,
   waitForNetwork = 0
@@ -351,12 +346,18 @@ async function changeTransactionInCaseOfPowerReset(
       const diff = now - last;
 
       if (diff <= 15 * 60 * 1000) {
-        await ComEmitter.plugReset(connectorId);
+        if (
+          state.statistic.plugs.plugState[connectorId] !==
+          PlugStateEnum.CHARGING
+        ) {
+          await ComEmitter.plugReset(connectorId);
+        }
+
         setTimeout(async () => {
           await ComEmitter.proxire(connectorId);
         }, 1000);
 
-        return;
+        continue;
       }
     }
 
@@ -374,6 +375,31 @@ async function changeTransactionInCaseOfPowerReset(
   }
 }
 
+function clearPowerValueOnSoftwareReboot() {
+  const osBootTimeElapsed = os.uptime();
+  Logger.info('OS boot time elapsed: ', osBootTimeElapsed);
+
+  for (const connectorId in state.state.plugs.transactionId) {
+    const lastTransactionId = state.state.plugs.transactionId[connectorId];
+    if (!lastTransactionId) {
+      continue;
+    }
+
+    if (
+      state.statistic.plugs.plugState[connectorId] !== PlugStateEnum.CHARGING
+    ) {
+      continue;
+    }
+
+    // check is OS booted 3 minutes ago.
+    if (osBootTimeElapsed < 180) {
+      continue;
+    }
+
+    PowerValue.putPowerValue(lastTransactionId, 0);
+  }
+}
+
 function registerLastTimeInterval() {
   LastTime.register(2);
 }
@@ -386,7 +412,12 @@ async function sendBootNotification() {
     return;
   }
 
+  Logger.info('---------------------------------------------------------');
+  Logger.info('-- Registering boot notification, please wait ...      --');
+  Logger.info('---------------------------------------------------------');
+
   bootNotificationAlreadySent = true;
+  clearPowerValueOnSoftwareReboot();
 
   if (
     rebootReason !== RebootSoftwareReasonEnum.COMPORT_STUCK &&
@@ -397,9 +428,9 @@ async function sendBootNotification() {
       lastTimeSaved,
       waitForNetwork * 1000
     );
-    await ping.BootNotification.execute(uuid());
   }
 
+  await ping.BootNotification.execute(uuid());
   registerLastTimeInterval();
 }
 
@@ -412,14 +443,30 @@ async function onWsConnect() {
   waitForNetwork = 0;
   clearInterval(intervalNetwork);
 
+  Logger.info('WebSocket connection established.');
   sendBootNotification();
 }
 
-bootstrap.onComportOpen(rebootReason, async function () {
-  bootstrap.registerWebsocketEvents({
-    onConnect: onWsConnect,
-    onMessage: onWsMessage,
-  });
+let timer = null;
 
-  WebSocket.startServer();
+bootstrap.onComportOpen(rebootReason, async function () {
+  clearTimeout(timer);
+  timer = setTimeout(function () {
+    Logger.info('ComPort event listener registered.');
+    ComPort.register(function () {
+      setTimeout(function () {
+        onComportDataReady();
+      }, 1_000);
+    });
+
+    setTimeout(function () {
+      Logger.info('WebSocket onConnect event listener registered.');
+      bootstrap.registerWebsocketEvents({
+        onConnect: onWsConnect,
+        onMessage: onWsMessage,
+      });
+
+      WebSocket.startServer();
+    }, 2_000);
+  }, 1_000);
 });

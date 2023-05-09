@@ -246,6 +246,10 @@ setInterval(() => {
 }, 60_000);
 
 function onConnect(callback) {
+  if (client?.readyState === client.OPEN) {
+    callback(client);
+  }
+
   clientEvents.connection['open'] = clientEvents.connection['open'] || [];
   clientEvents.connection['open'].push(callback);
 

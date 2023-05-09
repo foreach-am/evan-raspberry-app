@@ -7,7 +7,7 @@ function startClientApplication() {
   require('./src/lighting');
 }
 
-let intervalSteps = 5;
+let intervalSteps = 3;
 function printTimerEmpty() {
   console.clear();
   console.log();
