@@ -2,6 +2,7 @@ const { ComEmitter } = require('../../libraries/ComEmitter');
 
 const state = require('../../state');
 const ping = require('../../ping');
+const sleep = require('../../utils/sleep');
 
 module.exports = async function (parsedServerData) {
   // when idTag is invalid
@@ -58,5 +59,6 @@ module.exports = async function (parsedServerData) {
     ping.RemoteStartTransaction.StatusEnum.ACCEPTED
   );
 
+  await sleep(200);
   ComEmitter.proxire(parsedServerData.body.connectorId);
 };
