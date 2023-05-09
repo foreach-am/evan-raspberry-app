@@ -35,6 +35,7 @@ module.exports = async function (parsedServerData) {
 
   state.state.plugs.idTags[parsedServerData.body.connectorId] =
     parsedServerData.body.idTag || 'UNKNOWN';
+  state.saveState();
 
   if (
     parsedServerData.body.chargingProfile &&
