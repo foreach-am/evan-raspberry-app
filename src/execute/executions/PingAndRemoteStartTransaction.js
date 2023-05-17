@@ -52,7 +52,10 @@ module.exports = async function (parsedServerData) {
     console.log();
     console.log('>>>> PingAndRemoteStartTransaction.js (1)');
     console.log('>>>> Last transaction ID');
-    console.log('>>>> ' + state.state.plugs.transactionId[connectorId]);
+    console.log(
+      '>>>> ' +
+        state.state.plugs.transactionId[parsedServerData.body.connectorId]
+    );
     console.log();
     console.log();
     console.log();
@@ -70,7 +73,10 @@ module.exports = async function (parsedServerData) {
     console.log();
     console.log('>>>> PingAndRemoteStartTransaction.js (2)');
     console.log('>>>> Last transaction ID');
-    console.log('>>>> ' + state.state.plugs.transactionId[connectorId]);
+    console.log(
+      '>>>> ' +
+        state.state.plugs.transactionId[parsedServerData.body.connectorId]
+    );
     console.log();
     console.log();
     console.log();
