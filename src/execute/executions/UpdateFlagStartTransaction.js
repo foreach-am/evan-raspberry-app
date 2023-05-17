@@ -18,7 +18,7 @@ module.exports = async function (parsedServerData, connectorId) {
   console.log('>>>> UpdateFlagStartTransaction.js');
   console.log('>>>> Last transaction ID');
   console.log('>>>> ' + state.state.plugs.transactionId[connectorId]);
-  console.log();
+  console.log(parsedServerData);
   console.log();
   console.log();
   console.log();
