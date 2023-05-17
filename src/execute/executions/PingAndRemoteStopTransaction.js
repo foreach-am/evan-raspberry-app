@@ -17,7 +17,8 @@ module.exports = async function (parsedServerData) {
 
   if (!stopConnectorId) {
     Logger.warning(
-      `There is no any transaction fund with server provided ID: ${parsedServerData.body.transactionId}`
+      `There is no any transaction found with server provided ID` +
+        `: ${parsedServerData.body.transactionId}`
     );
     return;
   }

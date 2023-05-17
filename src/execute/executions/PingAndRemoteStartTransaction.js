@@ -45,12 +45,36 @@ module.exports = async function (parsedServerData) {
     state.state.plugs.transactionId[parsedServerData.body.connectorId] =
       parsedServerData.body.chargingProfile.transactionId;
     state.saveState();
+
+    console.log();
+    console.log();
+    console.log();
+    console.log();
+    console.log('>>>> PingAndRemoteStartTransaction.js (1)');
+    console.log('>>>> Last transaction ID');
+    console.log('>>>> ' + state.state.plugs.transactionId[connectorId]);
+    console.log();
+    console.log();
+    console.log();
+    console.log();
   }
 
   if (parsedServerData.body.transactionId) {
     state.state.plugs.transactionId[parsedServerData.body.connectorId] =
       parsedServerData.body.transactionId;
     state.saveState();
+
+    console.log();
+    console.log();
+    console.log();
+    console.log();
+    console.log('>>>> PingAndRemoteStartTransaction.js (2)');
+    console.log('>>>> Last transaction ID');
+    console.log('>>>> ' + state.state.plugs.transactionId[connectorId]);
+    console.log();
+    console.log();
+    console.log();
+    console.log();
   }
 
   await ping.RemoteStartTransaction.execute(
