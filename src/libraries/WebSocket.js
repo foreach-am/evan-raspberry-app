@@ -303,11 +303,18 @@ function register(eventName, callback) {
   }
 }
 
+let isAlreadyStarted = false;
 function startServer() {
   Logger.info('---------------------------------------------------------');
   Logger.info('-- Starting charging station server, please wait ...   --');
   Logger.info('---------------------------------------------------------');
-  // connectWithUri(false);
+
+  if (!isAlreadyStarted) {
+    isAlreadyStarted = true;
+    return;
+  }
+
+  connectWithUri(true);
 }
 
 function send({ sendType, commandId, messageId, commandArgs }) {
