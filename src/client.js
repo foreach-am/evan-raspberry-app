@@ -447,11 +447,18 @@ async function onWsConnect() {
   sendBootNotification();
 }
 
-let timer = null;
+let timerComportOpen = null;
 
+let isComportOpenAlreadyTriggered = false;
 bootstrap.onComportOpen(rebootReason, async function () {
-  clearTimeout(timer);
-  timer = setTimeout(function () {
+  if (isComportOpenAlreadyTriggered) {
+    return;
+  }
+
+  clearTimeout(timerComportOpen);
+  timerComportOpen = setTimeout(function () {
+    isComportOpenAlreadyTriggered = true;
+
     Logger.info('ComPort event listener registered.');
     ComPort.register(function () {
       setTimeout(function () {

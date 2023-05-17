@@ -21,9 +21,9 @@ function parseIncomingMessage(request, response) {
         {
           requested: `${request.method}: ${request.protocol}//${request.host}${request.path}`,
           received: {
-          body: bodyChunks.join(''),
-          headers: response.headers,
-          }
+            body: bodyChunks.join(''),
+            headers: response.headers,
+          },
         }
       );
     });
@@ -57,6 +57,19 @@ const reconnectionDelays = {
 
 let reconnectionAttempts = 0;
 
+function buildConnectionUrl() {
+  let connectionUrl = process.env.WEBSOCKET_URL;
+  if (connectionUrl) {
+    if (connectionUrl.includes('?')) {
+      connectionUrl += '&timestamp=' + Date.now();
+    } else {
+      connectionUrl += '?timestamp=' + Date.now();
+    }
+  }
+
+  return connectionUrl;
+}
+
 async function connectWithUri(triggerPreviousEvents) {
   const internetConnected = await Networking.isConnected();
   if (!internetConnected) {
@@ -67,11 +80,12 @@ async function connectWithUri(triggerPreviousEvents) {
   if (client) {
     Logger.info('Removing all listeners on WebSocket ...');
     client.removeAllListeners();
-    // client.close();
+    client.close();
+    client = null;
   }
 
   Logger.info('Trying to connect to WebSocket server ...');
-  client = new WebSocketClient(process.env.WEBSOCKET_URL, ['ocpp1.6']);
+  client = new WebSocketClient(buildConnectionUrl(), ['ocpp1.6']);
 
   client.on('error', function (error) {
     Logger.error('[WS.Error] Could not connect to server:', error);
