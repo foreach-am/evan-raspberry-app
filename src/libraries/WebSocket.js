@@ -85,7 +85,9 @@ async function connectWithUri(triggerPreviousEvents) {
       /* ... */
     }
     try {
-      client.close();
+      if (client.readyState === client.OPEN) {
+        client.close();
+      }
     } catch (e) {
       /* ... */
     }
