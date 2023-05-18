@@ -79,8 +79,16 @@ async function connectWithUri(triggerPreviousEvents) {
 
   if (client) {
     Logger.info('Removing all listeners on WebSocket ...');
-    client.removeAllListeners();
-    client.close();
+    try {
+      client.removeAllListeners();
+    } catch (e) {
+      /* ... */
+    }
+    try {
+      client.close();
+    } catch (e) {
+      /* ... */
+    }
     client = null;
   }
 
