@@ -153,8 +153,8 @@ function parseInputData(text) {
 
 function emitMessage(message) {
   return new Promise(function (resolve, reject) {
-    const prefix = `SerialPort message [${uuid()}]`;
-    Logger.info(`${prefix} - emitting:`, message);
+    const prefix = `SerialPort message [message -> ${uuid()}]`;
+    Logger.info(`${prefix} - emitting`);
 
     serialPort.write(message, function (error, ...result) {
       if (error) {
@@ -162,7 +162,7 @@ function emitMessage(message) {
         return reject(error);
       }
 
-      Logger.info(`${prefix} - success:`, result);
+      Logger.info(`${prefix} - success`);
       return resolve(...result);
     });
   });
