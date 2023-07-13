@@ -1,6 +1,7 @@
 const { SerialPort } = require('serialport');
 const { Logger } = require('./Logger');
 const state = require('../state');
+const uuid = require('../utils/uuid');
 
 const serialPort = new SerialPort({
   baudRate: 9_600,
@@ -152,13 +153,16 @@ function parseInputData(text) {
 
 function emitMessage(message) {
   return new Promise(function (resolve, reject) {
-    Logger.info('Emitting SerialPort message:', message);
+    const prefix = `SerialPort message [${uuid()}]`;
+    Logger.info(`${prefix} - emitting:`, message);
 
     serialPort.write(message, function (error, ...result) {
       if (error) {
+        Logger.info(`${prefix} - error:`, error);
         return reject(error);
       }
 
+      Logger.info(`${prefix} - success:`, result);
       return resolve(...result);
     });
   });

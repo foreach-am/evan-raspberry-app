@@ -50,6 +50,9 @@ const serverCommandList = [
 const offlineCacheableCommandList = [
   EventCommandNameEnum[EventCommandEnum.EVENT_METER_VALUES],
   EventCommandNameEnum[EventCommandEnum.EVENT_STATUS_NOTIFICATION],
+  EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_START_TRANSACTION],
+  EventCommandNameEnum[EventCommandEnum.EVENT_START_TRANSACTION],
+  EventCommandNameEnum[EventCommandEnum.EVENT_REMOTE_STOP_TRANSACTION],
   EventCommandNameEnum[EventCommandEnum.EVENT_STOP_TRANSACTION],
 ];
 
