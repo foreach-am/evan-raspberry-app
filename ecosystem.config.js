@@ -3,7 +3,7 @@ const path = require('path');
 const disableLoggingFor = ['out', 'error'];
 function getFilePath(type, name) {
   if (disableLoggingFor.includes(type)) {
-    // return '/dev/null';
+    return '/dev/null';
   }
 
   return path.join(__dirname, '.logs', `${name}-${type}.log`);
