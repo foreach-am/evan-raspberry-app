@@ -21,17 +21,18 @@ if [[ "$(command -v ifconfig)" == "" ]]; then
 fi
 
 if [[ "$(command -v macchanger)" == "" ]]; then
-  echo ">>>>>>>>> Downloading macchanger source..."
-  cd /tmp
-  sudo mkdir macchanger
-  sudo chmod 777 macchanger
-  cd macchanger
-  wget http://ftp.debian.org/debian/pool/main/m/macchanger/macchanger_1.7.0-5.4_armhf.deb
+  # echo ">>>>>>>>> Downloading macchanger source..."
+  # cd /tmp
+  # sudo mkdir macchanger
+  # sudo chmod 777 macchanger
+  # cd macchanger
+  # wget http://ftp.debian.org/debian/pool/main/m/macchanger/macchanger_1.7.0-5.4_armhf.deb
 
   echo ">>>>>>>>> Installing macchanger ..."
-  sudo dpkg --install macchanger_1.7.0-5.4_armhf.deb
-  rm macchanger_1.7.0-5.4_armhf.deb
-  cd "$ROOT_DIR"
+  sudo apt install -y macchanger
+  # sudo dpkg --install macchanger_1.7.0-5.4_armhf.deb
+  # rm macchanger_1.7.0-5.4_armhf.deb
+  # cd "$ROOT_DIR"
 fi
 
 ## ----------------------------------------------------------------------------------
