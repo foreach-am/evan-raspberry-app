@@ -26,14 +26,7 @@ async function connect() {
     };
 
     const url = await ngrok.connect(config);
-    fs.writeFileSync(
-      logFile,
-      `Station SSH tunnel URL generated: ${url}`,
-      'utf-8'
-    );
-
     await sendTunnelUrl(url);
-    fs.writeFileSync(logFile, 'Station SSH tunnel URL updated.', 'utf-8');
   } catch (e) {
     console.error();
     console.error(
@@ -41,12 +34,6 @@ async function connect() {
       e
     );
     console.error();
-
-    fs.writeFileSync(
-      logFile,
-      `Failed to generate/update station tunnel URL: ${e}`,
-      'utf-8'
-    );
 
     setTimeout(function () {
       connect();
