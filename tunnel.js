@@ -1,7 +1,10 @@
-const childProcess = require('child_process');
+const path = require('path');
+const fs = require('fs');
 const ngrok = require('ngrok');
 const axios = require('axios');
 require('./configure');
+
+const logFile = path.join(__dirname, 'tunnel.log');
 
 async function sendTunnelUrl(url) {
   const response = await axios.put(process.env.TUNNEL_UPDATE_URL, {
@@ -13,23 +16,7 @@ async function sendTunnelUrl(url) {
   }
 }
 
-function restart() {
-  const options = {
-    cwd: global.ROOT_DIR,
-  };
-
-  console.log('[TUNNEL] >>> Restarting SSH tunnel.');
-  childProcess.exec('npm run restart:runnel', options, function (error) {
-    if (error) {
-      console.error('[TUNNEL] >>> Failed to restart tunnel app:', error);
-      throw new Error('Failed to restart tunnel app.');
-    }
-
-    console.log('[TUNNEL] >>> Restart of SSH tunnel successfully completed.');
-  });
-}
-
-(async function () {
+async function connect() {
   try {
     const config = {
       authtoken: process.env.NGROK_AUTH_TOKEN,
@@ -39,10 +26,14 @@ function restart() {
     };
 
     const url = await ngrok.connect(config);
-    console.log('[TUNNEL] >>> Station SSH tunnel URL generated.');
+    fs.writeFileSync(
+      logFile,
+      `Station SSH tunnel URL generated: ${url}`,
+      'utf-8'
+    );
 
     await sendTunnelUrl(url);
-    console.log('[TUNNEL] >>> Station SSH tunnel URL updated.');
+    fs.writeFileSync(logFile, 'Station SSH tunnel URL updated.', 'utf-8');
   } catch (e) {
     console.error();
     console.error(
@@ -51,8 +42,19 @@ function restart() {
     );
     console.error();
 
+    fs.writeFileSync(
+      logFile,
+      `Failed to generate/update station tunnel URL: ${e}`,
+      'utf-8'
+    );
+
     setTimeout(function () {
-      restart();
+      connect();
     }, 5_000);
   }
+}
+
+(async function () {
+  fs.rmSync(logFile);
+  await connect();
 })();

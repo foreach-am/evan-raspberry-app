@@ -12,7 +12,9 @@ fi
 
 source "$(dirname "$0")/../includes.sh"
 
-# ## ----------------------------------------------------------------------------------
-# ## pull latest
-# git reset --hard
-# git pull
+## ----------------------------------------------------------------------------------
+## pull latest
+git reset --hard &&\
+  git pull &&\
+  pm2 restart all
+exit $?
