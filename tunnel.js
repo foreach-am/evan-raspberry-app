@@ -1,10 +1,6 @@
-const path = require('path');
-const fs = require('fs');
 const ngrok = require('ngrok');
 const axios = require('axios');
 require('./configure');
-
-const logFile = path.join(__dirname, 'tunnel.log');
 
 async function sendTunnelUrl(url) {
   const response = await axios.put(process.env.TUNNEL_UPDATE_URL, {
@@ -42,6 +38,5 @@ async function connect() {
 }
 
 (async function () {
-  fs.rmSync(logFile);
   await connect();
 })();
