@@ -110,43 +110,35 @@ function parseInputData(text) {
     .forEach(function (part) {
       const { index, name, value } = getSegmentValue(part);
 
-      switch (name) {
-        // plugs
-        case 'PI':
-          state.statistic.plugs.pilotFeedBack[index] = Number(value);
-          break;
-        case 'PL':
-          state.statistic.plugs.plugState[index] = Number(value);
-          break;
-        case 'PW':
-          state.statistic.plugs.powerKwh[index] = Number(value);
-          break;
-        case 'CA':
-          state.statistic.plugs.currentMeasureA[index] = Number(value);
-          break;
-        case 'CB':
-          state.statistic.plugs.currentMeasureB[index] = Number(value);
-          break;
-        case 'CC':
-          state.statistic.plugs.currentMeasureC[index] = Number(value);
-          break;
-        case 'OCE':
-          state.statistic.plugs.overCurrentError[index] = Number(value);
-          break;
+      const setters = {
+        plug: {
+          PI: { field: 'pilotFeedBack', isNumeric: true },
+          PL: { field: 'plugState', isNumeric: true },
+          PW: { field: 'powerKwh', isNumeric: true },
+          CA: { field: 'currentMeasureA', isNumeric: true },
+          CB: { field: 'currentMeasureB', isNumeric: true },
+          CC: { field: 'currentMeasureC', isNumeric: true },
+          OCE: { field: 'overCurrentError', isNumeric: true },
+          BL: { field: 'batteryLevel', isNumeric: true },
+        },
+        common: {
+          HV: { field: 'highVoltageMeasure', isNumeric: true },
+          HVE: { field: 'highVoltError', isNumeric: true },
+          LV: { field: 'lowVoltError', isNumeric: true },
+          T: { field: 'temperature', isNumeric: true },
+        },
+      };
 
-        // common
-        case 'HV':
-          state.statistic.common.highVoltageMeasure = Number(value);
-          break;
-        case 'HVE':
-          state.statistic.common.highVoltError = Number(value);
-          break;
-        case 'LV':
-          state.statistic.common.lowVoltError = Number(value);
-          break;
-        case 'T':
-          state.statistic.common.temperature = Number(value);
-          break;
+      if (Object.keys(setters.plug).includes(name)) {
+        const { field, isNumeric } = setters.plug[name];
+        const parsedValue = isNumeric ? Number(value) : value;
+
+        state.statistic.plugs[field][index] = parsedValue;
+      } else if (Object.keys(setters.plug).includes(name)) {
+        const { field, isNumeric } = setters.common[name];
+        const parsedValue = isNumeric ? Number(value) : value;
+
+        state.statistic.common[field] = parsedValue;
       }
     });
 }

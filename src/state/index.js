@@ -55,6 +55,7 @@ const state = {
       currentMeasureA: {},
       currentMeasureB: {},
       currentMeasureC: {},
+      batteryLevel: {},
     },
   },
 };
