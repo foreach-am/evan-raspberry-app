@@ -103,7 +103,11 @@ async function connectWithUri(triggerPreviousEvents) {
 
   Logger.info('Trying to connect to WebSocket server ...');
 
-  client = new WebSocketClient(buildConnectionUrl(), ['ocpp1.6']);
+  client = new WebSocketClient(buildConnectionUrl(), ['ocpp1.6'], {
+    followRedirects: true,
+    maxRedirects: 5,
+  });
+
   try {
     Logger.info('Listeners to remove before start:', client.listeners().length);
     client.removeAllListeners();
