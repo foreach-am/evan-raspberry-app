@@ -188,6 +188,7 @@ async function connectWithUri(triggerPreviousEvents) {
       clientEvents.connection[eventName].forEach(function (listener) {
         client.on(eventName, listener);
       });
+      clientEvents.connection[eventName] = [];
     });
   }
 }
