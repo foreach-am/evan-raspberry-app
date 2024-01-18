@@ -82,14 +82,16 @@ async function connectWithUri(triggerPreviousEvents) {
     try {
       client.removeAllListeners();
     } catch (e) {
-      /* ... */
+      Logger.error('Failed to removing listeners on WebSocket:', e);
     }
     try {
       if (client.readyState === client.OPEN) {
         client.close();
+      } else {
+        Logger.warning('WebSocket client is not in open state.');
       }
     } catch (e) {
-      /* ... */
+      Logger.error('Failed to close WebSocket before start:', e);
     }
     client = null;
   }
