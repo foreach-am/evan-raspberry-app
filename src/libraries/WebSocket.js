@@ -97,7 +97,13 @@ async function connectWithUri(triggerPreviousEvents) {
   }
 
   Logger.info('Trying to connect to WebSocket server ...');
+
   client = new WebSocketClient(buildConnectionUrl(), ['ocpp1.6']);
+  try {
+    client.removeAllListeners();
+  } catch (e) {
+    // ...
+  }
 
   client.on('error', function (error) {
     Logger.error('[WS.Error] Could not connect to server:', error);
