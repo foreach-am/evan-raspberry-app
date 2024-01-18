@@ -80,6 +80,11 @@ async function connectWithUri(triggerPreviousEvents) {
   if (client) {
     Logger.info('Removing all listeners on WebSocket ...');
     try {
+      Logger.info(
+        'Total registered listeners to remove:',
+        client.listeners().length
+      );
+
       client.removeAllListeners();
     } catch (e) {
       Logger.error('Failed to removing listeners on WebSocket:', e);
@@ -100,9 +105,10 @@ async function connectWithUri(triggerPreviousEvents) {
 
   client = new WebSocketClient(buildConnectionUrl(), ['ocpp1.6']);
   try {
+    Logger.info('Listeners to remove before start:', client.listeners().length);
     client.removeAllListeners();
   } catch (e) {
-    // ...
+    Logger.error('Failed to removing listeners before start:', e);
   }
 
   client.on('error', function (error) {
