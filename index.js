@@ -33,4 +33,10 @@ function startApplication() {
   }, 1_000);
 }
 
+process.on('uncaughtException', (err) => {
+  console.error();
+  console.error('Uncaught Exception:', err);
+  console.error();
+});
+
 startApplication();
