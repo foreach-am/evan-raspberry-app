@@ -121,10 +121,6 @@ function parseInputData(text) {
     },
   };
 
-  console.log();
-  console.log(packet);
-  console.log();
-  console.log();
   packet
     .split(':')
     .filter(function (part) {
@@ -145,8 +141,6 @@ function parseInputData(text) {
         state.statistic.common[field] = parsedValue;
       }
     });
-  console.log();
-  console.log();
 }
 
 function emitMessage(message) {
