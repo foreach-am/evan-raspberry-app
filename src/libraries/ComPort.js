@@ -102,6 +102,29 @@ function parseInputData(text) {
     endCharIndex
   );
 
+  const setters = {
+    plug: {
+      PI: { field: 'pilotFeedBack', isNumeric: true },
+      PL: { field: 'plugState', isNumeric: true },
+      PW: { field: 'powerKwh', isNumeric: true },
+      CA: { field: 'currentMeasureA', isNumeric: true },
+      CB: { field: 'currentMeasureB', isNumeric: true },
+      CC: { field: 'currentMeasureC', isNumeric: true },
+      OCE: { field: 'overCurrentError', isNumeric: true },
+      BL: { field: 'batteryLevel', isNumeric: true },
+    },
+    common: {
+      HV: { field: 'highVoltageMeasure', isNumeric: true },
+      HVE: { field: 'highVoltError', isNumeric: true },
+      LV: { field: 'lowVoltError', isNumeric: true },
+      T: { field: 'temperature', isNumeric: true },
+    },
+  };
+
+  console.log();
+  console.log(packet);
+  console.log();
+  console.log();
   packet
     .split(':')
     .filter(function (part) {
@@ -109,25 +132,7 @@ function parseInputData(text) {
     })
     .forEach(function (part) {
       const { index, name, value } = getSegmentValue(part);
-
-      const setters = {
-        plug: {
-          PI: { field: 'pilotFeedBack', isNumeric: true },
-          PL: { field: 'plugState', isNumeric: true },
-          PW: { field: 'powerKwh', isNumeric: true },
-          CA: { field: 'currentMeasureA', isNumeric: true },
-          CB: { field: 'currentMeasureB', isNumeric: true },
-          CC: { field: 'currentMeasureC', isNumeric: true },
-          OCE: { field: 'overCurrentError', isNumeric: true },
-          BL: { field: 'batteryLevel', isNumeric: true },
-        },
-        common: {
-          HV: { field: 'highVoltageMeasure', isNumeric: true },
-          HVE: { field: 'highVoltError', isNumeric: true },
-          LV: { field: 'lowVoltError', isNumeric: true },
-          T: { field: 'temperature', isNumeric: true },
-        },
-      };
+      console.log({ index, name, value });
 
       if (Object.keys(setters.plug).includes(name)) {
         const { field, isNumeric } = setters.plug[name];
@@ -141,6 +146,8 @@ function parseInputData(text) {
         state.statistic.common[field] = parsedValue;
       }
     });
+  console.log();
+  console.log();
 }
 
 function emitMessage(message) {
