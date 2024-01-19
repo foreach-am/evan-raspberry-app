@@ -81,10 +81,10 @@ function getSegmentValue(segment) {
   }
 
   const name = matchResult[1];
-  const index = matchResult[2];
+  const connectorId = matchResult[2];
 
   return {
-    index: index,
+    connectorId: connectorId,
     name: name,
     value: segmentValue,
   };
@@ -131,14 +131,13 @@ function parseInputData(text) {
       return !!part;
     })
     .forEach(function (part) {
-      const { index, name, value } = getSegmentValue(part);
-      console.log({ index, name, value });
+      const { connectorId, name, value } = getSegmentValue(part);
 
       if (Object.keys(setters.plug).includes(name)) {
         const { field, isNumeric } = setters.plug[name];
         const parsedValue = isNumeric ? Number(value) : value;
 
-        state.statistic.plugs[field][index] = parsedValue;
+        state.statistic.plugs[field][connectorId] = parsedValue;
       } else if (Object.keys(setters.plug).includes(name)) {
         const { field, isNumeric } = setters.common[name];
         const parsedValue = isNumeric ? Number(value) : value;
