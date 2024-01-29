@@ -73,11 +73,14 @@ serialPort.on('data', function (data) {
 });
 
 function getSegmentValue(segment) {
-  const [segmentKey, segmentValue] = segment.split('=');
+  if (!segment.includes('=')) {
+    return {};
+  }
 
+  const [segmentKey, segmentValue] = segment.split('=');
   const matchResult = segmentKey.match(/^([A-Z]+)([0-9]*)$/);
   if (!matchResult) {
-    return null;
+    return {};
   }
 
   const name = matchResult[1];
