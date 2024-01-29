@@ -134,7 +134,7 @@ function parseInputData(text) {
         const parsedValue = isNumeric ? Number(value) : value;
 
         state.statistic.plugs[field][connectorId] = parsedValue;
-      } else if (Object.keys(setters.plug).includes(name)) {
+      } else if (Object.keys(setters.common).includes(name)) {
         const { field, isNumeric } = setters.common[name];
         const parsedValue = isNumeric ? Number(value) : value;
 
@@ -215,7 +215,7 @@ function startIdleChecker() {
     const timesElapsed = currentDateTime - lastComDataReceivedTime;
     if (timesElapsed > 12_000) {
       Logger.warning(
-        `ComPost: ${timesElapsed} milliseconds elapsed, calling OnLongIdleEvent listeners.`
+        `ComPort: ${timesElapsed} milliseconds elapsed, calling OnLongIdleEvent listeners.`
       );
 
       clearInterval(onIdleInterval);
