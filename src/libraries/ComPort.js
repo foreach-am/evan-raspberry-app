@@ -73,7 +73,7 @@ serialPort.on('data', function (data) {
 });
 
 function getSegmentValue(segment) {
-  if (!segment.includes('=')) {
+  if (!segment || !segment.includes('=')) {
     return {};
   }
 
