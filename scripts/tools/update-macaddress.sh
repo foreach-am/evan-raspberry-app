@@ -36,23 +36,6 @@ if [[ "$(command -v macchanger)" == "" ]]; then
 fi
 
 ## ----------------------------------------------------------------------------------
-## variables & functions
-function get_macaddress() {
-  local NET_INTERFACE="$1"
-  ifconfig -a "$NET_INTERFACE" | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'
-}
-
-function network_state() {
-  local NEW_STATE="$1"
-
-  echo ">>>>>>>>> Putting network network: $NEW_STATE"
-  sudo ifconfig "$NETWORK_INTERFACE" "$NEW_STATE"
-}
-
-NETWORK_INTERFACE=eth0
-CURRENT_MACADDRESS="$(get_macaddress "$NETWORK_INTERFACE")"
-
-## ----------------------------------------------------------------------------------
 ## update macaddress
 SAVED_MACADDRES_VALUE=""
 if [[ -f "$SAVED_MACADDRES_PATH" ]]; then
@@ -64,17 +47,20 @@ if [[ "$CURRENT_MACADDRESS" == "$SAVED_MACADDRES_VALUE" ]]; then
   exit 0
 fi
 
+echo ">>>>>>>>> Putting network network: down"
 network_state "down"
+
 if [[ "$SAVED_MACADDRES_VALUE" == "" ]]; then
   echo ">>>>>>>>> Generating new MAC Address ..."
   sudo macchanger -r "$NETWORK_INTERFACE"
 
   echo ">>>>>>>>> Saving new MAC Address ..."
-  CURRENT_MACADDRESS="$(get_macaddress "$NETWORK_INTERFACE")"
-  echo "$CURRENT_MACADDRESS" > "$SAVED_MACADDRES_PATH"
+  UPDATED_MACADDRESS="$(get_macaddress "$NETWORK_INTERFACE")"
+  echo "$UPDATED_MACADDRESS" > "$SAVED_MACADDRES_PATH"
 else
   echo ">>>>>>>>> Updating MAC Address ..."
   sudo macchanger -m "$SAVED_MACADDRES_VALUE" "$NETWORK_INTERFACE"
 fi
 
+echo ">>>>>>>>> Putting network network: up"
 network_state "up"

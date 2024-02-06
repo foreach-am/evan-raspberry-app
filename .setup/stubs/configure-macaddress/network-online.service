@@ -1,7 +1,7 @@
 [Unit]
-Description=Automatically Update MAC Address
-Before=network-pre.target
-Wants=network-pre.target
+Description=Automatically Update MAC Address (ARM v6)
+Before=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=simple

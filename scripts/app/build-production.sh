@@ -33,23 +33,33 @@ echo ""
 ## addcronjob tas to autoupdate source code
 COMMAND_EXISTS="$(crontab -l | grep -v '^#' | grep 'tool:update-source-code' | wc -l)"
 if [[ $COMMAND_EXISTS == 0 ]]; then
-  (crontab -l; echo "*/30 * * * * cd '"$ROOT_DIR"' && npm run tool:update-source-code") | sort - | uniq - | crontab -
+  (crontab -l; echo "0 4 * * * cd '"$ROOT_DIR"' && npm run tool:update-source-code") \
+    | sort - \
+    | uniq - \
+    | crontab -
 fi
-
-# ## ----------------------------------------------------------------------------------
-# ## check and update node version
-# execute_action "$BUILD_LOG_FILE" \
-#   "bash ./run-cmd.sh tool:app:node-version" \
-#   "Updating or installing NodeJS v18" \
-#   "Failed to update or install NodeJS v18."
 
 ## ----------------------------------------------------------------------------------
 ## register macaddress updater service
+CPU_ARCH="$(lscpu | grep 'Architecture' | cut -c 14-100 | sed 's/^ *//g;s/ *$//g')"
+if [[ "$CPU_ARCH" == "armv6l" ]]; then
+  SERVICE_NAME_TYPE="network-online"
+else
+  SERVICE_NAME_TYPE="network-pre"
+fi
+
 SERVICE_NAME="configure-macaddress.service"
-SERVICE_PATH="/etc/systemd/system/$SERVICE_NAME"
-if [[ ! -f "$SERVICE_PATH" ]]; then
-  sudo cp "$ROOT_DIR/.setup/stubs/$SERVICE_NAME" "$SERVICE_PATH"
-  sudo sed -i "s|{{ROOT}}|$ROOT_DIR|g" "$SERVICE_PATH"
+SERVICE_SOURCE_FILE="configure-macaddress/$SERVICE_NAME_TYPE.service"
+SERVICE_SOURCE_PATH="$ROOT_DIR/.setup/stubs/$SERVICE_SOURCE_FILE"
+SERVICE_INSTALL_PATH="/etc/systemd/system/$SERVICE_NAME"
+
+if [[ -f "$SERVICE_SOURCE_PATH" ]]; then
+  if [[ ! -f "$SERVICE_INSTALL_PATH" ]]; then
+    sudo rm "$SERVICE_INSTALL_PATH"
+  fi
+
+  sudo cp "$SERVICE_SOURCE_PATH" "$SERVICE_INSTALL_PATH"
+  sudo sed -i "s|{{ROOT}}|$ROOT_DIR|g" "$SERVICE_INSTALL_PATH"
 
   sudo systemctl enable "$SERVICE_NAME"
   sudo systemctl start "$SERVICE_NAME"
@@ -58,10 +68,16 @@ fi
 ## ----------------------------------------------------------------------------------
 ## register tunnel updater service
 SERVICE_NAME="configure-tunnel.service"
-SERVICE_PATH="/etc/systemd/system/$SERVICE_NAME"
-if [[ ! -f "$SERVICE_PATH" ]]; then
-  sudo cp "$ROOT_DIR/.setup/stubs/$SERVICE_NAME" "$SERVICE_PATH"
-  sudo sed -i "s|{{ROOT}}|$ROOT_DIR|g" "$SERVICE_PATH"
+SERVICE_SOURCE_PATH="$ROOT_DIR/.setup/stubs/$SERVICE_NAME"
+SERVICE_INSTALL_PATH="/etc/systemd/system/$SERVICE_NAME"
+
+if [[ -f "$SERVICE_SOURCE_PATH" ]]; then
+  if [[ ! -f "$SERVICE_INSTALL_PATH" ]]; then
+    sudo rm "$SERVICE_INSTALL_PATH"
+  fi
+
+  sudo cp "$SERVICE_SOURCE_PATH" "$SERVICE_INSTALL_PATH"
+  sudo sed -i "s|{{ROOT}}|$ROOT_DIR|g" "$SERVICE_INSTALL_PATH"
 
   sudo systemctl enable "$SERVICE_NAME"
   sudo systemctl start "$SERVICE_NAME"
@@ -112,15 +128,20 @@ execute_action "$BUILD_LOG_FILE" \
 ## ----------------------------------------------------------------------------------
 ## create system service
 if [[ "$(command -v systemctl)" != "" ]]; then
-  SYSTEM_EXISTS="$(systemctl --all --type service | grep "pm2-$USER.service" | wc -l)"
-  if [[ "$SYSTEM_EXISTS" == "0" ]]; then
+  SYSTEM_SERVICE_EXISTS="$(\
+    systemctl --all --type service \
+      | grep "pm2-$USER.service" \
+      | wc -l \
+  )"
+
+  if [[ "$SYSTEM_SERVICE_EXISTS" == "0" ]]; then
     NODE_INSTALL_DIR="$(npm config get prefix)"
-    NODE_PATH_BON="$NODE_INSTALL_DIR/bin"
+    NODE_PATH_BIN="$NODE_INSTALL_DIR/bin"
     NODE_PATH_LIB="$NODE_INSTALL_DIR/lib/node_modules"
 
     execute_action "$BUILD_LOG_FILE" \
       "\
-        sudo env PATH=\$PATH:$NODE_BON_PATH $NODE_PATH_LIB/pm2/bin/pm2 startup systemd -u $USER --hp $HOME && \
+        sudo env PATH=\$PATH:$NODE_PATH_BIN $NODE_PATH_LIB/pm2/bin/pm2 startup systemd -u $USER --hp $HOME && \
         sudo systemctl enable pm2-$USER.service && \
         sudo systemctl start pm2-$USER.service &&
         pm2 save --force && \

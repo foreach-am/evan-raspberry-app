@@ -172,3 +172,14 @@ function execute_action() {
 
   end_cmd_die $? "$MESSAGE_ERROR"
 }
+
+NETWORK_INTERFACE=eth0
+function get_macaddress() {
+  ifconfig -a "$NETWORK_INTERFACE" \
+    | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'
+}
+
+CURRENT_MACADDRESS="$(get_macaddress)"
+function network_state() {
+  sudo ifconfig "$NETWORK_INTERFACE" "$1"
+}

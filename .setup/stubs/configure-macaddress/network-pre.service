@@ -1,0 +1,12 @@
+[Unit]
+Description=Automatically Update MAC Address (ARM v7)
+Before=network-pre.target
+Wants=network-pre.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/env bash {{ROOT}}/scripts/tools/update-macaddress.sh
+
+[Install]
+WantedBy=multi-user.target

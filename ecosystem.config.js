@@ -30,12 +30,8 @@ module.exports = {
       name: 'app',
       min_uptime: '5s',
       instances: 1,
-      script: './index.js',
+      script: 'npm',
+      args: 'run start:prod',
     }),
-    // buildApp({
-    //   name: 'tunnel',
-    //   instances: 1,
-    //   script: './tunnel.js',
-    // }),
   ],
 };
