@@ -18,7 +18,39 @@ if [[ -f "$BUILD_LOG_FILE" ]]; then
 fi
 
 trap on_process_kill SIGINT
+
+## ----------------------------------------------------------------------------------
+## check & install service
 REBOOT_REQUIRED=0
+function check_install_service() {
+  SERVICE_NAME="$1"
+  SERVICE_INSTALL_PATH="/etc/systemd/system/$SERVICE_NAME"
+  SERVICE_SOURCE_PATH="$ROOT_DIR/.setup/stubs/$2"
+
+  if [[ -f "$SERVICE_SOURCE_PATH" ]]; then
+    NEED_TO_CHANGE=1
+    if [[ -f "$SERVICE_INSTALL_PATH" ]]; then
+      OUTPUT_INSTALL="$(cat "$SERVICE_INSTALL_PATH" | xargs)"
+      OUTPUT_SOURCE="$(cat "$SERVICE_SOURCE_PATH" | xargs)"
+
+      if [[ "$OUTPUT_INSTALL" == "$OUTPUT_SOURCE" ]]; then
+        NEED_TO_CHANGE=0
+      else
+        sudo rm "$SERVICE_INSTALL_PATH"
+      fi
+    fi
+
+    if [[ $NEED_TO_CHANGE == 1 ]]; then
+      sudo cp "$SERVICE_SOURCE_PATH" "$SERVICE_INSTALL_PATH"
+      sudo sed -i "s|{{ROOT}}|$ROOT_DIR|g" "$SERVICE_INSTALL_PATH"
+
+      sudo systemctl enable "$SERVICE_NAME"
+      sudo systemctl start "$SERVICE_NAME"
+
+      REBOOT_REQUIRED=1
+    fi
+  fi
+}
 
 ## ----------------------------------------------------------------------------------
 ## start
@@ -50,57 +82,14 @@ else
 fi
 
 SERVICE_NAME="configure-macaddress.service"
-SERVICE_SOURCE_FILE="configure-macaddress/$SERVICE_NAME_TYPE.service"
-SERVICE_SOURCE_PATH="$ROOT_DIR/.setup/stubs/$SERVICE_SOURCE_FILE"
-SERVICE_INSTALL_PATH="/etc/systemd/system/$SERVICE_NAME"
-
-if [[ -f "$SERVICE_SOURCE_PATH" ]]; then
-  NEED_TO_CHANGE=1
-  if [[ -f "$SERVICE_INSTALL_PATH" ]]; then
-    if [[ "$(cat "$SERVICE_INSTALL_PATH")" == "$(cat "$SERVICE_SOURCE_PATH")" ]]; then
-      NEED_TO_CHANGE=0
-    else
-      sudo rm "$SERVICE_INSTALL_PATH"
-    fi
-  fi
-
-  if [[ $NEED_TO_CHANGE == 1 ]]; then
-    sudo cp "$SERVICE_SOURCE_PATH" "$SERVICE_INSTALL_PATH"
-    sudo sed -i "s|{{ROOT}}|$ROOT_DIR|g" "$SERVICE_INSTALL_PATH"
-
-    sudo systemctl enable "$SERVICE_NAME"
-    sudo systemctl start "$SERVICE_NAME"
-
-    REBOOT_REQUIRED=1
-  fi
-fi
+SERVICE_FILE="configure-macaddress/$SERVICE_NAME_TYPE.service"
+check_install_service "$SERVICE_NAME" "$SERVICE_FILE"
 
 ## ----------------------------------------------------------------------------------
 ## register tunnel updater service
 SERVICE_NAME="configure-tunnel.service"
-SERVICE_SOURCE_PATH="$ROOT_DIR/.setup/stubs/$SERVICE_NAME"
-SERVICE_INSTALL_PATH="/etc/systemd/system/$SERVICE_NAME"
-
-if [[ -f "$SERVICE_SOURCE_PATH" ]]; then
-  NEED_TO_CHANGE=1
-  if [[ -f "$SERVICE_INSTALL_PATH" ]]; then
-    if [[ "$(cat "$SERVICE_INSTALL_PATH")" == "$(cat "$SERVICE_SOURCE_PATH")" ]]; then
-      NEED_TO_CHANGE=0
-    else
-      sudo rm "$SERVICE_INSTALL_PATH"
-    fi
-  fi
-
-  if [[ $NEED_TO_CHANGE == 1 ]]; then
-    sudo cp "$SERVICE_SOURCE_PATH" "$SERVICE_INSTALL_PATH"
-    sudo sed -i "s|{{ROOT}}|$ROOT_DIR|g" "$SERVICE_INSTALL_PATH"
-
-    sudo systemctl enable "$SERVICE_NAME"
-    sudo systemctl start "$SERVICE_NAME"
-
-    REBOOT_REQUIRED=1
-  fi
-fi
+SERVICE_FILE="configure-tunnel.service"
+check_install_service "$SERVICE_NAME" "$SERVICE_FILE"
 
 ## ----------------------------------------------------------------------------------
 ## check .env configuration
