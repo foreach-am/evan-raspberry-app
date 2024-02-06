@@ -30,8 +30,8 @@ function check_install_service() {
   if [[ -f "$SERVICE_SOURCE_PATH" ]]; then
     NEED_TO_CHANGE=1
     if [[ -f "$SERVICE_INSTALL_PATH" ]]; then
-      OUTPUT_INSTALL="$(cat "$SERVICE_INSTALL_PATH" | xargs)"
-      OUTPUT_SOURCE="$(cat "$SERVICE_SOURCE_PATH" | xargs)"
+      OUTPUT_INSTALL="$(cat "$SERVICE_INSTALL_PATH" | xargs | sed "s|{{ROOT}}|$ROOT_DIR|g")"
+      OUTPUT_SOURCE="$(cat "$SERVICE_SOURCE_PATH" | xargs | sed "s|{{ROOT}}|$ROOT_DIR|g")"
 
       if [[ "$OUTPUT_INSTALL" == "$OUTPUT_SOURCE" ]]; then
         NEED_TO_CHANGE=0
