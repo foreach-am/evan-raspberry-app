@@ -18,6 +18,7 @@ if [[ -f "$BUILD_LOG_FILE" ]]; then
 fi
 
 trap on_process_kill SIGINT
+REBOOT_REQUIRED=0
 
 ## ----------------------------------------------------------------------------------
 ## start
@@ -54,15 +55,24 @@ SERVICE_SOURCE_PATH="$ROOT_DIR/.setup/stubs/$SERVICE_SOURCE_FILE"
 SERVICE_INSTALL_PATH="/etc/systemd/system/$SERVICE_NAME"
 
 if [[ -f "$SERVICE_SOURCE_PATH" ]]; then
-  if [[ ! -f "$SERVICE_INSTALL_PATH" ]]; then
-    sudo rm "$SERVICE_INSTALL_PATH"
+  NEED_TO_CHANGE=1
+  if [[ -f "$SERVICE_INSTALL_PATH" ]]; then
+    if [[ "$(cat "$SERVICE_INSTALL_PATH")" == "$(cat "$SERVICE_SOURCE_PATH")" ]]; then
+      NEED_TO_CHANGE=0
+    else
+      sudo rm "$SERVICE_INSTALL_PATH"
+    fi
   fi
 
-  sudo cp "$SERVICE_SOURCE_PATH" "$SERVICE_INSTALL_PATH"
-  sudo sed -i "s|{{ROOT}}|$ROOT_DIR|g" "$SERVICE_INSTALL_PATH"
+  if [[ $NEED_TO_CHANGE == 1 ]]; then
+    sudo cp "$SERVICE_SOURCE_PATH" "$SERVICE_INSTALL_PATH"
+    sudo sed -i "s|{{ROOT}}|$ROOT_DIR|g" "$SERVICE_INSTALL_PATH"
 
-  sudo systemctl enable "$SERVICE_NAME"
-  sudo systemctl start "$SERVICE_NAME"
+    sudo systemctl enable "$SERVICE_NAME"
+    sudo systemctl start "$SERVICE_NAME"
+
+    REBOOT_REQUIRED=1
+  fi
 fi
 
 ## ----------------------------------------------------------------------------------
@@ -72,15 +82,24 @@ SERVICE_SOURCE_PATH="$ROOT_DIR/.setup/stubs/$SERVICE_NAME"
 SERVICE_INSTALL_PATH="/etc/systemd/system/$SERVICE_NAME"
 
 if [[ -f "$SERVICE_SOURCE_PATH" ]]; then
-  if [[ ! -f "$SERVICE_INSTALL_PATH" ]]; then
-    sudo rm "$SERVICE_INSTALL_PATH"
+  NEED_TO_CHANGE=1
+  if [[ -f "$SERVICE_INSTALL_PATH" ]]; then
+    if [[ "$(cat "$SERVICE_INSTALL_PATH")" == "$(cat "$SERVICE_SOURCE_PATH")" ]]; then
+      NEED_TO_CHANGE=0
+    else
+      sudo rm "$SERVICE_INSTALL_PATH"
+    fi
   fi
 
-  sudo cp "$SERVICE_SOURCE_PATH" "$SERVICE_INSTALL_PATH"
-  sudo sed -i "s|{{ROOT}}|$ROOT_DIR|g" "$SERVICE_INSTALL_PATH"
+  if [[ $NEED_TO_CHANGE == 1 ]]; then
+    sudo cp "$SERVICE_SOURCE_PATH" "$SERVICE_INSTALL_PATH"
+    sudo sed -i "s|{{ROOT}}|$ROOT_DIR|g" "$SERVICE_INSTALL_PATH"
 
-  sudo systemctl enable "$SERVICE_NAME"
-  sudo systemctl start "$SERVICE_NAME"
+    sudo systemctl enable "$SERVICE_NAME"
+    sudo systemctl start "$SERVICE_NAME"
+
+    REBOOT_REQUIRED=1
+  fi
 fi
 
 ## ----------------------------------------------------------------------------------
@@ -153,7 +172,19 @@ if [[ "$(command -v systemctl)" != "" ]]; then
 fi
 
 ## ----------------------------------------------------------------------------------
-## empty message
+## finished message
+
 echo ""
-echo " Successfully restarted."
+if [[ $REBOOT_REQUIRED == 1 ]]; then
+  echo " Build completed sucessfully, but restart required."
+else
+  echo " Build completed sucessfully."
+fi
 echo ""
+
+if [[ $REBOOT_REQUIRED == 1 ]]; then
+  echo " Restaring device after 5 seconds."
+  sleep 5
+
+  sudo reboot
+fi
