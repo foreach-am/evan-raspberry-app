@@ -62,6 +62,8 @@ if [[ "$SAVED_MACADDRES_VALUE" == "" ]]; then
     sudo apt -y autoremove
     sudo apt -y autoclean
     sudo apt -y install macchanger
+
+    sudo macchanger -r "$NETWORK_INTERFACE"
   fi
 
   echo ">>>>>>>>> Saving new MAC Address ..."
