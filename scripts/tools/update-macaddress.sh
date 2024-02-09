@@ -57,6 +57,13 @@ if [[ "$SAVED_MACADDRES_VALUE" == "" ]]; then
   echo ">>>>>>>>> Generating new MAC Address ..."
   sudo macchanger -r "$NETWORK_INTERFACE"
 
+  if [[ $? != 0 ]]; then
+    sudo apt -y remove --purge macchanger
+    sudo apt -y autoremove
+    sudo apt -y autoclean
+    sudo apt -y install macchanger
+  fi
+
   echo ">>>>>>>>> Saving new MAC Address ..."
   UPDATED_MACADDRESS="$(get_macaddress "$NETWORK_INTERFACE")"
   echo "$UPDATED_MACADDRESS" > "$SAVED_MACADDRES_PATH"
