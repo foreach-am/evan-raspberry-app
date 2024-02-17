@@ -1,3 +1,4 @@
+const https = require('node:https');
 const fs = require('node:fs');
 const os = require('node:os');
 const ngrok = require('ngrok');
@@ -7,6 +8,10 @@ require('./configure');
 async function sendTunnelUrl(url) {
   const response = await axios.put(process.env.TUNNEL_UPDATE_URL, {
     tunnelUrl: url,
+  }, {
+    httpsAgent: new https.Agent({
+      rejectUnauthorized: false
+    })
   });
 
   if (response.status >= 400) {
