@@ -66,7 +66,7 @@ echo ""
 ## addcronjob tas to autoupdate source code
 COMMAND_EXISTS="$(crontab -l | grep -v '^#' | grep 'tool:update-source-code' | wc -l)"
 if [[ $COMMAND_EXISTS == 0 ]]; then
-  (crontab -l; echo "0 4 * * * cd '"$ROOT_DIR"' && npm run tool:update-source-code") \
+  (crontab -l; echo "0 4 * * * $ROOT_DIR/scripts/tool/update-source-code.sh") \
     | sort - \
     | uniq - \
     | crontab -
