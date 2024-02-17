@@ -14,6 +14,7 @@ source "$(dirname "$0")/../includes.sh"
 
 ## ----------------------------------------------------------------------------------
 ## pull latest
+echo "Updating source code ..."
 git reset --hard &&\
   git pull &&\
   pm2 restart all && \
