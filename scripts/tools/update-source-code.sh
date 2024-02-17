@@ -22,7 +22,7 @@ git reset --hard && \
 EXIT_CODE=$?
 
 if [[ $EXIT_CODE == 0 ]]; then
-  echo "Success"
+  echo "Successfully updated."
 else
   echo "Failed with code $EXIT_CODE"
   exit $EXIT_CODE
