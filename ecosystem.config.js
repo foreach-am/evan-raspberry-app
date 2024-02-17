@@ -33,5 +33,10 @@ module.exports = {
       script: 'npm',
       args: 'run start:prod',
     }),
+    buildApp({
+      name: 'jobs',
+      instances: 1,
+      script: 'jobs.js',
+    }),
   ],
 };
