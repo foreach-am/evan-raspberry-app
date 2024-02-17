@@ -65,6 +65,7 @@ async function configureYaml() {
     }
 
     const newContent = newLines.join(os.EOL);
+    console.log({ newContent, oldContent });
     if (newContent !== oldContent) {
       fs.writeFileSync(configFile, newContent, 'utf8');
     }
