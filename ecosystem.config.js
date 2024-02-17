@@ -1,6 +1,10 @@
 const path = require('path');
 
-const disableLoggingFor = ['out', 'error'];
+const disableLoggingFor = [
+  'out', // standard log outputs
+  'error', // error outputs
+];
+
 function getFilePath(type, name) {
   if (disableLoggingFor.includes(type)) {
     return '/dev/null';
