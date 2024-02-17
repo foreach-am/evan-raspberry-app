@@ -1,3 +1,4 @@
+const { execSync } = require('child_process');
 const path = require('path');
 
 const disableLoggingFor = [
@@ -6,7 +7,9 @@ const disableLoggingFor = [
 ];
 
 function getFilePath(type, name) {
-  if (disableLoggingFor.includes(type)) {
+  const branch = execSync('git rev-parse --abbrev-ref HEAD');
+
+  if (branch === 'main' && disableLoggingFor.includes(type)) {
     return '/dev/null';
   }
 
