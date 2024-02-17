@@ -43,12 +43,13 @@ async function configureYaml() {
   const configFile = `${process.env.HOME}/.ngrok2/ngrok.yml`;
 
   const configureKeyValue = function (key, value) {
-    if (!fs.existsSync()) {
-      fs.writeFileSync(configFile, '', 'utf8');
-    }
+    const oldContent = !fs.existsSync()
+      ? ''
+      : fs.readFileSync(configFile, 'utf8');
 
-    const oldContent = fs.readFileSync(configFile, 'utf8');
-    const oldLines = oldContent.split(os.EOL);
+    const oldLines = oldContent.split(os.EOL).filter(function (line) {
+      return !!line;
+    });
 
     let found = false;
     const newLines = oldLines.map(function (line) {
