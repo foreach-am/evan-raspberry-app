@@ -45,7 +45,8 @@ async function connectTunnel() {
 }
 
 async function configureYaml() {
-  const configFile = `${process.env.HOME}/.config/ngrok/ngrok.yml`;
+  // const configFile = `${process.env.HOME}/.config/ngrok/ngrok.yml`;
+  const configFile = `/home/admin/.config/ngrok/ngrok.yml`;
   await ngrok.upgradeConfig({
     relocate: false,
     configPath: configFile,
