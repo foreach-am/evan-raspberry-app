@@ -23,16 +23,16 @@ async function sendTunnelUrl(url) {
   }
 }
 
-async function connectTunnel() {
+async function connectTunnel(configFile) {
   try {
-    const config = {
+    const url = await ngrok.connect({
       authtoken: process.env.NGROK_AUTH_TOKEN,
       proto: 'tcp',
       addr: 22,
       region: 'eu',
-    };
+      configPath: configFile,
+    });
 
-    const url = await ngrok.connect(config);
     await sendTunnelUrl(url);
   } catch (e) {
     console.error();
@@ -48,8 +48,7 @@ async function connectTunnel() {
   }
 }
 
-async function configureYaml(root) {
-  const configFile = `${root}/.config/ngrok/ngrok.yml`;
+async function configureYaml(configFile) {
   await ngrok.upgradeConfig({
     relocate: false,
     configPath: configFile,
@@ -93,9 +92,7 @@ async function configureYaml(root) {
 }
 
 (async function () {
-  await configureYaml(process.env.HOME);
-  await configureYaml('/root');
-  await configureYaml('/home/admin');
-
-  await connectTunnel();
+  const configFile = '/home/admin/.config/ngrok/ngrok.yml';
+  await configureYaml(configFile);
+  await connectTunnel(configFile);
 })();
