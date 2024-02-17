@@ -40,8 +40,8 @@ async function connectTunnel() {
 }
 
 async function configureYaml() {
-  await ngrok.upgradeConfig({ relocate: true });
   const configFile = `${process.env.HOME}/.ngrok2/ngrok.yml`;
+  await ngrok.upgradeConfig({ relocate: false, configPath: configFile });
 
   const configureKeyValue = function (key, value) {
     const oldContent = !fs.existsSync(configFile)
@@ -73,7 +73,7 @@ async function configureYaml() {
   };
 
   configureKeyValue('authtoken', process.env.NGROK_AUTH_TOKEN);
-  configureKeyValue('version', '2');
+  configureKeyValue('version', '3');
 }
 
 (async function () {
