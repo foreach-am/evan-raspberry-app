@@ -76,7 +76,7 @@ async function configureYaml() {
   };
 
   configureKeyValue('authtoken', process.env.NGROK_AUTH_TOKEN);
-  configureKeyValue('version', '3');
+  configureKeyValue('version', '2');
 }
 
 (async function () {
