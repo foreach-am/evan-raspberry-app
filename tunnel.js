@@ -43,7 +43,7 @@ async function configureYaml() {
   const configFile = `${process.env.HOME}/.ngrok2/ngrok.yml`;
 
   const configureKeyValue = function (key, value) {
-    const oldContent = !fs.existsSync()
+    const oldContent = !fs.existsSync(configFile)
       ? ''
       : fs.readFileSync(configFile, 'utf8');
 
