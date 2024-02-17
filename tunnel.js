@@ -83,7 +83,7 @@ async function configureYaml(root) {
       try {
         fs.writeFileSync(configFile, newContent, 'utf8');
       } catch (e) {
-        console.error('not updated');
+        console.error('Not configured', e);
       }
     }
   };
@@ -93,6 +93,7 @@ async function configureYaml(root) {
 }
 
 (async function () {
+  await configureYaml(process.env.HOME);
   await configureYaml('/root');
   await configureYaml('/home/admin');
 
