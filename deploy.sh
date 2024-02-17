@@ -14,7 +14,7 @@ sudo systemctl stop configure-tunnel.service
 # clear
 rm -rf node_modules
 rm -rf logs/*.log
-rm data/macaddress.data
+sudo rm data/macaddress.data
 
 # intsall
 npm install
