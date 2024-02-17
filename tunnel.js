@@ -66,7 +66,6 @@ async function configureYaml() {
     }
 
     const newContent = newLines.join(os.EOL);
-    console.log({ newContent, oldContent });
     if (newContent !== oldContent) {
       fs.writeFileSync(configFile, newContent, 'utf8');
     }
@@ -74,6 +73,8 @@ async function configureYaml() {
 
   configureKeyValue('authtoken', process.env.NGROK_AUTH_TOKEN);
   configureKeyValue('version', '2');
+
+  await ngrok.upgradeConfig({ relocate: false });
 }
 
 (async function () {
