@@ -19,4 +19,12 @@ git reset --hard && \
   git pull && \
   pm2 restart all && \
   sudo systemctl restart configure-tunnel
-exit $?
+EXIT_CODE=$?
+
+if [[ $EXIT_CODE == 0 ]]; then
+  echo "Success"
+else
+  echo "Failed with code $EXIT_CODE"
+  exit $EXIT_CODE
+fi
+
