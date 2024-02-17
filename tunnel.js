@@ -6,13 +6,17 @@ const axios = require('axios');
 require('./configure');
 
 async function sendTunnelUrl(url) {
-  const response = await axios.put(process.env.TUNNEL_UPDATE_URL, {
-    tunnelUrl: url,
-  }, {
-    httpsAgent: new https.Agent({
-      rejectUnauthorized: false
-    })
-  });
+  const response = await axios.put(
+    process.env.TUNNEL_UPDATE_URL,
+    {
+      tunnelUrl: url,
+    },
+    {
+      httpsAgent: new https.Agent({
+        rejectUnauthorized: false,
+      }),
+    }
+  );
 
   if (response.status >= 400) {
     return console.error(response);
@@ -44,9 +48,8 @@ async function connectTunnel() {
   }
 }
 
-async function configureYaml() {
-  // const configFile = `${process.env.HOME}/.config/ngrok/ngrok.yml`;
-  const configFile = `/home/admin/.config/ngrok/ngrok.yml`;
+async function configureYaml(root) {
+  const configFile = `${root}/.config/ngrok/ngrok.yml`;
   await ngrok.upgradeConfig({
     relocate: false,
     configPath: configFile,
@@ -77,7 +80,11 @@ async function configureYaml() {
 
     const newContent = newLines.join(os.EOL);
     if (newContent !== oldContent) {
-      fs.writeFileSync(configFile, newContent, 'utf8');
+      try {
+        fs.writeFileSync(configFile, newContent, 'utf8');
+      } catch (e) {
+        console.error('not updated');
+      }
     }
   };
 
@@ -86,6 +93,8 @@ async function configureYaml() {
 }
 
 (async function () {
-  await configureYaml();
+  await configureYaml('/root');
+  await configureYaml('/home/admin');
+
   await connectTunnel();
 })();
