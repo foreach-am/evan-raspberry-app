@@ -17,4 +17,4 @@ process.on('uncaughtException', (err) => {
 });
 
 // jobs ...
-register('npm run tool:update-source-code', 1);
+register('npm run tool:update-source-code', 12 * 60); // twice daily
