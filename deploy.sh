@@ -22,4 +22,4 @@ npm install
 # start
 pm2 start ecosystem.config.js
 pm2 save --force
-sudo systemctl stop configure-tunnel.service
+sudo systemctl start configure-tunnel.service
