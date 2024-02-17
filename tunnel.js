@@ -40,8 +40,11 @@ async function connectTunnel() {
 }
 
 async function configureYaml() {
-  const configFile = `${process.env.HOME}/.ngrok2/ngrok.yml`;
-  await ngrok.upgradeConfig({ relocate: false, configPath: configFile });
+  const configFile = `${process.env.HOME}/.config/ngrok/ngrok.yml`;
+  await ngrok.upgradeConfig({
+    relocate: false,
+    configPath: configFile,
+  });
 
   const configureKeyValue = function (key, value) {
     const oldContent = !fs.existsSync(configFile)
