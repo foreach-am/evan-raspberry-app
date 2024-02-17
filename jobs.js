@@ -3,6 +3,7 @@ const { execSync } = require('child_process');
 function register(command, minutes) {
   console.log(`Job registered: ${minutes} minutes - "${command}"`);
   setInterval(function () {
+    console.log(` >>> Running job: "${command}"`);
     execSync(command, {
       cwd: __dirname,
     });
