@@ -55,6 +55,10 @@ async function configureYaml(configFile) {
   });
 
   const configureKeyValue = function (key, value) {
+    if (!fs.existsSync(configFile)) {
+      fs.writeFileSync(configFile, '', 'utf8');
+    }
+
     const oldContent = !fs.existsSync(configFile)
       ? ''
       : fs.readFileSync(configFile, 'utf8');
