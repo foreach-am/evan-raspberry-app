@@ -92,6 +92,7 @@ async function configureYaml(configFile) {
   };
 
   configureKeyValue('authtoken', process.env.NGROK_AUTH_TOKEN);
+  configureKeyValue('region', 'eu');
   configureKeyValue('version', '2');
 }
 
