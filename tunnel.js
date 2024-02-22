@@ -96,7 +96,9 @@ async function configureYaml(configFile) {
 }
 
 (async function () {
-  const configFile = '/home/admin/.config/ngrok/ngrok.yml';
+  // const configFile = '/home/admin/.config/ngrok/ngrok.yml';
+  const configFile = '/home/admin/.ngrok2/ngrok.yml';
+
   await configureYaml(configFile);
   await connectTunnel(configFile);
 })();
