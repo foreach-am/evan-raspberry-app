@@ -104,6 +104,10 @@ async function configureYaml(configFile) {
   // const configFile = '/home/admin/.config/ngrok/ngrok.yml';
   const configFile = '/home/admin/.ngrok2/ngrok.yml';
 
+  console.log('[TUNNEL] >>> configuring ngrok tunnel.');
   await configureYaml(configFile);
+  console.log('[TUNNEL] >>> configuration completed.');
+
+  console.log('[TUNNEL] >>> opening tunnel.');
   await connectTunnel(configFile);
 })();
