@@ -33,6 +33,7 @@ async function connectTunnel(configFile) {
       configPath: configFile,
     });
 
+    console.log('[TUNNEL] >>> tunnel url ready:', url);
     await sendTunnelUrl(url);
   } catch (e) {
     console.error();
