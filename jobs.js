@@ -2,9 +2,14 @@ const { execSync } = require('child_process');
 
 function runCommand(command) {
   console.log(` >>> Running job: "${command}"`);
-  execSync(command, {
-    cwd: __dirname,
-  });
+
+  try {
+    execSync(command, {
+      cwd: __dirname,
+    });
+  } catch (e) {
+    console.log(`Job failed: ${command}"`, e);
+  }
 }
 
 function register(command, minutes) {
