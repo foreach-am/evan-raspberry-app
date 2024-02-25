@@ -14,17 +14,17 @@ source "$(dirname "$0")/../../includes.sh"
 
 ## ----------------------------------------------------------------------------------
 ## format code
-# bash ./run-cmd.sh tool:format:code
+# npm run tool:format:code
 # check_exit $? ${ERROR_APP_FORMAT_CODE[@]}
 
 ## ----------------------------------------------------------------------------------
 ## execute lint
-# bash ./run-cmd.sh tool:lint:execute:prod
+# npm run tool:lint:execute:prod
 # check_exit $? ${ERROR_APP_LINT_EXECUTE[@]}
 
 ## ----------------------------------------------------------------------------------
 ## format scripts
-# bash ./run-cmd.sh tool:format:scripts
+# npm run tool:format:scripts
 # check_exit $? ${ERROR_APP_FORMAT_SCRIPTS[@]}
 
 ## ----------------------------------------------------------------------------------

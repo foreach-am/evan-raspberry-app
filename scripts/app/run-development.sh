@@ -16,7 +16,7 @@ source "$(dirname "$0")/../includes.sh"
 ## check node modules installed
 if [[ ! -d "node_modules" ]]; then
   log_action_title "Installing required dependencies ..."
-  bash ./run-cmd.sh install
+  npm run install
   check_exit $? ${ERROR_INSTALL_MODULES[@]}
 fi
 

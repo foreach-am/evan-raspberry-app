@@ -22,7 +22,7 @@ trap on_process_kill SIGINT
 # ## ----------------------------------------------------------------------------------
 # ## check and update node version
 # execute_action "$BUILD_LOG_FILE" \
-#   "bash ./run-cmd.sh tool:app:node-version" \
+#   "npm run tool:app:node-version" \
 #   "Updating or installing NodeJS v18" \
 #   "Failed to update or install NodeJS v18."
 
@@ -33,7 +33,7 @@ clear
 ## ----------------------------------------------------------------------------------
 ## check .env configuration
 execute_action "$BUILD_LOG_FILE" \
-  "bash ./run-cmd.sh tool:app:env-check" \
+  "npm run tool:app:env-check" \
   "Checking .env configuration" \
   ".env file was not configured properly or it missing."
 

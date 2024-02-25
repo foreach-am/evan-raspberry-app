@@ -14,5 +14,5 @@ source "$(dirname "$0")/../../includes.sh"
 
 ## ----------------------------------------------------------------------------------
 ## execute prepare
-bash ./run-cmd.sh tool:husky:init
+npm run tool:husky:init
 exit_on_fail $?

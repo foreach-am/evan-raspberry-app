@@ -94,7 +94,7 @@ check_install_service "$SERVICE_NAME" "$SERVICE_FILE"
 ## ----------------------------------------------------------------------------------
 ## check .env configuration
 execute_action "$BUILD_LOG_FILE" \
-  "bash ./run-cmd.sh tool:app:env-check" \
+  "npm run tool:app:env-check" \
   "Checking .env configuration" \
   ".env file was not configured properly or it missing."
 
@@ -102,14 +102,9 @@ execute_action "$BUILD_LOG_FILE" \
 ## check node modules installed
 if [[ ! -d "node_modules" ]]; then
   execute_action "$BUILD_LOG_FILE" \
-    "bash ./run-cmd.sh install --silent" \
+    "npm run install --silent" \
     "Installing required dependencies" \
     "Failed to install app dependecies."
-else
-  execute_action "$BUILD_LOG_FILE" \
-    "bash ./run-cmd.sh tool:sum-hash:check" \
-    "Installing required dependency updates" \
-    "Failed to install app dependency updates."
 fi
 
 ## ----------------------------------------------------------------------------------
