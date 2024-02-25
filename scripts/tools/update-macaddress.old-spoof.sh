@@ -20,6 +20,12 @@ if [[ "$(command -v ifconfig)" == "" ]]; then
   sudo apt-get -y install net-tools
 fi
 
+if [[ "$(command -v spoof)" == "" ]]; then
+  echo ">>>>>>>>> Installing spoof ..."
+  sudo npm install --location=global spoof
+  npm install --location=global spoof
+fi
+
 ## ----------------------------------------------------------------------------------
 ## update macaddress
 SAVED_MACADDRES_VALUE=""
@@ -36,21 +42,19 @@ if [[ "$CURRENT_MACADDRESS" == "$SAVED_MACADDRES_VALUE" ]]; then
 fi
 
 echo ">>>>>>>>> Putting network network: down"
-sudo ifconfig "$NETWORK_INTERFACE" "down"
+network_state "down"
 
 if [[ "$SAVED_MACADDRES_VALUE" == "" ]]; then
   echo ">>>>>>>>> Generating new MAC Address ..."
-  SAVED_MACADDRES_VALUE="$(\
-    printf '%02x:%02x:%02x:%02x:%02x:%02x\n' \
-    "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]" \
-    "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]" \
-  )"
-  sudo ifconfig "$NETWORK_INTERFACE" hw ether "$SAVED_MACADDRES_VALUE"
-  echo "$SAVED_MACADDRES_VALUE" > "$SAVED_MACADDRES_PATH"
+  sudo spoof randomize "$NETWORK_INTERFACE"
+
+  echo ">>>>>>>>> Saving new MAC Address ..."
+  UPDATED_MACADDRESS="$(get_macaddress "$NETWORK_INTERFACE")"
+  echo "$UPDATED_MACADDRESS" > "$SAVED_MACADDRES_PATH"
+else
+  echo ">>>>>>>>> Updating MAC Address ..."
+  sudo spoof set "$SAVED_MACADDRES_VALUE" "$NETWORK_INTERFACE"
 fi
 
-echo ">>>>>>>>> Updating MAC Address ..."
-sudo ifconfig "$NETWORK_INTERFACE" hw ether "$SAVED_MACADDRES_VALUE"
-
 echo ">>>>>>>>> Putting network network: up"
-sudo ifconfig "$NETWORK_INTERFACE" "up"
+network_state "up"
