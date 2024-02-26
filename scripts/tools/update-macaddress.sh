@@ -33,6 +33,7 @@ NEW_MACADDRES_VALUE="$(\
   "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]" \
   "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]" \
 )"
+echo "New Mac Address will bew \"$NEW_MACADDRES_VALUE\""
 
 echo ">>>>>>>>> Putting network network: down"
 sudo ifconfig "$NETWORK_INTERFACE" "down"
