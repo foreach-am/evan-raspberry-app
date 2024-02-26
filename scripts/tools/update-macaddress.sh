@@ -21,6 +21,7 @@ fi
 
 ## ----------------------------------------------------------------------------------
 ## update macaddress
+CURRENT_MACADDRESS="$(get_macaddress)"
 if [[ "$CURRENT_MACADDRESS" == "00:08:dc:01:02:03" ]]; then
   echo ">>>>>>>>> MAC Address already updated, value: $CURRENT_MACADDRESS"
   exit 0
