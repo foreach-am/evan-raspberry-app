@@ -11,7 +11,6 @@ else
 fi
 
 source "$(dirname "$0")/../includes.sh"
-SAVED_MACADDRES_PATH="$ROOT_DIR/data/macaddress.data"
 
 ## ----------------------------------------------------------------------------------
 ## install tools if missing
@@ -22,35 +21,23 @@ fi
 
 ## ----------------------------------------------------------------------------------
 ## update macaddress
-SAVED_MACADDRES_VALUE=""
-if [[ -f "$SAVED_MACADDRES_PATH" ]]; then
-  SAVED_MACADDRES_VALUE="$(cat "$SAVED_MACADDRES_PATH")"
-  if [[ "$SAVED_MACADDRES_VALUE" == "00:08:dc:01:02:03" ]]; then
-    SAVED_MACADDRES_VALUE=""
-  fi
-fi
-
-if [[ "$CURRENT_MACADDRESS" == "$SAVED_MACADDRES_VALUE" ]]; then
-  echo ">>>>>>>>> MAC Address already updated, value: $SAVED_MACADDRES_VALUE"
+if [[ "$CURRENT_MACADDRESS" == "00:08:dc:01:02:03" ]]; then
+  echo ">>>>>>>>> MAC Address already updated, value: $CURRENT_MACADDRESS"
   exit 0
 fi
 
 echo ">>>>>>>>> Putting network network: down"
 sudo ifconfig "$NETWORK_INTERFACE" "down"
 
-if [[ "$SAVED_MACADDRES_VALUE" == "" ]]; then
-  echo ">>>>>>>>> Generating new MAC Address ..."
-  SAVED_MACADDRES_VALUE="$(\
-    printf '%02x:%02x:%02x:%02x:%02x:%02x\n' \
-    "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]" \
-    "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]" \
-  )"
-  sudo ifconfig "$NETWORK_INTERFACE" hw ether "$SAVED_MACADDRES_VALUE"
-  echo "$SAVED_MACADDRES_VALUE" > "$SAVED_MACADDRES_PATH"
-fi
+echo ">>>>>>>>> Generating new MAC Address ..."
+NEW_MACADDRES_VALUE="$(\
+  printf '%02x:%02x:%02x:%02x:%02x:%02x\n' \
+  "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]" \
+  "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]" \
+)"
 
-echo ">>>>>>>>> Updating MAC Address ..."
-sudo ifconfig "$NETWORK_INTERFACE" hw ether "$SAVED_MACADDRES_VALUE"
+echo ">>>>>>>>> Setting new MAC Address ..."
+sudo ifconfig "$NETWORK_INTERFACE" hw ether "$NEW_MACADDRES_VALUE"
 
 echo ">>>>>>>>> Putting network network: up"
 sudo ifconfig "$NETWORK_INTERFACE" "up"
