@@ -4,11 +4,10 @@ function runCommand(command) {
   console.log(` >>> Running job: "${command}"`);
 
   try {
-    execSync(command, {
-      cwd: __dirname,
-    });
+    const output = execSync(command, { cwd: __dirname });
+    console.log(' >>> Job Result', output);
   } catch (e) {
-    console.log(`Job failed: ${command}"`, e);
+    console.error(` >>> Job failed: ${command}"`, e);
   }
 }
 
