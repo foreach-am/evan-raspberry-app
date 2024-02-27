@@ -26,7 +26,7 @@ process.on('uncaughtException', (err) => {
 });
 
 // run command at start
-runCommand('npm run tool:update-source-code');
+runCommand('npm run tool:update-macaddress');
 
 // jobs ...
 register('npm run tool:update-source-code', 12 * 60); // twice daily
