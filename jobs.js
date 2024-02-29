@@ -28,5 +28,5 @@ process.on('uncaughtException', (err) => {
 runCommand('npm run tool:update-macaddress');
 
 // jobs ...
-register('npm run tool:update-source-code', 12 * 60); // twice daily
 register('npm run tool:update-macaddress', 2 * 60); // every two hours
+// register('npm run tool:update-source-code', 2 * 24 * 60); // every 2 days

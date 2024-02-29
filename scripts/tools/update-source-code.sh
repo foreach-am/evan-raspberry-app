@@ -15,10 +15,7 @@ source "$(dirname "$0")/../includes.sh"
 ## ----------------------------------------------------------------------------------
 ## pull latest
 echo "Updating source code ..."
-git reset --hard && \
-  git pull && \
-  pm2 restart all && \
-  sudo systemctl restart configure-tunnel
+git reset --hard && git pull
 EXIT_CODE=$?
 
 if [[ $EXIT_CODE == 0 ]]; then
