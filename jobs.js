@@ -5,7 +5,7 @@ function runCommand(command) {
 
   try {
     const output = execSync(command, { cwd: __dirname });
-    console.log(' >>> Job Result', output);
+    console.log(' >>> Job Result', output.toString('utf-8'));
   } catch (e) {
     console.error(` >>> Job failed: ${command}"`, e);
   }
