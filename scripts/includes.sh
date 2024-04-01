@@ -179,7 +179,6 @@ function get_macaddress() {
     | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'
 }
 
-CURRENT_MACADDRESS="$(get_macaddress)"
 function network_state() {
   sudo ifconfig "$NETWORK_INTERFACE" "$1"
 }
