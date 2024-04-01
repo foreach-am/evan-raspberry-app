@@ -23,7 +23,7 @@ function random_macaddress() {
     "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]"
 }
 function generate_macaddress() {
-  local MACADDRESS="get_macaddress"
+  local MACADDRESS="$(get_macaddress)"
   if [[ -f "$MACADDRESS_STORE_FILE" ]]; then
     MACADDRESS="$(cat "$MACADDRESS_STORE_FILE")"
   fi
