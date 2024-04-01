@@ -51,6 +51,8 @@ fi
 ## ----------------------------------------------------------------------------------
 ## update macaddress
 CURRENT_MACADDRESS="$(get_macaddress)"
+echo "CURRENT_MACADDRESS = $CURRENT_MACADDRESS"
+echo "DEFAULT_MACADDRESS = $DEFAULT_MACADDRESS"
 if [[ "$CURRENT_MACADDRESS" != "$DEFAULT_MACADDRESS" ]]; then
   store_macaddress "$CURRENT_MACADDRESS"
   echo ">>>>>>>>> MAC Address already updated, value: $CURRENT_MACADDRESS"
