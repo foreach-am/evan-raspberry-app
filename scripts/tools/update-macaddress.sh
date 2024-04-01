@@ -38,7 +38,7 @@ fi
 CURRENT_MACADDRESS="$(get_macaddress)"
 if [[ \
   "$CURRENT_MACADDRESS" != "$DEFAULT_MACADDRESS" && \
-  "$CURRENT_MACADDRESS" != "" \ &&
+  "$CURRENT_MACADDRESS" != "" && \
   "$CURRENT_MACADDRESS" =~ "^([a-fA-F0-9]{2}:){5}[a-fA-F0-9]{2}$" \
 ]]; then
   echo ">>>>>>>>> An valid MAC-Address already updated, value: $CURRENT_MACADDRESS"
