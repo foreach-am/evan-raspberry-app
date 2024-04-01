@@ -40,8 +40,7 @@ echo ">>>>>>>>> Current MAC-Address value: $CURRENT_MACADDRESS"
 
 if [[ \
   "$CURRENT_MACADDRESS" != "$DEFAULT_MACADDRESS" && \
-  "$CURRENT_MACADDRESS" != "" && \
-  "$CURRENT_MACADDRESS" =~ "^([a-fA-F0-9]{2}:){5}[a-fA-F0-9]{2}$" \
+  "$CURRENT_MACADDRESS" != "" \
 ]]; then
   echo ">>>>>>>>> An valid MAC-Address already set, value: $CURRENT_MACADDRESS"
   store_macaddress "$CURRENT_MACADDRESS"
