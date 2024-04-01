@@ -55,7 +55,7 @@ fi
 
 echo ">>>>>>>>> Generating new MAC Address ..."
 NEW_MACADDRES_VALUE="$(generate_macaddress)"
-echo "New Mac Address will bew \"$NEW_MACADDRES_VALUE\""
+echo ">>>>>>>>> New Mac Address value will be \"$NEW_MACADDRES_VALUE\""
 
 echo ">>>>>>>>> Putting network network: down"
 sudo ifconfig "$NETWORK_INTERFACE" "down"
