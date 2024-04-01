@@ -33,7 +33,7 @@ function generate_macaddress() {
   echo "$MACADDRESS"
 }
 function store_macaddress() {
-  rm "$MACADDRESS_STORE_FILE"
+  sudo rm -rf "$MACADDRESS_STORE_FILE"
   echo "$1" > "$MACADDRESS_STORE_FILE"
 }
 
