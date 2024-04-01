@@ -36,12 +36,14 @@ fi
 ## ----------------------------------------------------------------------------------
 ## update macaddress
 CURRENT_MACADDRESS="$(get_macaddress)"
+echo ">>>>>>>>> Current MAC-Address value: $CURRENT_MACADDRESS"
+
 if [[ \
   "$CURRENT_MACADDRESS" != "$DEFAULT_MACADDRESS" && \
   "$CURRENT_MACADDRESS" != "" && \
   "$CURRENT_MACADDRESS" =~ "^([a-fA-F0-9]{2}:){5}[a-fA-F0-9]{2}$" \
 ]]; then
-  echo ">>>>>>>>> An valid MAC-Address already updated, value: $CURRENT_MACADDRESS"
+  echo ">>>>>>>>> An valid MAC-Address already set, value: $CURRENT_MACADDRESS"
   store_macaddress "$CURRENT_MACADDRESS"
   exit 0
 fi
@@ -50,10 +52,12 @@ NEW_MACADDRES_VALUE=""
 if [[ -f "$MACADDRESS_STORE_FILE" ]]; then
   echo ">>>>>>>>> Getting previously saved MAC-Address form file ..."
   NEW_MACADDRES_VALUE="$(cat "$MACADDRESS_STORE_FILE")"
+  echo ">>>>>>>>> MAC-Address value from stored file \"$NEW_MACADDRES_VALUE\""
 fi
+
 if [[ \
-  "$CURRENT_MACADDRESS" == "$DEFAULT_MACADDRESS" || \
-  "$CURRENT_MACADDRESS" == "" \
+  "$NEW_MACADDRES_VALUE" == "$DEFAULT_MACADDRESS" || \
+  "$NEW_MACADDRES_VALUE" == "" \
 ]]; then
   echo ">>>>>>>>> Generating new MAC-Address ..."
   NEW_MACADDRES_VALUE="$(\
