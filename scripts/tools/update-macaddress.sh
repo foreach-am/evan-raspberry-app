@@ -17,24 +17,29 @@ source "$(dirname "$0")/../includes.sh"
 MACADDRESS_STORE_FILE="$ROOT_DIR/data/macaddress.data"
 DEFAULT_MACADDRESS="00:08:dc:01:02:03"
 
-function random_macaddress() {
-  printf '%02x:%02x:%02x:%02x:%02x:%02x\n' \
-    "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]" \
-    "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]"
-}
 function generate_macaddress() {
-  local MACADDRESS="$(get_macaddress)"
+  local CURRENT_MACADDRESS="$(get_macaddress)"
+  echo "CURRENT_MACADDRESS = $CURRENT_MACADDRESS"
+  echo "DEFAULT_MACADDRESS = $DEFAULT_MACADDRESS"
+
   if [[ -f "$MACADDRESS_STORE_FILE" ]]; then
-    MACADDRESS="$(cat "$MACADDRESS_STORE_FILE")"
+    CURRENT_MACADDRESS="$(cat "$MACADDRESS_STORE_FILE")"
   fi
-  if [[ "$MACADDRESS" == "$DEFAULT_MACADDRESS" || "$MACADDRESS" == "" ]]; then
-    MACADDRESS="$(\
+  echo "CURRENT_MACADDRESS_FILE = $CURRENT_MACADDRESS"
+
+  if [[ \
+    "$CURRENT_MACADDRESS" == "$DEFAULT_MACADDRESS" || \
+    "$CURRENT_MACADDRESS" == "" \
+  ]]; then
+    CURRENT_MACADDRESS="$(\
       printf '%02x:%02x:%02x:%02x:%02x:%02x\n' \
         "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]" \
         "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]" \
     )"
   fi
-  echo "$MACADDRESS"
+
+  echo "CURRENT_MACADDRESS_FINAL = $CURRENT_MACADDRESS"
+  echo "$CURRENT_MACADDRESS"
 }
 function store_macaddress() {
   sudo rm -rf "$MACADDRESS_STORE_FILE"
@@ -51,8 +56,6 @@ fi
 ## ----------------------------------------------------------------------------------
 ## update macaddress
 CURRENT_MACADDRESS="$(get_macaddress)"
-echo "CURRENT_MACADDRESS = $CURRENT_MACADDRESS"
-echo "DEFAULT_MACADDRESS = $DEFAULT_MACADDRESS"
 if [[ "$CURRENT_MACADDRESS" != "$DEFAULT_MACADDRESS" ]]; then
   store_macaddress "$CURRENT_MACADDRESS"
   echo ">>>>>>>>> MAC Address already updated, value: $CURRENT_MACADDRESS"
