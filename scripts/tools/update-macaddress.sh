@@ -27,11 +27,11 @@ function generate_macaddress() {
   if [[ -f "$MACADDRESS_STORE_FILE" ]]; then
     MACADDRESS="$(cat "$MACADDRESS_STORE_FILE")"
   fi
-  if [[ "$DEFAULT_MACADDRESS" == "$MACADDRESS" ]]; then
+  if [[ "$MACADDRESS" == "$DEFAULT_MACADDRESS" || "$MACADDRESS" == "" ]]; then
     MACADDRESS="$(\
       printf '%02x:%02x:%02x:%02x:%02x:%02x\n' \
         "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]" \
-        "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]"\
+        "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]" \
     )"
   fi
   echo "$MACADDRESS"
