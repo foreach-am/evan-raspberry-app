@@ -43,7 +43,6 @@ if [[ \
   "$CURRENT_MACADDRESS" != "" \
 ]]; then
   echo ">>>>>>>>> An valid MAC-Address already set, value: $CURRENT_MACADDRESS"
-  store_macaddress "$CURRENT_MACADDRESS"
   exit 0
 fi
 
@@ -59,9 +58,13 @@ if [[ \
   "$NEW_MACADDRES_VALUE" == "" \
 ]]; then
   echo ">>>>>>>>> Generating new MAC-Address ..."
+  # NEW_MACADDRES_VALUE="$(\
+  #   printf '%02x:%02x:%02x:%02x:%02x:%02x\n' \
+  #     "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]" \
+  #     "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]" \
+  # )"
   NEW_MACADDRES_VALUE="$(\
-    printf '%02x:%02x:%02x:%02x:%02x:%02x\n' \
-      "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]" \
+    printf '02:00:00:%02x:%02x:%02x\n' \
       "$[RANDOM%255]" "$[RANDOM%255]" "$[RANDOM%255]" \
   )"
 fi
