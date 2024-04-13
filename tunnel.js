@@ -34,9 +34,10 @@ async function sendTunnelUrl(url) {
   }
 }
 
-async function onTerminated() {
+async function onTerminated(...args) {
   console.log('[TUNNEL] >>> tunnel terminated, reconnecting ...');
-  await connectTunnel();
+  // await connectTunnel();
+  console.log(...args);
 }
 
 async function connectTunnel() {
