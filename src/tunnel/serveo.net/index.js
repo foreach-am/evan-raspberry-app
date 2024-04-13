@@ -12,13 +12,30 @@ function connectTunnel(onTerminated) {
       'serveo.net',
     ];
 
-    spawn('ssh', commandArguments).stdout.on('data', (data) => {
+    const { stdout } = spawn('ssh', commandArguments);
+
+    stdout.on('data', (data) => {
       const domainPattern = /(https\:\/\/[a-z0-9.-]+\.serveo\.net)/gi;
       const domainMatches = data.toString().match(domainPattern);
 
       if (Array.isArray(domainMatches) && domainMatches.length > 0) {
         resolve(domainMatches[0]);
+      } else {
+        console.log(data);
       }
+    });
+
+    stdout.on('close', (...args) => {
+      console.log('close:', ...args);
+    });
+    stdout.on('end', (...args) => {
+      console.log('end:', ...args);
+    });
+    stdout.on('error', (...args) => {
+      console.log('error:', ...args);
+    });
+    stdout.on('pause', (...args) => {
+      console.log('pause:', ...args);
     });
   });
 }
