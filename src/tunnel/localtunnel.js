@@ -1,7 +1,7 @@
 const localtunnel = require('localtunnel');
 
 async function connectTunnel(onTerminated) {
-  const tunnel = await localtunnel({ port: 3000 });
+  const tunnel = await localtunnel({ port: 22 });
   tunnel.on('close', onTerminated);
 
   return tunnel.url;
