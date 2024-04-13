@@ -4,6 +4,7 @@ async function connectTunnel(onTerminated) {
   const tunnel = await localtunnel({
     port: 22,
     allow_invalid_cert: true,
+    subdomain: 'embers',
   });
 
   tunnel.on('close', onTerminated);
