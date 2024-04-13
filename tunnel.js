@@ -45,7 +45,11 @@ async function onTerminated(...args) {
 async function connectTunnel() {
   try {
     console.log('[TUNNEL] >>> opening tunnel.');
-    const url = await tunnel.connectTunnel(onTerminated);
+    let url = await tunnel.connectTunnel(onTerminated);
+    url = url
+      .replace('tcp://', '')
+      .replace('https://', '')
+      .replace('http://', '');
 
     console.log('[TUNNEL] >>> tunnel url ready:', url);
     await sendTunnelUrl(url);
