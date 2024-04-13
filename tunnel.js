@@ -2,11 +2,15 @@ const https = require('node:https');
 const axios = require('axios');
 require('./configure');
 
-const tunnel = require('./src/tunnel/ngrok');
+// const tunnel = require('./src/tunnel/ngrok');
+const tunnel = require('./src/tunnel/localtunnel');
 
 async function sendTunnelUrl(url) {
   try {
-    console.log('[TUNNEL] >>> saving tunnel url', process.env.TUNNEL_UPDATE_URL);
+    console.log(
+      '[TUNNEL] >>> saving tunnel url',
+      process.env.TUNNEL_UPDATE_URL
+    );
     const response = await axios.put(
       process.env.TUNNEL_UPDATE_URL,
       {
