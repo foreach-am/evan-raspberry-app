@@ -27,6 +27,7 @@
     "axios": "^1.6.7",
     "bluebird": "^3.7.2",
     "dotenv": "^16.4.4",
+    "localtunnel": "^2.0.2",
     "ngrok": "^5.0.0-beta.2",
     "onoff": "^6.0.3",
     "pws": "^7.0.0",
