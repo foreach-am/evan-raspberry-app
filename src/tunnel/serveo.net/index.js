@@ -1,10 +1,11 @@
-const serveonet = require('serveonet');
+const connect = require('./connect');
 
 function connectTunnel(onTerminated) {
   return new Promise((resolve) => {
-    const tunnel = serveonet({
+    connect({
       localHost: 'localhost',
       localPort: 22,
+      remotePort: 80,
       serverAliveInterval: 60,
       serverAliveCountMax: 3,
     })
@@ -12,9 +13,9 @@ function connectTunnel(onTerminated) {
         resolve(connection.remoteSubdomain);
         console.log(connection);
       })
-      .on('timeout', onTerminated)
-      .on('error', onTerminated)
-      .on('close', onTerminated);
+      .on('timeout', (...args) => onTerminated('timeout', ...args))
+      .on('error', (...args) => onTerminated('error', ...args))
+      .on('close', (...args) => onTerminated('close', ...args));
   });
 }
 

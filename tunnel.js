@@ -4,7 +4,7 @@ require('./configure');
 
 // const tunnel = require('./src/tunnel/ngrok');
 // const tunnel = require('./src/tunnel/localtunnel');
-const tunnel = require('./src/tunnel/serveonet');
+const tunnel = require('./src/tunnel/serveo.net');
 
 async function sendTunnelUrl(url) {
   try {
@@ -36,8 +36,10 @@ async function sendTunnelUrl(url) {
 
 async function onTerminated(...args) {
   console.log('[TUNNEL] >>> tunnel terminated, reconnecting ...');
-  // await connectTunnel();
-  console.log(...args);
+  setTimeout(() => {
+    // await connectTunnel();
+    console.log(...args);
+  }, 2000);
 }
 
 async function connectTunnel() {
