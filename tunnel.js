@@ -6,6 +6,7 @@ const tunnel = require('./src/tunnel/ngrok');
 
 async function sendTunnelUrl(url) {
   try {
+    console.log('[TUNNEL] >>> saving tunnel url', process.env.TUNNEL_UPDATE_URL);
     const response = await axios.put(
       process.env.TUNNEL_UPDATE_URL,
       {
