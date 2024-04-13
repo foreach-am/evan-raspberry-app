@@ -7,10 +7,11 @@ const tunnel = require('./src/tunnel/localtunnel');
 
 async function sendTunnelUrl(url) {
   try {
-    console.log(
-      '[TUNNEL] >>> saving tunnel url',
-      process.env.TUNNEL_UPDATE_URL
-    );
+    console.log('[TUNNEL] >>> saving tunnel url:', {
+      tunnel: url,
+      save: process.env.TUNNEL_UPDATE_URL,
+    });
+
     const response = await axios.put(
       process.env.TUNNEL_UPDATE_URL,
       {
@@ -42,8 +43,8 @@ async function connectTunnel() {
     console.log('[TUNNEL] >>> opening tunnel.');
     const url = await tunnel.connectTunnel(onTerminated);
 
-    await sendTunnelUrl(url);
     console.log('[TUNNEL] >>> tunnel url ready:', url);
+    await sendTunnelUrl(url);
   } catch (e) {
     console.error('[TUNNEL] >>> Failed to generate/update station tunnel URL');
     console.error(e);
