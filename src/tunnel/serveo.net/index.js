@@ -1,21 +1,25 @@
-const connect = require('./connect');
+const { spawn } = require('child_process');
 
 function connectTunnel(onTerminated) {
   return new Promise((resolve) => {
-    connect({
-      localHost: 'localhost',
-      localPort: 22,
-      remotePort: 80,
-      serverAliveInterval: 60,
-      serverAliveCountMax: 3,
-    })
-      .on('connect', (connection) => {
-        resolve(connection.remoteSubdomain);
-        console.log(connection);
-      })
-      .on('timeout', (...args) => onTerminated('timeout', ...args))
-      .on('error', (...args) => onTerminated('error', ...args))
-      .on('close', (...args) => onTerminated('close', ...args));
+    const commandArguments = [
+      '-T',
+      '-R 80:localhost:22',
+      '-o ExitOnForwardFailure=yes',
+      '-o StrictHostKeyChecking=no',
+      '-o ServerAliveInterval=60',
+      '-o ServerAliveCountMax=3',
+      'serveo.net',
+    ];
+
+    spawn('ssh', commandArguments).stdout.on('data', (data) => {
+      const domainPattern = /(https\:\/\/[a-z0-9.-]+\.serveo\.net)/gi;
+      const domainMatches = data.toString().match(domainPattern);
+
+      if (Array.isArray(domainMatches) && domainMatches.length > 0) {
+        resolve(domainMatches[0]);
+      }
+    });
   });
 }
 
