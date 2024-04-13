@@ -11,7 +11,6 @@
     "start:prod": "bash ./scripts/app/run-production.sh",
     "restart:app": "bash ./scripts/app/restart-production.sh",
     "postinstall": "bash ./scripts/hooks/package/post-install.sh",
-    "prepare": "npm run tool:husky:init",
     "lint": "npm run tool:lint:execute:dev",
     "format": "npm run tool:format:code && npm run tool:format:scripts",
     "tool:app:node-version": "bash ./scripts/app/check-node-version.sh",
