@@ -5,21 +5,25 @@ require('./configure');
 const tunnel = require('./src/tunnel/ngrok');
 
 async function sendTunnelUrl(url) {
-  const response = await axios.put(
-    process.env.TUNNEL_UPDATE_URL,
-    {
-      tunnelUrl: url,
-    },
-    {
-      httpsAgent: new https.Agent({
-        rejectUnauthorized: false,
-      }),
-    }
-  );
+  try {
+    const response = await axios.put(
+      process.env.TUNNEL_UPDATE_URL,
+      {
+        tunnelUrl: url,
+      },
+      {
+        httpsAgent: new https.Agent({
+          rejectUnauthorized: false,
+        }),
+      }
+    );
 
-  console.log('[TUNNEL] >>> tunnel response', response.data);
-  if (response.status >= 400) {
-    return console.error(response);
+    if (response.status >= 400) {
+      return console.error(response);
+    }
+  } catch (e) {
+    console.log('[TUNNEL] >>> tunnel response', e.data || e.response?.data);
+    throw e;
   }
 }
 
