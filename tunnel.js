@@ -56,7 +56,7 @@ async function connectTunnel() {
     const canReconnect = await tunnel.canReconnectOnError(e);
     const reconnectionInterval = canReconnect
       ? 60 // every minute
-      : 3600 * 12; // twice daily
+      : 3600 * 4; // every 4 hour
 
     console.error(
       `[TUNNEL] >>> reconnection after ${reconnectionInterval} seconds.`
