@@ -78,14 +78,20 @@ async function bootstrap() {
 
 async function canReconnectOnError(error) {
   if (error.name === 'RequestError' && error.code === 'ECONNREFUSED') {
+    const patterns = [
+      /^connect ECONNREFUSED 127\.0\.0\.1/,
+      /^connect ECONNREFUSED ::1/,
+      /^connect ECONNREFUSED 192\.168\.\d+\.\d+$/,
+    ];
+
+    for (const pattern of patterns) {
+      if (pattern.test(error.message)) {
+        return false;
+      }
+    }
   }
-  console.log();
-  console.log({
-    NAME: error.name,
-    MSG: error.message,
-    CODE: error.code,
-  });
-  console.log();
+
+  return true;
 }
 
 module.exports.bootstrap = bootstrap;
