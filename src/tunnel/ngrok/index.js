@@ -76,7 +76,17 @@ async function bootstrap() {
   console.log('[TUNNEL] >>> configuration completed.');
 }
 
-async function canReconnectOnError(error) {}
+async function canReconnectOnError(error) {
+  if (error.name === 'RequestError' && error.code === 'ECONNREFUSED') {
+  }
+  console.log();
+  console.log({
+    NAME: error.name,
+    MSG: error.message,
+    CODE: error.code,
+  });
+  console.log();
+}
 
 module.exports.bootstrap = bootstrap;
 module.exports.connectTunnel = connectTunnel;
