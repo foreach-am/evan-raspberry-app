@@ -2,9 +2,9 @@ const https = require('node:https');
 const axios = require('axios');
 require('./configure');
 
-// const tunnel = require('./src/tunnel/ngrok');
+const tunnel = require('./src/tunnel/ngrok');
 // const tunnel = require('./src/tunnel/localtunnel');
-const tunnel = require('./src/tunnel/serveo.net');
+// const tunnel = require('./src/tunnel/serveo.net');
 
 async function sendTunnelUrl(url) {
   try {
