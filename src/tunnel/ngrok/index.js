@@ -76,5 +76,8 @@ async function bootstrap() {
   console.log('[TUNNEL] >>> configuration completed.');
 }
 
+async function canReconnectOnError(error) {}
+
 module.exports.bootstrap = bootstrap;
 module.exports.connectTunnel = connectTunnel;
+module.exports.canReconnectOnError = canReconnectOnError;

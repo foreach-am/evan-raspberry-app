@@ -35,12 +35,8 @@ async function sendTunnelUrl(url) {
   }
 }
 
-async function onTerminated(...args) {
-  console.log('[TUNNEL] >>> tunnel terminated, reconnecting ...');
-  setTimeout(() => {
-    // await connectTunnel();
-    console.log(...args);
-  }, 2000);
+async function onTerminated() {
+  console.log('[TUNNEL] >>> tunnel terminated.');
 }
 
 async function connectTunnel() {
@@ -57,9 +53,15 @@ async function connectTunnel() {
     console.error('[TUNNEL] >>> Failed to generate/update station tunnel URL');
     console.error(e);
 
+    const canReconnect = await tunnel.canReconnectOnError(e);
+    if (!canReconnect) {
+      console.error('[TUNNEL] >>> reconnection disabled');
+      return;
+    }
+
     setTimeout(function () {
       connectTunnel();
-    }, 5_000);
+    }, 30_000);
   }
 }
 
