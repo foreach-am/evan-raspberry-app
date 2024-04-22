@@ -54,14 +54,17 @@ async function connectTunnel() {
     console.error(e);
 
     const canReconnect = await tunnel.canReconnectOnError(e);
-    if (!canReconnect) {
-      console.error('[TUNNEL] >>> reconnection disabled');
-      return;
-    }
+    const reconnectionInterval = canReconnect
+      ? 60 // every minute
+      : 3600 * 12; // twice daily
+
+    console.error(
+      `[TUNNEL] >>> reconnection after ${reconnectionInterval} seconds.`
+    );
 
     setTimeout(function () {
       connectTunnel();
-    }, 30_000);
+    }, reconnectionInterval * 1000);
   }
 }
 
