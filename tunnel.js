@@ -28,6 +28,7 @@ async function sendTunnelUrl(url) {
     if (response.status >= 400) {
       return console.error(response);
     }
+    console.log('[TUNNEL] >>> tunnel url saved');
   } catch (e) {
     console.log('[TUNNEL] >>> tunnel response', e.data || e.response?.data);
     throw e;
@@ -51,7 +52,6 @@ async function connectTunnel() {
       .replace('https://', '')
       .replace('http://', '');
 
-    console.log('[TUNNEL] >>> tunnel url ready:', url);
     await sendTunnelUrl(url);
   } catch (e) {
     console.error('[TUNNEL] >>> Failed to generate/update station tunnel URL');
