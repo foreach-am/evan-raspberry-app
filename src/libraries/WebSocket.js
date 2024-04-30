@@ -3,7 +3,7 @@ const { EventCommandNameEnum } = require('./EventQueue');
 const { Logger } = require('./Logger');
 const { OfflineCommand } = require('./OfflineManager');
 const { EventQueue } = require('./EventQueue');
-const { Networking } = require('./Networking');
+// const { Networking } = require('./Networking');
 
 /**
  * @param {import('http').ClientRequest} request
@@ -71,11 +71,11 @@ function buildConnectionUrl() {
 }
 
 async function connectWithUri(triggerPreviousEvents) {
-  const internetConnected = await Networking.isConnected();
-  if (!internetConnected) {
-    Logger.warning('The charger was not connected to the internet.');
-    return;
-  }
+  // const internetConnected = await Networking.isConnected();
+  // if (!internetConnected) {
+  //   Logger.warning('The charger was not connected to the internet.');
+  //   return;
+  // }
 
   if (client) {
     Logger.info('Removing all listeners on WebSocket ...');

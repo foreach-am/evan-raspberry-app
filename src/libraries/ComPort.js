@@ -1,5 +1,6 @@
 const { SerialPort } = require('serialport');
 const { Logger } = require('./Logger');
+const { PlugStateEnum } = require('./PlugState');
 const state = require('../state');
 const uuid = require('../utils/uuid');
 
@@ -108,7 +109,21 @@ function parseInputData(text) {
   const setters = {
     plug: {
       PI: { field: 'pilotFeedBack', isNumeric: true },
-      PL: { field: 'plugState', isNumeric: true },
+      PL: {
+        field: 'plugState',
+        isNumeric: true,
+        validValues: [
+          PlugStateEnum.UNPLUGGED,
+          PlugStateEnum.CAR_DETECTED,
+          PlugStateEnum.CHARGING,
+          PlugStateEnum.NO_POWER_ABORT,
+          PlugStateEnum.CAR_ERROR_12V_ERROR,
+          PlugStateEnum.PLUG_SOFT_LOCK,
+          PlugStateEnum.OVER_CURRENT_ERROR,
+          PlugStateEnum.PLUG_RESERVE,
+          PlugStateEnum.CHARGE_COMPLETED,
+        ],
+      },
       PW: { field: 'powerKwh', isNumeric: true },
       CA: { field: 'currentMeasureA', isNumeric: true },
       CB: { field: 'currentMeasureB', isNumeric: true },
@@ -124,6 +139,31 @@ function parseInputData(text) {
     },
   };
 
+  let isValidPacket = true;
+  const dataToSet = {
+    plugs: {},
+    common: {},
+  };
+
+  const parseAndSetValue = function (
+    { value, connectorId },
+    { field, isNumeric, validValues }
+  ) {
+    if (isValidPacket) {
+      const parsedValue = isNumeric ? Number(value) : value;
+      if (Array.isArray(validValues) && !validValues.includes(parsedValue)) {
+        isValidPacket = false;
+      } else {
+        if (connectorId) {
+          dataToSet.plugs[field] = dataToSet.plugs[field] || {};
+          dataToSet.plugs[field][connectorId] = parsedValue;
+        } else {
+          dataToSet.common[field] = parsedValue;
+        }
+      }
+    }
+  };
+
   packet
     .split(':')
     .filter(function (part) {
@@ -133,17 +173,23 @@ function parseInputData(text) {
       const { connectorId, name, value } = getSegmentValue(part);
 
       if (Object.keys(setters.plug).includes(name)) {
-        const { field, isNumeric } = setters.plug[name];
-        const parsedValue = isNumeric ? Number(value) : value;
-
-        state.statistic.plugs[field][connectorId] = parsedValue;
+        parseAndSetValue({ value, connectorId }, setters.plug[name]);
       } else if (Object.keys(setters.common).includes(name)) {
-        const { field, isNumeric } = setters.common[name];
-        const parsedValue = isNumeric ? Number(value) : value;
-
-        state.statistic.common[field] = parsedValue;
+        parseAndSetValue({ value }, setters.common[name]);
       }
     });
+
+  if (isValidPacket) {
+    for (const field in dataToSet.plugs) {
+      for (const connectorId in dataToSet.plugs[field]) {
+        state.statistic.plugs[field][connectorId] =
+          dataToSet.plugs[field][connectorId];
+      }
+    }
+    for (const field in dataToSet.common) {
+      state.statistic.common[field] = dataToSet.common[field];
+    }
+  }
 }
 
 function emitMessage(message) {

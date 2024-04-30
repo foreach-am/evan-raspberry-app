@@ -9,12 +9,7 @@ const CheckerPromise = Promise;
 const checkHosts = [
   'google.com',
   'amazon.com',
-  'ws.e-evan.com'
-    .toString()
-    .replace('https://', '')
-    .replace('wss://', '')
-    .replace('https://', '')
-    .replace('ws://', ''),
+  'evcharge-api-prod.e-evan.com',
 ];
 
 const subdomains = ['', 'www'];
