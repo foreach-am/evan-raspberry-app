@@ -179,17 +179,17 @@ function parseInputData(text) {
       }
     });
 
-  if (isValidPacket) {
-    for (const field in dataToSet.plugs) {
-      for (const connectorId in dataToSet.plugs[field]) {
-        state.statistic.plugs[field][connectorId] =
-          dataToSet.plugs[field][connectorId];
-      }
-    }
-    for (const field in dataToSet.common) {
-      state.statistic.common[field] = dataToSet.common[field];
+  // if (isValidPacket) {
+  for (const field in dataToSet.plugs) {
+    for (const connectorId in dataToSet.plugs[field]) {
+      state.statistic.plugs[field][connectorId] =
+        dataToSet.plugs[field][connectorId];
     }
   }
+  for (const field in dataToSet.common) {
+    state.statistic.common[field] = dataToSet.common[field];
+  }
+  // }
 }
 
 function emitMessage(message) {
