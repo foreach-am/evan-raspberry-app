@@ -8,6 +8,9 @@ const PlugStateEnum = {
   OVER_CURRENT_ERROR: 7,
   PLUG_RESERVE: 8,
   CHARGE_COMPLETED: 9,
+
+  // non-standard codes
+  CONNECTOR_MISSING: 17,
 };
 
 module.exports = {
