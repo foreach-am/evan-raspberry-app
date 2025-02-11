@@ -17,11 +17,6 @@ module.exports = async function (parsedServerData, connectorId, reason, timestam
     timestamp
   );
 
-  state.state.plugs.transactionId[connectorId] = '';
-  state.state.plugs.idTags[connectorId] = '';
-  state.state.plugs.idTagInfoStatus[connectorId] = '';
-  state.saveState();
-
   // await ping.StatusNotification.execute(
   //   uuid(),
   //   connectorId,

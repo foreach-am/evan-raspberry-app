@@ -95,6 +95,11 @@ async function onComportDataReady() {
           ping.StatusNotification.StatusEnum.AVAILABLE,
           ping.StatusNotification.ErrorCodeEnum.NO_ERROR
         );
+
+        state.state.plugs.transactionId[connectorId] = '';
+        state.state.plugs.idTags[connectorId] = '';
+        state.state.plugs.idTagInfoStatus[connectorId] = '';
+        state.saveState();
       }
     } else {
       state.switch.plugs.sendStatusNotification[connectorId] = true;
